@@ -1,0 +1,26 @@
+>>>>>>>>>>>>>>>>>>REQUETE POST<<<<<<<<<<<<<<<<<<<<<<<<<<<
+POST / HTTP/1.1
+Host: foo.com
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 13
+
+say=Hi&to=Mom
+
+>>>>>>>>>>>>>>>>>>REQUETE POST<<<<<<<<<<<<<<<<<<<<<<<<<<<
+POST /test.html HTTP/1.1
+Host: example.org
+Content-Type: multipart/form-data;boundary="boundary"
+
+--boundary
+Content-Disposition: form-data; name="field1"
+
+value1
+--boundary
+Content-Disposition: form-data; name="field2"; filename="example.txt"
+
+value2
+
+>>>>>>>>>>>>>>>>>>REQUETE GET<<<<<<<<<<<<<<<<<<<<<<<<<<<
+GET / HTTP/1.1
+Host: developer.mozilla.org
+Accept-Language: fr
