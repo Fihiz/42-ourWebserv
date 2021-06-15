@@ -18,7 +18,7 @@ void    closeAllFdUnlessMaster(fd_set &read_set, Socket &master)
     {
         if (FD_ISSET(ind, &read_set) && ind != master.getMasterSock())
         {
-            printf(T_YB "Connection lost... (fd=%d)\n" T_N, ind);
+            std::cerr << T_YB << "Connection lost... fd=" << ind << T_N << std::endl;
             close(ind);
         }
     }

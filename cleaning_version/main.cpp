@@ -79,30 +79,31 @@ int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
 			<< std::endl;
 			std::cout << req.content << std::endl;
 			check = checkHeader(req);
-			// if (check != 0)
-  			// {
-			// 	std::cout << check << std::endl;
-  			//     write(1, "wrong file path\n", strlen("wrong file path\n"));
-			// 	losingConnexion( fd, read_set, "CKC... (");
-  			//     return (-1);
-  			// }
+			if (check != 0)
+  			{
+				losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
+  			    return (-1);
+  			}
 			if ((envp = initEnvp(envp, req, serv)) == NULL)
     		{
-    		    write(1, "bad request\n", strlen("bad request\n"));
-    		    return (1);
+    		    losingConnexion(fd, read_set, "Losing connexion: environmnent is corrupted... (");
+    		    return (-1);
     		}
-			std::string::size_type dot = (req.path_info).find('.');
+			std::string pointlessPath = (req.path_info).substr(1);
+			std::cout << "|" << pointlessPath << "|" << std::endl;
+			std::string::size_type dot = (pointlessPath).find('.');
 			if (dot != std::string::npos)
 			{
-				fileName = (req.path_info).substr(0, dot);
-				ext = (req.path_info).substr(dot);
+				fileName = (req.path_info).substr(0, dot + 1);
+				std::cout << "filename " << fileName <<std::endl;
+				ext = (req.path_info).substr(dot + 1 + 1);
+				std::cout << "ext " << ext <<std::endl;
 			}
 			else
 			{
 				fileName = (req.path_info);
 				ext = "";
 			}
-			fileName = "." + fileName;
 			// for (int i = 0; i < tab_size(envp); i++)
    			//     std::cout << envp[i] << std::endl;
 			if (ext != "")

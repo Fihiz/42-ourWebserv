@@ -184,7 +184,7 @@ t_request  takeInfo(char *buffer)
     std::getline(ss, chain, ' ');
     req.request_method = chain;
     std::getline(ss, chain, ' ');
-    req.path_info = chain;
+    req.path_info = "." + chain;
 	std::getline(ss, chain, '\n');
     req.protocol = chain;
     chain = buffer;
