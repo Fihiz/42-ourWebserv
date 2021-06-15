@@ -53,30 +53,30 @@ int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
     		serv.server_protocol = reinterpret_cast<const char *>("HTTP/1.1");
             //getFileInfo(request, fileName, ext, contentType);
 			req = takeInfo(request);
-			std::cout \
-			<< "req.User-Agent=" << req.user_agent \
-			<< "\naccepted_charset=" << req.accepted_charset \
-			<< "\naccepted_language=" << req.accepted_language \
-			<< "\nallow=" << req.allow \
-			<< "\nauthorization=" << req.authorization \
-			<< "\ncontent_language=" << req.content_language \
-			<< "\ncontent_lenght=" << req.content_lenght \
-			<< "\ncontent_location=" <<req.content_location \
-			<< "\ncontent_type=" << req.content_type \
-			<< "\ndate=" << req.date \
-			<< "\nhost=" << req.host \
-			<< "\nlast_modified=" << req.last_modified \
-			<< "\nlocation=" << req.location \
-			<< "\nreferer=" << req.referer \
-			<< "\nretry_after=" << req.retry_after \
-			<< "\nserver=" << req.server \
-			<< "\ntransfert_encoding=" << req.transfert_encoding \
-			<< "\nuser_agent=" << req.user_agent \
-			<< "\nwww_authenticate=" << req.www_authenticate \
-			<< "\nprotocol=" << req.protocol \
-			<< "\npath_info=" << req.path_info \
-			<< "\nrequest_method=" << req.request_method \
-			<< std::endl;
+			// std::cout \
+			// << "req.User-Agent=" << req.user_agent \
+			// << "\naccepted_charset=" << req.accepted_charset \
+			// << "\naccepted_language=" << req.accepted_language \
+			// << "\nallow=" << req.allow \
+			// << "\nauthorization=" << req.authorization \
+			// << "\ncontent_language=" << req.content_language \
+			// << "\ncontent_lenght=" << req.content_lenght \
+			// << "\ncontent_location=" <<req.content_location \
+			// << "\ncontent_type=" << req.content_type \
+			// << "\ndate=" << req.date \
+			// << "\nhost=" << req.host \
+			// << "\nlast_modified=" << req.last_modified \
+			// << "\nlocation=" << req.location \
+			// << "\nreferer=" << req.referer \
+			// << "\nretry_after=" << req.retry_after \
+			// << "\nserver=" << req.server \
+			// << "\ntransfert_encoding=" << req.transfert_encoding \
+			// << "\nuser_agent=" << req.user_agent \
+			// << "\nwww_authenticate=" << req.www_authenticate \
+			// << "\nprotocol=" << req.protocol \
+			// << "\npath_info=" << req.path_info \
+			// << "\nrequest_method=" << req.request_method \
+			// << std::endl;
 			std::cout << req.content << std::endl;
 			check = checkHeader(req);
 			if (check != 0)
@@ -120,6 +120,7 @@ int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
 			}
 			if (S_ISDIR(buf.st_mode))
 			{
+				std::cout << "filename: " << fileName << std::endl;
                 content = createAutoIndex(fileName);
                 if (!content.size()) // if null, return 404
                     return (EXIT_FAILURE);

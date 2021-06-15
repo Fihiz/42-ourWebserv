@@ -76,7 +76,7 @@ std::string	getDateFormat(time_t	&date)
 
 /* AUTO INDEX */
 
-std::string     fillAutoIndex( std::vector<char *> files, std::string &fileName )
+std::string     fillAutoIndex( std::vector<char *> &files, std::string &fileName )
 {
     std::string content = "<html>\n\t<head><title>Index of /</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of /</h1><hr><pre>\n";
     std::vector<char *>::iterator   it = files.begin();
@@ -84,11 +84,13 @@ std::string     fillAutoIndex( std::vector<char *> files, std::string &fileName 
     std::string files_buf = "";
     struct stat buf;
 
+    std::cout << T_CB "JE PASSE ICI |" << fileName << "|" << *(files.begin()) << " | " << *(files.end() - 1) << " | " T_N << std::endl;
     while (it != files.end())
     {
         if ((*it)[0] != '.' || (((std::string)(*it)) == ".."))
         {
-            if (fileName[fileName.size() - 1] == '/')
+            std::cerr << "file:" << *it << std::endl;
+            if (fileName[fileName.size()] == '/')
                 stat((fileName + (std::string) *it).c_str(), &buf);
             else
                 stat((fileName + "/" + (std::string) *it).c_str(), &buf);
@@ -109,11 +111,14 @@ std::string     createAutoIndex( std::string &fileName )
     std::vector<char *> files;
     struct dirent *dirRead;
 
-    std::cout << T_CB << fileName << T_N << std::endl;
+    std::cout << T_CB << fileName << " begin: " << (files.begin() == files.end()) << T_N << std::endl;
     if ((dir = opendir((fileName).c_str())) != nullptr)
     {
         while ((dirRead = readdir(dir)) != nullptr)
+        {  
+            std::cout << T_RB "dir name : " << dirRead->d_name << T_N << std::endl;
             files.push_back(dirRead->d_name);
+        }
         closedir (dir);
     }
     else
