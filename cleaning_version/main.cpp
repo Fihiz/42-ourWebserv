@@ -51,7 +51,7 @@ int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
 	  		serv.server_name = reinterpret_cast<const char *>("localhost");
     		serv.server_port = reinterpret_cast<const char *>("8080");
     		serv.server_protocol = reinterpret_cast<const char *>("HTTP/1.1");
-            //getFileInfo(request, fileName, ext, contentType);
+            getFileInfo(request, fileName, ext, contentType);
 			req = takeInfo(request);
 			// std::cout \
 			// << "req.User-Agent=" << req.user_agent \
@@ -126,7 +126,7 @@ int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
                     return (EXIT_FAILURE);
 			}
             std::string responseHeader = "HTTP/1.1 200 OK\nContent-Type:" + contentType + "\nContent-Length:" + std::to_string(content.size()) + "\n\n" + content;
-            if ((std::string)request == "exit\n") // (?)
+            if (req.path_info == "./exit") // (?)
                 running = 0;
 			std::cout << fd << " is requesting :" << std::endl << request << std::endl;
             // std::cout << T_YB << responseHeader << T_N << std::endl;

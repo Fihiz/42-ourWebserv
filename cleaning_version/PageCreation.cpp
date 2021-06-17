@@ -74,31 +74,50 @@ std::string	getDateFormat(time_t	&date)
 	return (ret);
 }
 
+std::string formatName(std::string src)
+{
+    std::string spaces = " ";
+
+    if (src.size() == 50)
+        ;
+    else if ((src.size() == 51) && (src[50] == '/'))
+    {
+        src[50] = '\0';
+        std::cout << "|" + src + "|" << std::endl;
+    }
+    else if (src.size() > 50)
+        src = src.substr(0, 47) + "..>";
+    src = src + "</a>";
+    while (src.size() + spaces.size() < 55)
+        spaces = spaces + " ";
+    return(src + spaces);
+}
+
 /* AUTO INDEX */
 
-std::string     fillAutoIndex( std::vector<char *> &files, std::string &fileName )
+std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fileName )
 {
-    std::string content = "<html>\n\t<head><title>Index of /</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of /</h1><hr><pre>\n";
-    std::vector<char *>::iterator   it = files.begin();
-    std::string dir_buf = ""; // To remove later 
+    std::string content = "<html>\n\t<head><title>Index of /" + fileName.substr(2) + "</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of /" + fileName.substr(2) + "</h1><hr><pre>\n";
+    std::vector<std::string>::iterator   it = files.begin();
+    std::string dir_buf = "<a href=\"../\">../</a>\n"; 
     std::string files_buf = "";
     struct stat buf;
 
-    std::cout << T_CB "JE PASSE ICI |" << fileName << "|" << *(files.begin()) << " | " << *(files.end() - 1) << " | " T_N << std::endl;
+    //std::cout << T_CB "JE PASSE ICI |" << fileName << "|" << *(files.begin()) << " | " << *(files.end() - 1) << " | " T_N << std::endl;
     while (it != files.end())
     {
-        if ((*it)[0] != '.' || (((std::string)(*it)) == ".."))
+        if ((*it)[0] != '.')
         {
-            std::cerr << "file:" << *it << std::endl;
-            if (fileName[fileName.size()] == '/')
-                stat((fileName + (std::string) *it).c_str(), &buf);
+            if (fileName[fileName.size() - 1] == '/')
+                stat((fileName + *it).c_str(), &buf);
             else
-                stat((fileName + "/" + (std::string) *it).c_str(), &buf);
+                stat((fileName + "/" + *it).c_str(), &buf);
+            printf("%p\n", &(*it));
             std::cout << T_GYB << *it << " " << S_ISDIR(buf.st_mode) << " " << S_ISREG(buf.st_mode) << T_N << std::endl;
             if (S_ISDIR(buf.st_mode))
-                dir_buf += "<a href=\"" + (std::string)*it + "/\">" + (std::string)*it + "/</a>" + "                                   " + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
+                dir_buf += "<a href=\"" + *it + "/\">" + formatName(*it + "/") + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
             else
-                files_buf += "<a href=\"" + (std::string)*it + "\">" + (std::string)*it + "</a>" + "                                   " + getDateFormat(buf.st_mtime) + "                   " + std::to_string(buf.st_size) + "\n";
+                files_buf += "<a href=\"" + *it + "\">" + formatName(*it) +getDateFormat(buf.st_mtime) + "                   " + std::to_string(buf.st_size) + "\n";
         }
         it++;
     }
@@ -108,7 +127,7 @@ std::string     fillAutoIndex( std::vector<char *> &files, std::string &fileName
 std::string     createAutoIndex( std::string &fileName )
 {
     DIR *dir;
-    std::vector<char *> files;
+    std::vector<std::string> files;
     struct dirent *dirRead;
 
     std::cout << T_CB << fileName << " begin: " << (files.begin() == files.end()) << T_N << std::endl;
@@ -117,7 +136,7 @@ std::string     createAutoIndex( std::string &fileName )
         while ((dirRead = readdir(dir)) != nullptr)
         {  
             std::cout << T_RB "dir name : " << dirRead->d_name << T_N << std::endl;
-            files.push_back(dirRead->d_name);
+            files.push_back((std::string)dirRead->d_name);
         }
         closedir (dir);
     }
