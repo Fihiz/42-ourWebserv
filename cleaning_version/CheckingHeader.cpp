@@ -1,19 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   checkHeader.cpp                                    :+:      :+:    :+:   */
+/*   CheckingHeader.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 09:32:20 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/15 17:02:59 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/17 15:46:36 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
 #include "All.hpp"
 
-int checkHeader(t_request req)
+int checkingHeader(t_request req)
 {
     struct stat file;
 

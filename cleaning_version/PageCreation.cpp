@@ -6,43 +6,45 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/15 14:05:14 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/17 15:58:05 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-void    getFileInfo(char *request, std::string &fileName, std::string &ext, std::string &contentType)
-{
-    std::string::size_type n = ((std::string)(request)).find('/');
-    if (n != std::string::npos && (n < ((std::string)(request)).find('\n')))
-    {
-        std::string::size_type dot = ((std::string)(request + n + 1)).find('.');
-        if ((dot != std::string::npos) && (dot < ((std::string)(request + n + 1)).find(' '))) // si on trouve un ' ' avant de trouver un '.', on nous demande pas un fichier
-        {
-            std::string::size_type space = ((std::string)(request + n + 1 + dot + 1)).find(' '); // space pos relative to dot pos
-            fileName = ((std::string)(request)).substr(n + 1, dot);
-            ext = ((std::string)(request)).substr(n + 1 + dot + 1, space);
-        }
-        else
-        {
-            fileName = "./" + ((std::string)(request)).substr(n + 1, ((std::string)(request + n + 1)).find(' '));
-            ext = "";
-        }
-    }
-    else // si la requête a pas de nom de fichier sur la première ligne
-    {
-        fileName = "html/index";
-        ext = "html";
-    }
+// void    getFileInfo(char *request, std::string &fileName, std::string &ext, std::string &contentType)
+// {
+//     std::string::size_type n = ((std::string)(request)).find('/');
+//     if (n != std::string::npos && (n < ((std::string)(request)).find('\n')))
+//     {
+//         std::string::size_type dot = ((std::string)(request + n + 1)).find('.');
+//         if ((dot != std::string::npos) && (dot < ((std::string)(request + n + 1)).find(' '))) // si on trouve un ' ' avant de trouver un '.', on nous demande pas un fichier
+//         {
+//             std::string::size_type space = ((std::string)(request + n + 1 + dot + 1)).find(' '); // space pos relative to dot pos
+//             fileName = ((std::string)(request)).substr(n + 1, dot);
+//             ext = ((std::string)(request)).substr(n + 1 + dot + 1, space);
+//         }
+//         else
+//         {
+//             fileName = "./" + ((std::string)(request)).substr(n + 1, ((std::string)(request + n + 1)).find(' '));
+//             ext = "";
+//         }
+//     }
+//     else // si la requête a pas de nom de fichier sur la première ligne
+//     {
+//         fileName = "html/index";
+//         ext = "html";
+//     }
 
-    if (ext == "jpg") // to be : contentType = ft_ext_to_type(ext);
-        contentType = "image/jpeg";
-    else if (ext == "ico")
-        contentType = "image/x-icon";
-    else
-        contentType = "text/html";
-}
+//     if (ext == "jpg") // to be : contentType = ft_ext_to_type(ext);
+//         contentType = "image/jpeg";
+//     else if (ext == "ico")
+//         contentType = "image/x-icon";
+//     else
+//         contentType = "text/html";
+// }
+
+
 
 std::string getFileContent(std::string fullFileName)
 {
@@ -62,7 +64,7 @@ std::string numFormat(int nb)
 	return (std::to_string(nb));
 }
 
-std::string	getDateFormat(time_t	&date)
+std::string	getDateFormat( time_t &date )
 {
 	std::string	ret;
 	std::string month[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -74,7 +76,7 @@ std::string	getDateFormat(time_t	&date)
 	return (ret);
 }
 
-std::string formatName(std::string src)
+std::string formatName( std::string src )
 {
     std::string spaces = " ";
 

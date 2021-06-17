@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   request.hpp                                        :+:      :+:    :+:   */
+/*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/10 13:10:43 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/17 16:08:25 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef struct s_request
     std::string user_agent; //+
     std::string www_authenticate; //+
 
-    std::string content; //+
+    std::string body; //+
     std::string protocol; // +
     std::string path_info; //+
     std::string request_method; // +
@@ -47,6 +47,12 @@ typedef struct s_request
     std::string remote_user; //-
     std::string remote_addr; // -
     std::string auth_type; //-
+    // Added by socket team
+    std::string fileName;
+    std::string fileExt;
+    std::string fileType;
+    //std::string fileContent; (?)
+    
 
 }               t_request;
 

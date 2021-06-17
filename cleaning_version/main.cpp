@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/15 17:07:59 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/17 16:32:45 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
 
-void    processMasterSocket( fd_set &read_set, Socket &master )
+void    processMasterSocket(fd_set &read_set, Socket &master)
 {
     int     clientSock;
 
@@ -24,111 +24,93 @@ void    processMasterSocket( fd_set &read_set, Socket &master )
     return ;
 }
 
-int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
+int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
 {
-    char    request[20000];
+    char    requestBuffer[20000];
     int     running = 1;
 
 	if (fd == master.getMasterSock())
         processMasterSocket(read_set, master);
     else
     {
-        ssize_t ret = recv(fd, request, 19999, 0); // Flags to check later
-        if (ret < 0)
-            losingConnexion( fd, read_set, "Connexion lost... (");
+        ssize_t len = recv(fd, requestBuffer, 19999, 0); // Flags to check later
+        if (len < 0)
+            losingConnexion(fd, read_set, "Connexion lost... (");
         else
         {
-            request[ret] = '\0';
-            std::string fileName;
-            std::string ext;
-            std::string contentType;
-            std::string content;
-            struct stat buf;
-			t_request	req;
-			int			check;
-			t_serv serv;
-			
-	  		serv.server_name = reinterpret_cast<const char *>("localhost");
-    		serv.server_port = reinterpret_cast<const char *>("8080");
-    		serv.server_protocol = reinterpret_cast<const char *>("HTTP/1.1");
-            getFileInfo(request, fileName, ext, contentType);
-			req = takeInfo(request);
-			// std::cout \
-			// << "req.User-Agent=" << req.user_agent \
-			// << "\naccepted_charset=" << req.accepted_charset \
-			// << "\naccepted_language=" << req.accepted_language \
-			// << "\nallow=" << req.allow \
-			// << "\nauthorization=" << req.authorization \
-			// << "\ncontent_language=" << req.content_language \
-			// << "\ncontent_lenght=" << req.content_lenght \
-			// << "\ncontent_location=" <<req.content_location \
-			// << "\ncontent_type=" << req.content_type \
-			// << "\ndate=" << req.date \
-			// << "\nhost=" << req.host \
-			// << "\nlast_modified=" << req.last_modified \
-			// << "\nlocation=" << req.location \
-			// << "\nreferer=" << req.referer \
-			// << "\nretry_after=" << req.retry_after \
-			// << "\nserver=" << req.server \
-			// << "\ntransfert_encoding=" << req.transfert_encoding \
-			// << "\nuser_agent=" << req.user_agent \
-			// << "\nwww_authenticate=" << req.www_authenticate \
-			// << "\nprotocol=" << req.protocol \
-			// << "\npath_info=" << req.path_info \
-			// << "\nrequest_method=" << req.request_method \
-			// << std::endl;
-			std::cout << req.content << std::endl;
-			check = checkHeader(req);
-			if (check != 0)
+            requestBuffer[len] = '\0';
+            // std::string fileName;
+            // std::string fileExt;
+            // std::string fileType;
+            std::string fileContent;
+			t_request	parsedRequest;
+            struct stat statBuf;
+            
+            /* For CGI, not needed for the moment (?) */
+			//t_serv      serv;
+            (void) env;
+
+            /* For CGI, not needed for the moment (?) */
+	  		// serv.server_name = reinterpret_cast<const char *>("localhost");
+    		// serv.server_port = reinterpret_cast<const char *>("8080");
+    		// serv.server_protocol = reinterpret_cast<const char *>("HTTP/1.1");
+            
+			parsedRequest = parsingRequest(requestBuffer);
+
+			//std::cout << "CLIENT SAYS: " << parsedRequest.body << "FIN" << std::endl; body
+			if (checkingHeader(parsedRequest))
   			{
 				losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
   			    return (-1);
   			}
-			if ((envp = initEnvp(envp, req, serv)) == NULL)
-    		{
-    		    losingConnexion(fd, read_set, "Losing connexion: environmnent is corrupted... (");
-    		    return (-1);
-    		}
-			std::string pointlessPath = (req.path_info).substr(1);
-			std::cout << "|" << pointlessPath << "|" << std::endl;
-			std::string::size_type dot = (pointlessPath).find('.');
-			if (dot != std::string::npos)
+
+            /* For CGI, not needed for the moment (?) */
+			// if ((env = initEnv(env, req, serv)) == NULL)
+    		// {
+    		//     losingConnexion(fd, read_set, "Losing connexion: environmnent is corrupted... (");
+    		//     return (-1);
+    		// }
+
+			// std::string pointlessPath = (parsedRequest.path_info).substr(1);
+			// //std::cout << T_CYB "path info: [" << pointlessPath << "]" T_N << std::endl;
+			// std::string::size_type dot = (pointlessPath).find('.');
+			// if (dot != std::string::npos)
+			// {
+			// 	fileName = (parsedRequest.path_info).substr(0, dot + 1);
+			// 	std::cout << "filename " << fileName <<std::endl;
+			// 	fileExt = (parsedRequest.path_info).substr(dot + 1 + 1);
+			// 	std::cout << "fileExt " << fileExt <<std::endl;
+			// }
+			// else
+			// {
+			// 	fileName = (parsedRequest.path_info);
+			// 	fileExt = "";
+			// }
+			// for (int i = 0; i < tab_size(env); i++)
+   			//     std::cout << env[i] << std::endl;
+			if (parsedRequest.fileExt != "")
 			{
-				fileName = (req.path_info).substr(0, dot + 1);
-				std::cout << "filename " << fileName <<std::endl;
-				ext = (req.path_info).substr(dot + 1 + 1);
-				std::cout << "ext " << ext <<std::endl;
+				stat((parsedRequest.fileName + "." + parsedRequest.fileExt).c_str(), &statBuf);
+				if (!S_ISDIR(statBuf.st_mode))
+					fileContent = getFileContent((parsedRequest.fileName + "." + parsedRequest.fileExt));
 			}
 			else
 			{
-				fileName = (req.path_info);
-				ext = "";
+				stat(parsedRequest.fileName.c_str(), &statBuf);
+				if (!S_ISDIR(statBuf.st_mode))
+					fileContent = getFileContent(parsedRequest.fileName);
 			}
-			// for (int i = 0; i < tab_size(envp); i++)
-   			//     std::cout << envp[i] << std::endl;
-			if (ext != "")
+			if (S_ISDIR(statBuf.st_mode))
 			{
-				stat((fileName + "." + ext).c_str(), &buf);
-				if (!S_ISDIR(buf.st_mode))
-					content = getFileContent((fileName + "." + ext));
-			}
-			else
-			{
-				stat(fileName.c_str(), &buf);
-				if (!S_ISDIR(buf.st_mode))
-					content = getFileContent(fileName);
-			}
-			if (S_ISDIR(buf.st_mode))
-			{
-				std::cout << "filename: " << fileName << std::endl;
-                content = createAutoIndex(fileName);
-                if (!content.size()) // if null, return 404
+				std::cout << "parsedRequest.filename: " << parsedRequest.fileName << std::endl;
+                fileContent = createAutoIndex(parsedRequest.fileName);
+                if (!fileContent.size()) // if null, return 404
                     return (EXIT_FAILURE);
 			}
-            std::string responseHeader = "HTTP/1.1 200 OK\nContent-Type:" + contentType + "\nContent-Length:" + std::to_string(content.size()) + "\n\n" + content;
-            if (req.path_info == "./exit") // (?)
+            std::string responseHeader = "HTTP/1.1 200 OK\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" + std::to_string(fileContent.size()) + "\n\n" + fileContent;
+            if (parsedRequest.path_info == "./exit") // (?)
                 running = 0;
-			std::cout << fd << " is requesting :" << std::endl << request << std::endl;
+			std::cout << fd << " is requesting :" << std::endl << requestBuffer << std::endl;
             // std::cout << T_YB << responseHeader << T_N << std::endl;
             if (send(fd, responseHeader.c_str(), responseHeader.size(), 0) < 0)
                 error("Send", read_set, master);
@@ -138,32 +120,32 @@ int     processSockets( int fd, fd_set &read_set, Socket &master, char **envp)
     return (running);
 }
 
-int     main( int ac, char *av[], char *envp[] )
+int     main(int ac, char *av[], char *env[])
 {
     Socket master( 8080 );
 
     fd_set read_set;
     fd_set read_copy;
 
-    FD_ZERO( &read_set );
-    FD_ZERO( &read_copy );
-    FD_SET( master.getMasterSock(), &read_set );
+    FD_ZERO(&read_set);
+    FD_ZERO(&read_copy);
+    FD_SET(master.getMasterSock(), &read_set);
 
     int running = 1;
-    int fd = 0;
 	(void)ac;
 	(void)av;
+
     while (running)
     {
         std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
         read_copy = read_set;
         if (select(FD_SETSIZE, &read_copy, 0, 0, 0) < 0)
             error("Select", read_set, master);
-        for (fd = 0; fd <= FD_SETSIZE; ++fd)
+        for (int fd = 0; fd <= FD_SETSIZE; ++fd)
         {
             if (FD_ISSET(fd, &read_copy))
             {
-                running = processSockets(fd, read_set, master, envp);
+                running = processSockets(fd, read_set, master, env);
                 break ;
             }
         }

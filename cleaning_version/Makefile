@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+         #
+#    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/15 16:07:09 by pgoudet          ###   ########.fr        #
+#    Updated: 2021/06/17 15:45:42 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,8 +32,8 @@ FILES		= Socket.cpp \
 			  PageCreation.cpp \
 			  CloseError.cpp \
 			  InitEnvp.cpp \
-			  CheckHeader.cpp \
-			  ParsingReq.cpp \
+			  CheckingHeader.cpp \
+			  ParsingRequest.cpp \
 			  main.cpp
 
 OBJS		= $(FILES:.cpp=.o)
