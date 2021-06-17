@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   answer.cpp                                         :+:      :+:    :+:   */
+/*   Answer.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:26:22 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/08 08:24:07 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/17 18:37:40 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "all.hpp"
+#include "Request.hpp"
 
 // int getAnswer(t_request const &req, char **argv, char **envp)
 // {
@@ -46,7 +46,7 @@
 
 // int deleteAnswer(t_request const &req)
 // {
-//     if((remove(req.path_info) != 0))
+//     if((remove(req.pathInfo) != 0))
 //         perror( "Error deleting file" );
 //     else
 //     {   std::cout << "HTTP/1.1 200 OK\nDate: Wed, 21 Oct 2015 07:28:00 GMT\n";
