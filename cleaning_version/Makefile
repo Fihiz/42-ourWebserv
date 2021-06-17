@@ -6,7 +6,7 @@
 #    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/17 15:45:42 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/06/17 18:30:27 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,8 @@ NAME		= webserv
 CC		 	= clang++
 CPPFLAGS 	= -g -Wall -Wextra -Werror
 HEADERS		=	Socket.hpp \
-				Webserv.hpp
+				Webserv.hpp \
+				Request.hpp
 FILES		= Socket.cpp \
 			  PageCreation.cpp \
 			  CloseError.cpp \

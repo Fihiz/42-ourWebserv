@@ -6,11 +6,10 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/17 16:29:02 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/17 18:38:07 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "All.hpp"
 #include "Request.hpp"
 
 
@@ -45,7 +44,7 @@ void        parsingRequestCinquies(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->retry_after = value;
+        req->retryAfter = value;
     }
     pos = word.find("Server", 0);
     if (pos != (int)std::string::npos)
@@ -57,7 +56,7 @@ void        parsingRequestCinquies(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->transfert_encoding = value;
+        req->transfertEncoding = value;
     }
 }
 
@@ -70,7 +69,7 @@ void       parsingRequestQuater(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->content_type = value;
+        req->contentType = value;
     }
     pos = word.find("Host", 0);
     if (pos != (int)std::string::npos)
@@ -82,7 +81,7 @@ void       parsingRequestQuater(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->last_modified = value;
+        req->lastModified = value;
     }
     pos = word.find("Location", 0);
     if (pos != (int)std::string::npos)
@@ -101,7 +100,7 @@ void       parsingRequestTer(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->content_language = value;
+        req->contentLanguage = value;
     }
     pos = word.find("Date", 0);
     if (pos != (int)std::string::npos)
@@ -113,7 +112,7 @@ void       parsingRequestTer(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->user_agent = value;
+        req->userAgent = value;
     }
     pos = word.find("Authorization", 0);
     if (pos != (int)std::string::npos)
@@ -138,25 +137,25 @@ void       parsingRequestBis(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->accepted_language = value;
+        req->acceptedLanguage = value;
     }
     pos = word.find("Accept-Charset", 0);
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->accepted_charset = value;
+        req->acceptedCharset = value;
     }
     pos = word.find("Content-Length", 0);
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->content_lenght = value;
+        req->contentLenght = value;
     }
     pos = word.find("Content-Location", 0);
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->content_location = value;
+        req->contentLocation = value;
     }
 }
 
@@ -176,24 +175,26 @@ void    takeBody(t_request *req, char *requestBuffer)
 
 void        splittingPath(t_request *req)
 {
-    std::string withoutFirstPoint = (req->path_info).substr(1);
+    std::string fileName;
+    std::string fileExt;
+    std::string withoutFirstPoint = (req->pathInfo).substr(1);
     //std::cout << "path info: [" << withoutFirstPoint << "]" << std::endl;
     std::string::size_type dot = (withoutFirstPoint).find('.');
     if (dot != std::string::npos)
     {
-        req->fileName = (req->path_info).substr(0, dot + 1);
-        std::cout << "filename " << req->fileName <<std::endl;
-        req->fileExt = (req->path_info).substr(dot + 1 + 1);
-        std::cout << "fileExt " << req->fileExt <<std::endl;
+        fileName = (req->pathInfo).substr(0, dot + 1);
+        std::cout << "filename " << fileName <<std::endl;
+        fileExt = (req->pathInfo).substr(dot + 1 + 1);
+        std::cout << "fileExt " << fileExt <<std::endl;
     }
     else
     {
-        req->fileName = (req->path_info);
-        req->fileExt = "";
+        fileName = (req->pathInfo);
+        fileExt = "";
     }
-    if (req->fileExt == "jpg") // to be : contentType = ft_ext_to_type(ext);
+    if (fileExt == "jpg") // to be : contentType = ft_ext_to_type(ext);
         req->fileType = "image/jpeg";
-    else if (req->fileExt == "ico")
+    else if (fileExt == "ico")
         req->fileType = "image/x-icon";
     else
         req->fileType = "text/html";
@@ -207,9 +208,9 @@ t_request  parsingRequest(char *requestBuffer)
     size_t pos = -1;
 
     std::getline(ss, word, ' ');
-    req.request_method = word;
+    req.requestMethod = word;
     std::getline(ss, word, ' ');
-    req.path_info = "." + word;
+    req.pathInfo = "." + word;
 	std::getline(ss, word, '\n');
     req.protocol = word;
     word = requestBuffer;
@@ -221,16 +222,16 @@ t_request  parsingRequest(char *requestBuffer)
     if (pos != std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req.accepted_language = value;
+        req.acceptedLanguage = value;
     }
     pos = word.find("WWW-Authenticate", 0);
     if (pos != std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req.accepted_language = value;
+        req.acceptedLanguage = value;
     }
-    if (req.path_info.empty() == false && req.host.empty() == false)
-        req.path_translated = req.host + req.path_info;
+    if (req.pathInfo.empty() == false && req.host.empty() == false)
+        req.pathTranslated = req.host + req.pathInfo;
     takeBody(&req, requestBuffer);
     // Added by socket team
     splittingPath(&req);

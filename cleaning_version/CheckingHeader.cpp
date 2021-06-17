@@ -6,20 +6,19 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 09:32:20 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/17 15:46:36 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/17 18:37:55 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
-#include "All.hpp"
 
 int checkingHeader(t_request req)
 {
     struct stat file;
 
-    if (req.request_method.empty() == false && req.request_method.compare("GET") != 0 
-        && req.request_method.compare("POST") != 0
-        && req.request_method.compare("DELETE") != 0)
+    if (req.requestMethod.empty() == false && req.requestMethod.compare("GET") != 0 
+        && req.requestMethod.compare("POST") != 0
+        && req.requestMethod.compare("DELETE") != 0)
     {
         std::cerr << "Wrong method" << std::endl;
         return(-1);
@@ -29,7 +28,7 @@ int checkingHeader(t_request req)
         std::cerr << "Wrong protocol HTTP/1.1" << std::endl;
         return (-1);
 	}
-    else if (req.path_info.empty() == true || (stat((req.path_info).c_str(), &file) != 0))
+    else if (req.pathInfo.empty() == true || (stat((req.pathInfo).c_str(), &file) != 0))
     {
         std::cerr << "Wrong file path" << std::endl;
         return (-1);

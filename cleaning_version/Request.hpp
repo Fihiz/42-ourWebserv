@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/17 16:08:25 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/17 18:38:48 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,43 +17,44 @@
 
 typedef struct s_request
 {
-    std::string accepted_charset; //+
-    std::string accepted_language; //+
+    std::string acceptedCharset; //+
+    std::string acceptedLanguage; //+
     std::string allow; //+
     std::string authorization; //+
-    std::string content_language; //+
-    std::string content_lenght; //+
-    std::string content_location; //+
-    std::string content_type; //+
+    std::string contentLanguage; //+
+    std::string contentLenght; //+
+    std::string contentLocation; //+
+    std::string contentType; //+
     std::string date; //+
     std::string host; // +
-    std::string last_modified; //+
+    std::string lastModified; //+
     std::string location; //+
     std::string referer; //+
-    std::string retry_after; //+
+    std::string retryAfter; //+
     std::string server; // +
-    std::string transfert_encoding; //+
-    std::string user_agent; //+
-    std::string www_authenticate; //+
+    std::string transfertEncoding; //+
+    std::string userAgent; //+
+    std::string wwwAuthenticate; //+
 
     std::string body; //+
     std::string protocol; // +
-    std::string path_info; //+
-    std::string request_method; // +
-    std::string path_translated; // +
+    std::string pathInfo; //+
+    std::string requestMethod; // +
+    std::string pathTranslated; // +
     std::string script;   // -
-    std::string query_string; // -
+    std::string queryString; // -
     std::string uri; // -
-    std::string remote_user; //-
-    std::string remote_addr; // -
+    std::string remoteUser; //-
+    std::string remoteAddr; // -
     std::string auth_type; //-
     // Added by socket team
-    std::string fileName;
-    std::string fileExt;
+    std::string fileContent;
     std::string fileType;
     //std::string fileContent; (?)
     
 
 }               t_request;
+
+#include "Webserv.hpp"
 
 #endif

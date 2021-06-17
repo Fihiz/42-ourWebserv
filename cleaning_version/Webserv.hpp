@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/15 15:47:23 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/17 18:40:50 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
 #include <stdexcept> // To do: try and catch
 #include <time.h>
 #include <vector>
-#include "All.hpp"
 #include "Request.hpp"
 
 # define CLEAN "\e[1;1H\e[2J"
@@ -38,6 +37,13 @@
 # define T_CB "\033[01;36m"
 # define T_RB "\033[01;31m"
 
+typedef struct s_serv
+{
+   const char *server_name;
+   const char *server_protocol;
+   const char *server_port;
+}               t_serv;
+
 /* PAGE CREATION */
 
 std::string     getFileContent( std::string fullFileName );
@@ -45,6 +51,7 @@ void            getFileInfo( char *request, std::string &fileName, std::string &
 std::string     getDateFormat( time_t &date );
 std::string     numFormat( int nb );
 std::string     createAutoIndex( std::string &fileName );
+void            setContentDependingOnFileOrDirectory( t_request &parsedRequest );
 
 
 /* CLOSE AND ERROR MANAGEMENT */
@@ -54,5 +61,17 @@ class Socket; // Need to deal with it later
 void            losingConnexion( int fd, fd_set &read_set, std::string const type );
 int				error( std::string str, fd_set &read_set, Socket &master );
 void			closeAllFdUnlessMaster( fd_set &read_set, Socket &master );
+
+/* REQUEST */
+
+int             getAnswer( t_request const &req );
+int             postAnswer( t_request const &req );
+int             deleteAnswer( t_request const &req );
+char **         initEnv( char **env, t_request const &req, t_serv serv );
+int             tabSize( char **tab );
+t_request       parsingRequest( char *buffer );
+int             checkingHeader( t_request req );
+
+
 
 #endif

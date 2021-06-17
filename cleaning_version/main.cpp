@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/17 16:32:45 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/17 18:37:40 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,25 +39,21 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
         else
         {
             requestBuffer[len] = '\0';
-            // std::string fileName;
-            // std::string fileExt;
-            // std::string fileType;
-            std::string fileContent;
 			t_request	parsedRequest;
-            struct stat statBuf;
             
             /* For CGI, not needed for the moment (?) */
 			//t_serv      serv;
+            /* ----------------------------------------- */
+            
             (void) env;
 
             /* For CGI, not needed for the moment (?) */
 	  		// serv.server_name = reinterpret_cast<const char *>("localhost");
     		// serv.server_port = reinterpret_cast<const char *>("8080");
     		// serv.server_protocol = reinterpret_cast<const char *>("HTTP/1.1");
-            
-			parsedRequest = parsingRequest(requestBuffer);
+            /* ----------------------------------------- */
 
-			//std::cout << "CLIENT SAYS: " << parsedRequest.body << "FIN" << std::endl; body
+			parsedRequest = parsingRequest(requestBuffer);
 			if (checkingHeader(parsedRequest))
   			{
 				losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
@@ -70,49 +66,16 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
     		//     losingConnexion(fd, read_set, "Losing connexion: environmnent is corrupted... (");
     		//     return (-1);
     		// }
-
-			// std::string pointlessPath = (parsedRequest.path_info).substr(1);
-			// //std::cout << T_CYB "path info: [" << pointlessPath << "]" T_N << std::endl;
-			// std::string::size_type dot = (pointlessPath).find('.');
-			// if (dot != std::string::npos)
-			// {
-			// 	fileName = (parsedRequest.path_info).substr(0, dot + 1);
-			// 	std::cout << "filename " << fileName <<std::endl;
-			// 	fileExt = (parsedRequest.path_info).substr(dot + 1 + 1);
-			// 	std::cout << "fileExt " << fileExt <<std::endl;
-			// }
-			// else
-			// {
-			// 	fileName = (parsedRequest.path_info);
-			// 	fileExt = "";
-			// }
-			// for (int i = 0; i < tab_size(env); i++)
-   			//     std::cout << env[i] << std::endl;
-			if (parsedRequest.fileExt != "")
-			{
-				stat((parsedRequest.fileName + "." + parsedRequest.fileExt).c_str(), &statBuf);
-				if (!S_ISDIR(statBuf.st_mode))
-					fileContent = getFileContent((parsedRequest.fileName + "." + parsedRequest.fileExt));
-			}
-			else
-			{
-				stat(parsedRequest.fileName.c_str(), &statBuf);
-				if (!S_ISDIR(statBuf.st_mode))
-					fileContent = getFileContent(parsedRequest.fileName);
-			}
-			if (S_ISDIR(statBuf.st_mode))
-			{
-				std::cout << "parsedRequest.filename: " << parsedRequest.fileName << std::endl;
-                fileContent = createAutoIndex(parsedRequest.fileName);
-                if (!fileContent.size()) // if null, return 404
-                    return (EXIT_FAILURE);
-			}
-            std::string responseHeader = "HTTP/1.1 200 OK\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" + std::to_string(fileContent.size()) + "\n\n" + fileContent;
-            if (parsedRequest.path_info == "./exit") // (?)
+            /* ----------------------------------------- */
+            
+            setContentDependingOnFileOrDirectory(parsedRequest);
+            std::string responseToClient = "HTTP/1.1 200 OK\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+                                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
+            if (parsedRequest.pathInfo == "./pages/exit.html") // (?)
                 running = 0;
-			std::cout << fd << " is requesting :" << std::endl << requestBuffer << std::endl;
-            // std::cout << T_YB << responseHeader << T_N << std::endl;
-            if (send(fd, responseHeader.c_str(), responseHeader.size(), 0) < 0)
+			std::cout << T_CB << fd << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
+            // std::cout << T_YB << responseToClient << T_N << std::endl;
+            if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", read_set, master);
             losingConnexion( fd, read_set, "Closing... (");
         }

@@ -6,45 +6,11 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/17 15:58:05 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/17 18:37:40 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
-
-// void    getFileInfo(char *request, std::string &fileName, std::string &ext, std::string &contentType)
-// {
-//     std::string::size_type n = ((std::string)(request)).find('/');
-//     if (n != std::string::npos && (n < ((std::string)(request)).find('\n')))
-//     {
-//         std::string::size_type dot = ((std::string)(request + n + 1)).find('.');
-//         if ((dot != std::string::npos) && (dot < ((std::string)(request + n + 1)).find(' '))) // si on trouve un ' ' avant de trouver un '.', on nous demande pas un fichier
-//         {
-//             std::string::size_type space = ((std::string)(request + n + 1 + dot + 1)).find(' '); // space pos relative to dot pos
-//             fileName = ((std::string)(request)).substr(n + 1, dot);
-//             ext = ((std::string)(request)).substr(n + 1 + dot + 1, space);
-//         }
-//         else
-//         {
-//             fileName = "./" + ((std::string)(request)).substr(n + 1, ((std::string)(request + n + 1)).find(' '));
-//             ext = "";
-//         }
-//     }
-//     else // si la requête a pas de nom de fichier sur la première ligne
-//     {
-//         fileName = "html/index";
-//         ext = "html";
-//     }
-
-//     if (ext == "jpg") // to be : contentType = ft_ext_to_type(ext);
-//         contentType = "image/jpeg";
-//     else if (ext == "ico")
-//         contentType = "image/x-icon";
-//     else
-//         contentType = "text/html";
-// }
-
-
 
 std::string getFileContent(std::string fullFileName)
 {
@@ -93,6 +59,20 @@ std::string formatName( std::string src )
     while (src.size() + spaces.size() < 55)
         spaces = spaces + " ";
     return(src + spaces);
+}
+
+void    setContentDependingOnFileOrDirectory(t_request &parsedRequest)
+{
+    struct stat statBuf;
+    stat((parsedRequest.pathInfo).c_str(), &statBuf); /* need to be protected  */
+    if (!S_ISDIR(statBuf.st_mode))
+        parsedRequest.fileContent = getFileContent(parsedRequest.pathInfo);
+    else
+    {
+        std::cout << "parsedRequest.pathInfo: " << parsedRequest.pathInfo << std::endl;
+        parsedRequest.fileContent = createAutoIndex(parsedRequest.pathInfo);
+        /* return 404 ?*/
+    }
 }
 
 /* AUTO INDEX */
