@@ -70,7 +70,7 @@ int             deleteAnswer( t_request const &req );
 char **         initEnv( char **env, t_request const &req, t_serv serv );
 int             tabSize( char **tab );
 t_request       parsingRequest( char *buffer );
-int             checkingHeader( t_request req );
+int             checkingHeader( t_request *req );
 
 
 

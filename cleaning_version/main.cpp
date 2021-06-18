@@ -54,7 +54,7 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
             /* ----------------------------------------- */
 
 			parsedRequest = parsingRequest(requestBuffer);
-			if (checkingHeader(parsedRequest))
+			if (checkingHeader(&parsedRequest))
   			{
 				losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
   			    return (-1);
