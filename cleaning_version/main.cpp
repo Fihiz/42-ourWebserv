@@ -54,11 +54,12 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
             /* ----------------------------------------- */
 
 			parsedRequest = parsingRequest(requestBuffer);
-			if (checkingHeader(&parsedRequest))
-  			{
-				losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
-  			    return (-1);
-  			}
+            checkingHeader(&parsedRequest);
+			// if (checkingHeader(&parsedRequest))
+  			// {
+			// 	losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
+  			//     return (-1);
+  			// }
 
             /* For CGI, not needed for the moment (?) */
 			// if ((env = initEnv(env, req, serv)) == NULL)

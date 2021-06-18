@@ -50,6 +50,7 @@ typedef struct s_request
     // Added by socket team
     std::string fileContent;
     std::string fileType;
+    std::string statusCode;
     //std::string fileContent; (?)
     
 
