@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/15 13:26:10 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/17 14:52:05 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/18 14:31:39 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int     error(std::string str, fd_set &read_set, Socket &master)
 
 void    losingConnexion(int fd, fd_set &read_set, std::string const type)
 {
-    std::cerr << T_YB << type << "fd=" << fd << ")" T_N << std::endl;
+    std::cerr << T_YB << type << "fd=" << fd << "]" T_N << std::endl;
     FD_CLR(fd, &read_set);
     close(fd);
     return ;

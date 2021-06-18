@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/17 18:37:40 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/18 14:31:30 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,11 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
             if (parsedRequest.pathInfo == "./pages/exit.html") // (?)
                 running = 0;
-			std::cout << T_CB << fd << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
+			std::cout << T_CB << "[" << fd << "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << T_YB << responseToClient << T_N << std::endl;
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", read_set, master);
-            losingConnexion( fd, read_set, "Closing... (");
+            losingConnexion( fd, read_set, "Closing... [");
         }
     }
     return (running);
