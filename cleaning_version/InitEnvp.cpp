@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   InitEnvp.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 14:07:57 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/17 18:38:48 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/18 10:58:18 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,13 @@ char **initEnv(char **env, t_request const &req, t_serv serv)
         error_failure("init_env\n");
     tmp = i;
     associate(&var[i], "AUTH_TYPE=", req.contentLenght, &i);
-    associate(&var[i], "contentType=", req.contentType, &i);
-    associate(&var[i], "pathInfo=", req.pathInfo, &i);
-    associate(&var[i], "pathTranslated=", req.pathTranslated, &i);
-    associate(&var[i], "queryString=", req.queryString, &i);
-    associate(&var[i], "remoteAddr=", req.remoteAddr, &i);
-    associate(&var[i], "remoteUser=", req.remoteAddr, &i);
-    associate(&var[i], "requestMethod=", req.requestMethod, &i);
+    associate(&var[i], "CONTENT_TYPE=", req.contentType, &i);
+    associate(&var[i], "PATH_INFO=", req.pathInfo, &i);
+    associate(&var[i], "PATH_TRANSLATED=", req.pathTranslated, &i);
+    associate(&var[i], "QUERY_STRING=", req.queryString, &i);
+    associate(&var[i], "REMOTE_ADDR=", req.remoteAddr, &i);
+    associate(&var[i], "REMOTE_USER=", req.remoteAddr, &i);
+    associate(&var[i], "REQUEST_METHOD=", req.requestMethod, &i);
     associate(&var[i], "REQUEST_URI=", req.uri, &i);
     associate(&var[i], "SCRIPT_NAME=", req.script, &i);
     // associate(&var[i], "SERVER_NAME=", serv.server_name, &i);
