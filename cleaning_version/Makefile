@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/17 18:30:27 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/06/22 15:02:59 by jobenass         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,15 +26,21 @@ ITALIC = \033[3m
 NAME		= webserv
 CC		 	= clang++
 CPPFLAGS 	= -g -Wall -Wextra -Werror
+VPATH		=	./config \
+				./
 HEADERS		=	Socket.hpp \
 				Webserv.hpp \
-				Request.hpp
+				Request.hpp \
+				Config.hpp \
+				Parser.hpp
 FILES		= Socket.cpp \
 			  PageCreation.cpp \
 			  CloseError.cpp \
 			  InitEnvp.cpp \
 			  CheckingHeader.cpp \
 			  ParsingRequest.cpp \
+			  Config.cpp \
+			  Parser.cpp \
 			  main.cpp
 
 OBJS		= $(FILES:.cpp=.o)
@@ -77,4 +83,4 @@ draw:
 	@printf "$(NORMAL)																\n"
 
 exec: all
-	./webserv
+	./webserv ./nginx.conf

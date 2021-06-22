@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:35 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/15 13:36:54 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/22 15:08:59 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define SOCKET_HPP
 
 #include "Webserv.hpp"
+#include "./config/Config.hpp"
 
 class Socket
 {
@@ -28,7 +29,8 @@ class Socket
 	
 
 	public:
-		Socket( int port );
+		// Socket(Config const & it) ;
+		Socket( std::vector<Config>::iterator it );
 		~Socket( void );
 
 		int			getMasterSock( void ) const;

@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/18 14:31:30 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/22 15:07:45 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
+#include "./config/Parser.hpp"
+#include "./config/Config.hpp"
+#include <iostream>
 
 void    processMasterSocket(fd_set &read_set, Socket &master)
 {
@@ -84,9 +87,48 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
     return (running);
 }
 
+std::vector<Config> configuration(const std::string & path) {
+	Parser	file(path);
+	file.setContent();
+	file.checkSyntax();
+	file.setConfiguration();
+	return (file.getConfiguration());
+}
+
 int     main(int ac, char *av[], char *env[])
 {
-    Socket master( 8080 );
+    if (ac != 2) {
+		std::cout << "Error: At least one argument is needed." << std::endl;
+		return (1);
+	}
+	std::vector<Config> setup;
+	try {
+		setup = configuration(av[1]);
+	}
+	catch (std::exception & err) {
+		std::cout << err.what() << std::endl;
+		return (1);
+	}
+
+	// // DISPLAY SERVER
+	// int i = 1;
+	// for (std::vector<Config>::const_iterator it = setup.begin(); it != setup.end(); it++)
+	// {
+	// 	std::cout << "-- [ " << "SETUP " << i++ << " ]" << std::endl;
+	// 	it->printListen();
+	// 	it->printServerName();
+	// 	it->printMaxBodyClient();
+	// 	it->printErrorPage();
+	// 	it->printLocation();
+	// 	std::cout << std::endl;
+	// }
+	// // ^
+
+    std::vector<Config>::iterator it = setup.begin();
+    // std::cout << "Listen: " << it->getListen().front() << std::endl;
+
+    // Socket master( it->getListen().front() );
+    Socket master( it );
 
     fd_set read_set;
     fd_set read_copy;

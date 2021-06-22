@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:41 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/18 17:06:28 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/22 15:41:26 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
+#include "./config/Config.hpp"
 
 Socket::Socket( void )
 {
@@ -18,16 +19,25 @@ Socket::Socket( void )
     return ;
 }
 
-Socket::Socket( int port )
+Socket::Socket(std::vector<Config>::iterator it)
 {
+     std::cout << "Listen: " << it->getListen().front() << std::endl;
     std::cout << T_GYB "Socket port constructor called" T_N << std::endl;
     
     this->doSocket();
 
     // Joel part
+    std::cout << "Server name: " << it->getServerName().front() << std::endl;
+    //this->_servAddr.sin_addr.s_addr = htonl(static_cast<>(it->getServerName().front()));
+
     this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    //this->_servAddr.sin_addr.s_addr = inet_addr("127.0.0.2");
     this->_servAddr.sin_family = AF_INET;
-    this->_servAddr.sin_port = htons(port);
+    this->_servAddr.sin_port = htons(static_cast<int>(it->getListen().front()));
+
+    //this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    //this->_servAddr.sin_family = AF_INET;
+   //this->_servAddr.sin_port = htons(8080);
     
     this->doBind();
 
