@@ -2,7 +2,7 @@
 
 // ------- CONSTRUCTOR --------------------------------------------------------
 Config::Config(void)
-: _listen(std::vector<unsigned short>()), _serverName(std::vector<std::string>()), _maxBodySizeClient(0)/*, _errorPage(std::map<int, std::string>()), _location(std::map<std::string, std::string>(), _socket(std::vector<Socket>())*/
+: _listen(0), _serverName(std::vector<std::string>()), _maxBodySizeClient(0)/*, _errorPage(std::map<int, std::string>()), _location(std::map<std::string, std::string>(), _socket(std::vector<Socket>())*/
 {
 }
 
@@ -24,17 +24,21 @@ Config::setListen(std::vector<std::string> input) {
 	std::vector<std::string>::iterator it = input.begin();
 	if (it->compare("listen") == 0)
 		it++;
+	int step = 0;
 	while (it != input.end() && it->compare(";") != 0) {
+		step++;
 		if (it->size() > 5)
 			throw (WrongDataValueDeclarationException());
 		for (size_t i = 0; i < it->size(); i++) {
 			if (isdigit(it->at(i)) == false)
 				throw (WrongDataValueDeclarationException());
 		}
-		unsigned short value = std::atoi(it->c_str());
-		this->_listen.push_back(value);
+		int value = std::atoi(it->c_str());
+		this->_listen = value;
 		it++;
 	}
+	if (step != 1)
+		throw(WrongDataValueDeclarationException());
 } /* Nombre de port MAX qu'on peut ouvrir / gérer ? */
 
 void
@@ -190,8 +194,8 @@ Config::setAutoindex(std::vector<std::string> input) {
 
 void
 Config::setDefault(void) {
-	if (this->_listen.empty() == true)
-		this->_listen.push_back(80);
+	if (this->_listen == 0)
+		this->_listen = 80;
 	if (this->_serverName.empty() == true)
 		this->_serverName.push_back("localhost");
 	if (this->_maxBodySizeClient == 0)
@@ -207,7 +211,7 @@ Config::setDefault(void) {
 } /* Segfault */
 
 // ------- GETTER -------------------------------------------------------------
-std::vector<unsigned short>
+int
 Config::getListen(void) const {
 	return (this->_listen);
 }
@@ -250,7 +254,7 @@ Config::getSpecificErrorPage(int ask) const {
 // ------- UTILS --------------------------------------------------------------
 void
 Config::reset(void) {
-	this->_listen.clear();
+	this->_listen = 0;
 	this->_serverName.clear();
 	this->_maxBodySizeClient = 0;
 	this->_errorPage.clear();
@@ -258,15 +262,15 @@ Config::reset(void) {
 	this->_routes.clear();
 }
 
-void
-Config::printListen(void) const {
-	if (this->_listen.empty() == true)
-		return ;
-	std::cout << "Listen: ";
-	for (std::vector<unsigned short>::const_iterator it = this->_listen.begin(); it != this->_listen.end(); it++)
-		std::cout << *it << " ";
-	std::cout << std::endl;
-}
+// void
+// Config::printListen(void) const {
+// 	if (this->_listen.empty() == true)
+// 		return ;
+// 	std::cout << "Listen: ";
+// 	for (std::vector<unsigned short>::const_iterator it = this->_listen.begin(); it != this->_listen.end(); it++)
+// 		std::cout << *it << " ";
+// 	std::cout << std::endl;
+// }
 
 void
 Config::printServerName(void) const {

@@ -6,7 +6,7 @@
 #    By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/22 15:02:59 by jobenass         ###   ########lyon.fr    #
+#    Updated: 2021/06/23 14:45:38 by jobenass         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,23 +43,26 @@ FILES		= Socket.cpp \
 			  Parser.cpp \
 			  main.cpp
 
-OBJS		= $(FILES:.cpp=.o)
+OPATH		= objs/
+
+OBJS		= $(addprefix $(OPATH), ${FILES:.cpp=.o})
 
 # Compiling
 all:	draw $(NAME)
+
+$(OPATH)%.o	:	%.cpp $(HEADERS)
+	$(shell mkdir -p $(OPATH))
+	@echo "$(BLUE)$(HIDDEN)COMPILATION $(NORMAL)$(GREY)\t"$<
+	$(CC) $(CPPFLAGS) -c $< -o $@
 
 $(NAME):	$(OBJS)
 	@echo "$(CYAN)\nWEBSERV $(GREEN)\tREADY FOR EXEC$(NORMAL)"
 	@$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME)
 
-%.o: %.cpp $(HEADERS)
-	@echo "$(BLUE)$(HIDDEN)COMPILATION $(NORMAL)$(GREY)\t"$<
-	@$(CC) $(CPPFLAGS) -c $< -o $@
-
 # Cleaning
 clean:
 	@echo "$(BLUE)WEBSERV $(GREY)\t.O DELETION $(NORMAL)"
-	@rm -f $(OBJS)
+	@rm -rf $(OPATH)
 
 fclean:		clean
 	@echo "$(BLUE)WEBSERV $(GREY)\tEXEC DELETION $(NORMAL)"
@@ -83,4 +86,4 @@ draw:
 	@printf "$(NORMAL)																\n"
 
 exec: all
-	./webserv ./nginx.conf
+	./webserv ./config/nginx.conf

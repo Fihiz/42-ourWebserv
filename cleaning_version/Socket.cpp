@@ -6,7 +6,7 @@
 /*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:41 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/22 15:41:26 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/23 14:48:37 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,26 +19,18 @@ Socket::Socket( void )
     return ;
 }
 
-Socket::Socket(std::vector<Config>::iterator it)
+Socket::Socket(int port)
 {
-     std::cout << "Listen: " << it->getListen().front() << std::endl;
-    std::cout << T_GYB "Socket port constructor called" T_N << std::endl;
-    
     this->doSocket();
 
     // Joel part
-    std::cout << "Server name: " << it->getServerName().front() << std::endl;
-    //this->_servAddr.sin_addr.s_addr = htonl(static_cast<>(it->getServerName().front()));
-
     this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    //this->_servAddr.sin_addr.s_addr = inet_addr("127.0.0.2");
     this->_servAddr.sin_family = AF_INET;
-    this->_servAddr.sin_port = htons(static_cast<int>(it->getListen().front()));
+    this->_servAddr.sin_port = htons(port);
 
-    //this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    //this->_servAddr.sin_family = AF_INET;
-   //this->_servAddr.sin_port = htons(8080);
-    
+    // std::cout << "fct.sock: " << getsockname(_masterSock, _servAddr, sizeof(_servAddr)) << std::endl;
+    // int getsockname(int s, struct sockaddr *name, socklen_t *namelen)
+
     this->doBind();
 
     // this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);

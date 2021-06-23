@@ -6,7 +6,7 @@
 /*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:35 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/22 15:08:59 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/23 15:25:55 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ class Socket
 		struct sockaddr_in _servAddr;
 
 
-		Socket( void );
 		Socket( Socket const &src );
 		Socket &operator=( Socket const &rhs );
 	
 
 	public:
+		Socket( void );
 		// Socket(Config const & it) ;
-		Socket( std::vector<Config>::iterator it );
+		Socket( int port );
 		~Socket( void );
 
 		int			getMasterSock( void ) const;

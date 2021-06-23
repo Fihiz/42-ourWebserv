@@ -6,7 +6,7 @@
 /*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/22 15:07:45 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/23 16:34:09 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,25 +15,27 @@
 #include "./config/Config.hpp"
 #include <iostream>
 
-void    processMasterSocket(fd_set &read_set, Socket &master)
+void    processMasterSocket(fd_set &read_set, std::vector<Socket *> tabMaster, int fd)
 {
     int     clientSock;
 
-    clientSock = accept(master.getMasterSock(), NULL, NULL);
+    clientSock = accept(fd, NULL, NULL);
     if (clientSock < 0)
-        error("Accept connexion", read_set, master);
+        error("Accept connexion", read_set, tabMaster);
     FD_SET(clientSock, &read_set);
     std::cout << T_BB "New connexion established on [" << clientSock << "]" T_N << std::endl;
     return ;
 }
 
-int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
+int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster, char **env)
 {
     char    requestBuffer[20000];
     int     running = 1;
+    // (void) env;
 
-	if (fd == master.getMasterSock())
-        processMasterSocket(read_set, master);
+
+    if (isTabMaster(tabMaster, fd) == 1)
+        processMasterSocket(read_set, tabMaster, fd);
     else
     {
         ssize_t len = recv(fd, requestBuffer, 19999, 0); // Flags to check later
@@ -80,7 +82,7 @@ int     processSockets(int fd, fd_set &read_set, Socket &master, char **env)
 			std::cout << T_CB << "[" << fd << "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << T_YB << responseToClient << T_N << std::endl;
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
-                error("Send", read_set, master);
+                error("Send", read_set, tabMaster);
             losingConnexion( fd, read_set, "Closing... [");
         }
     }
@@ -124,38 +126,44 @@ int     main(int ac, char *av[], char *env[])
 	// }
 	// // ^
 
-    std::vector<Config>::iterator it = setup.begin();
-    // std::cout << "Listen: " << it->getListen().front() << std::endl;
-
-    // Socket master( it->getListen().front() );
-    Socket master( it );
-
     fd_set read_set;
     fd_set read_copy;
 
     FD_ZERO(&read_set);
     FD_ZERO(&read_copy);
-    FD_SET(master.getMasterSock(), &read_set);
+    
+    std::vector<Socket *> tabMaster;
+
+    std::vector<Config>::iterator it = setup.begin();
+    while (it != setup.end()) {
+        Socket *master = new Socket( it->getListen() );
+        std::cout << it->getListen() << std::endl;
+        tabMaster.push_back(master);
+        FD_SET(master->getMasterSock(), &read_set);
+        ++it;
+    }
 
     int running = 1;
-	(void)ac;
-	(void)av;
 
     while (running)
     {
         std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
         read_copy = read_set;
         if (select(FD_SETSIZE, &read_copy, 0, 0, 0) < 0)
-            error("Select", read_set, master);
+            error("Select", read_set, tabMaster);
         for (int fd = 0; fd <= FD_SETSIZE; ++fd)
         {
             if (FD_ISSET(fd, &read_copy))
             {
-                running = processSockets(fd, read_set, master, env);
+                running = processSockets(fd, read_set, tabMaster, env);
                 break ;
             }
         }
     }
-    closeAllFdUnlessMaster(read_set, master); // Destructor destroys the master
+    closeAllFdUnlessMaster(read_set, tabMaster); // Destructor destroys the master
+    destroyTabMaster(tabMaster);
+    // for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != tabMaster.end(); ++it) {
+    //     delete (*it);
+    // }
     return (0);
 }
