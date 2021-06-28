@@ -25,11 +25,11 @@ Parser::checkSyntax() {
 		this->_tokens = this->_content.find(i)->second;
 		if (this->_tokens.empty() == false) {
 			if (find(this->_tokens.begin(), this->_tokens.end(), "{") != this->_tokens.end())
-				this->CheckOpenContext(i);
+				this->checkOpenContext(i);
 			else if (find(this->_tokens.begin(), this->_tokens.end(), "}") != this->_tokens.end())
-				this->CheckCloseContext(i);
+				this->checkCloseContext(i);
 			else
-				this->CheckDirective(i);
+				this->checkDirective(i);
 		}
 		i++;
 	}
@@ -41,7 +41,7 @@ Parser::checkSyntax() {
 }
 
 void
-Parser::CheckOpenContext(size_t line) {
+Parser::checkOpenContext(size_t line) {
 	if (this->_tokens.front().compare("server") == 0) {
 		// Argument different de 2 || Server Imbriqué
 		if (this->_tokens.size() != 2
@@ -70,7 +70,7 @@ Parser::CheckOpenContext(size_t line) {
 }
 
 void
-Parser::CheckCloseContext(size_t line) {
+Parser::checkCloseContext(size_t line) {
 	size_t len = this->_tokens.size();
 	if (len != 1) {
 		std::cerr << "Error at line #" << line << " : ";
@@ -91,7 +91,7 @@ Parser::CheckCloseContext(size_t line) {
 }
 
 void
-Parser::CheckDirective(size_t line) {
+Parser::checkDirective(size_t line) {
 	if (find(this->_tokens.begin(), this->_tokens.end(), ";") == this->_tokens.begin()) {
 		std::cerr << "Error at line #" << line << " : ";
 		throw (WrongDirectiveDeclarationException());
@@ -151,29 +151,29 @@ Parser::setConfiguration() {
 			std::string directive = this->getDirective();
 			if (context.compare("server") == 0) {
 				if (directive.compare("listen") == 0)
-					unit.setListen(this->_tokens);
+					unit.setListen(this->_tokens, i);
 				else if (directive.compare("server_name") == 0)
-					unit.setServerName(this->_tokens);
+					unit.setServerName(this->_tokens, i);
 				else if (directive.compare("client_max_body_size") == 0)
-					unit.setMaxBodyClient(this->_tokens);
+					unit.setMaxBodyClient(this->_tokens, i);
 				else if (directive.compare("error_page") == 0)
-					unit.setErrorPage(this->_tokens);
+					unit.setErrorPage(this->_tokens, i);
 			}
 			else if (context.compare("location") == 0) {
 				if (this->_tokens.front().compare("location") == 0)
-					unit.setRoutes(this->_tokens);
+					unit.setRoutes(this->_tokens, i);
 				if (directive.compare("method") == 0)
-					unit.setMethod(this->_tokens);
+					unit.setMethod(this->_tokens, i);
 				else if (directive.compare("root") == 0)
-					unit.setRoot(this->_tokens);
+					unit.setRoot(this->_tokens, i);
 				else if (directive.compare("index") == 0)
-					unit.setIndex(this->_tokens);
+					unit.setIndex(this->_tokens, i);
 				else if (directive.compare("autoindex") == 0)
-					unit.setAutoindex(this->_tokens);
+					unit.setAutoindex(this->_tokens, i);
 			}
 			this->setEndContext();
 			if (this->getContext().compare("") == 0) {
-				//		!!!!!	 	unit.setDefault(); // Gestion location vide ou server vide
+				unit.setDefault();
 				this->_setup.push_back(unit);
 				unit.reset();
 			}
@@ -196,6 +196,38 @@ Parser::setEndContext(void) {
 		this->_context.pop_back();
 }
 
+// /****************/
+void
+Parser::setPorts(void) {
+	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it)
+		this->_listPortsSocket.push_back(it->getListen());
+	/**/
+	this->_listPortsSocket.sort();
+	this->_listPortsSocket.unique();
+	for (std::list<int>::iterator it = this->_listPortsSocket.begin(); it != this->_listPortsSocket.end(); ++it) {
+		std::cout << *it << std::endl;
+	}
+	std::cout << std::endl;
+	/**/
+}
+// /*****/ // ^
+
+void
+Parser::setHosts() {
+	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it) {
+		std::stringstream number;
+		number << it->getListen();
+		std::string port = number.str();
+		std::string tmp = it->getServerName() + ":" + port;
+		this->_mapServerName.insert(std::pair<std::string, Config>(tmp, *it));
+	}
+	for (std::map<std::string, Config>::iterator it = this->_mapServerName.begin(); it != this->_mapServerName.end(); ++it) {
+		std::cout << "hosts first :" << it->first << std::endl;
+		std::cout << "hosts second :" << it->second.getListen() << std::endl;
+	}
+	std::cout << std::endl;
+}
+
 // ------- GETTER -------------------------------------------------------------
 std::string
 Parser::getContext(void) const {
@@ -215,6 +247,16 @@ Parser::getDirective(void) const {
 std::vector<Config>
 Parser::getConfiguration(void) const {
 	return (this->_setup);
+}
+
+std::list<int>
+Parser::getListPorts(void) const {
+	return (this->_listPortsSocket);
+}
+
+std::map<std::string, Config>
+Parser::getMapServerName(void) const {
+	return (this->_mapServerName);
 }
 
 // ------- UTILS --------------------------------------------------------------

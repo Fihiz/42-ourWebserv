@@ -6,13 +6,14 @@
 /*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/23 16:34:09 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/28 18:13:51 by jobenass         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
+#include "./All.hpp"
 
 void    processMasterSocket(fd_set &read_set, std::vector<Socket *> tabMaster, int fd)
 {
@@ -64,23 +65,28 @@ int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster
     return (running);
 }
 
-std::vector<Config> configuration(const std::string & path) {
+All configuration(const std::string & path) {
 	Parser	file(path);
 	file.setContent();
 	file.checkSyntax();
 	file.setConfiguration();
-	return (file.getConfiguration());
+    file.setPorts();
+    file.setHosts();
+    All General(file.getConfiguration(), file.getListPorts(), file.getMapServerName());
+	return (General);
 }
 
 int     main(int ac, char *av[], char *env[])
 {
+    (void)env;
     if (ac != 2) {
 		std::cout << "Error: At least one argument is needed." << std::endl;
 		return (1);
 	}
-	std::vector<Config> setup;
+	All General;
 	try {
-		setup = configuration(av[1]);
+		General = configuration(av[1], );
+        std::cout << "Port 1: " << General.getListPorts().front() << std::endl;
 	}
 	catch (std::exception & err) {
 		std::cout << err.what() << std::endl;
@@ -109,7 +115,7 @@ int     main(int ac, char *av[], char *env[])
     
     std::vector<Socket *> tabMaster;
 
-    std::vector<Config>::iterator it = setup.begin();
+    std::list<int>::iterator it = General.begin();
     while (it != setup.end()) {
         Socket *master = new Socket( it->getListen() );
         std::cout << it->getListen() << std::endl;
