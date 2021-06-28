@@ -27,7 +27,9 @@ NAME		= webserv
 CC		 	= clang++
 CPPFLAGS 	= -g -Wall -Wextra -Werror
 VPATH		=	./config \
+				./server \
 				./
+
 HEADERS		=	Socket.hpp \
 				Webserv.hpp \
 				Request.hpp \

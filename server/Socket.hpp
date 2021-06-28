@@ -14,7 +14,7 @@
 # define SOCKET_HPP
 
 #include "Webserv.hpp"
-#include "./config/Config.hpp"
+#include "../config/Config.hpp"
 
 class Socket
 {

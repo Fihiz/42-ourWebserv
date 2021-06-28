@@ -19,7 +19,7 @@ typedef struct s_location {
 class   Config
 {
 	private:
-    	std::vector<unsigned short>					_listen;
+    	int											_listen;
 		std::vector<std::string>					_serverName;
 		unsigned long								_maxBodySizeClient;
 		std::map<int, std::string>					_errorPage;
@@ -47,7 +47,7 @@ class   Config
 		void										setAutoindex(std::vector<std::string> input);
 		void										setDefault(void);
 
-		std::vector<unsigned short>					getListen(void) const;
+		int											getListen(void) const;
 		std::vector<std::string>					getServerName(void) const;
 		unsigned long								getMaxBodySize(void) const;
 		std::map<int, std::string>					getErrorPage(void) const;
@@ -56,7 +56,7 @@ class   Config
 		t_location *								getSpecificLocation(std::string ask) const;
 
 		void										reset(void);
-		void										printListen(void) const;
+		// void										printListen(void) const;
 		void										printServerName(void) const;
 		void										printMaxBodyClient(void) const;
 		void										printErrorPage(void) const;

@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "Socket.hpp"
-#include "./config/Parser.hpp"
-#include "./config/Config.hpp"
+#include "../config/Parser.hpp"
+#include "../config/Config.hpp"
 #include <iostream>
 
 void    processMasterSocket(fd_set &read_set, std::vector<Socket *> tabMaster, int fd)
@@ -60,12 +60,7 @@ int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster
 
 			parsedRequest = parsingRequest(requestBuffer);
             checkingHeader(&parsedRequest);
-			// if (checkingHeader(&parsedRequest))
-  			// {
-			// 	losingConnexion(fd, read_set, "Losing connexion: header is corrupted... (");
-  			//     return (-1);
-  			// }
-
+			
             /* For CGI, not needed for the moment (?) */
 			// if ((env = initEnv(env, req, serv)) == NULL)
     		// {
