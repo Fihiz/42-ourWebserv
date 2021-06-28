@@ -13,7 +13,6 @@
 #include "Socket.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
-#include <iostream>
 
 void    processMasterSocket(fd_set &read_set, std::vector<Socket *> tabMaster, int fd)
 {
@@ -31,8 +30,6 @@ int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster
 {
     char    requestBuffer[20000];
     int     running = 1;
-    // (void) env;
-
 
     if (isTabMaster(tabMaster, fd) == 1)
         processMasterSocket(read_set, tabMaster, fd);
@@ -45,30 +42,13 @@ int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster
         {
             requestBuffer[len] = '\0';
 			t_request	parsedRequest;
-            
-            /* For CGI, not needed for the moment (?) */
-			//t_serv      serv;
-            /* ----------------------------------------- */
-            
+ 
             (void) env;
-
-            /* For CGI, not needed for the moment (?) */
-	  		// serv.server_name = reinterpret_cast<const char *>("localhost");
-    		// serv.server_port = reinterpret_cast<const char *>("8080");
-    		// serv.server_protocol = reinterpret_cast<const char *>("HTTP/1.1");
-            /* ----------------------------------------- */
 
 			parsedRequest = parsingRequest(requestBuffer);
             checkingHeader(&parsedRequest);
 			
-            /* For CGI, not needed for the moment (?) */
-			// if ((env = initEnv(env, req, serv)) == NULL)
-    		// {
-    		//     losingConnexion(fd, read_set, "Losing connexion: environmnent is corrupted... (");
-    		//     return (-1);
-    		// }
-            /* ----------------------------------------- */
-            
+
             setContentDependingOnFileOrDirectory(parsedRequest);
             std::string responseToClient = "HTTP/1.1 200 OK\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
@@ -157,8 +137,5 @@ int     main(int ac, char *av[], char *env[])
     }
     closeAllFdUnlessMaster(read_set, tabMaster); // Destructor destroys the master
     destroyTabMaster(tabMaster);
-    // for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != tabMaster.end(); ++it) {
-    //     delete (*it);
-    // }
     return (0);
 }

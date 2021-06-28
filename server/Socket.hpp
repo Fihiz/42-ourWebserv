@@ -29,7 +29,6 @@ class Socket
 
 	public:
 		Socket( void );
-		// Socket(Config const & it) ;
 		Socket( int port );
 		~Socket( void );
 

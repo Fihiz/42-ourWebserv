@@ -7,7 +7,7 @@
 # include <exception>
 # include <vector>
 # include <map>
-// # include "Socket.hpp"
+
 
 typedef struct s_location {
 	std::vector<std::string>	method;
@@ -25,10 +25,6 @@ class   Config
 		std::map<int, std::string>					_errorPage;
 		std::map<std::string, t_location>			_location;
 		std::string									_routes;
-		// std::vector<Socket>							_socket;
-
-
-		// Config(const Config & src);
 
 	public:
 		Config();
@@ -56,7 +52,6 @@ class   Config
 		t_location *								getSpecificLocation(std::string ask) const;
 
 		void										reset(void);
-		// void										printListen(void) const;
 		void										printServerName(void) const;
 		void										printMaxBodyClient(void) const;
 		void										printErrorPage(void) const;

@@ -38,8 +38,6 @@ class   Parser
 		void										CheckCloseContext(size_t line);
 		void										CheckDirective(size_t line);
 		void										reset(void);
-
-		//		!!!!!	 	check doublons
 		
 		class FileOpeningFailedException : public std::exception {
 			virtual const char * 	what() const throw();

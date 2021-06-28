@@ -21,7 +21,7 @@ std::string onlyTheGood(std::string str)
 	int i = 0;
     
     std::getline(ss, ss_str);
-	while(tmp[i] && tmp[i] != ':')// && tmp[i + 1] != ' ')
+	while(tmp[i] && tmp[i] != ':')
 		i++;
     if (tmp[i + 1] == ' ')
         i++;
@@ -178,7 +178,6 @@ void        splittingPath(t_request *req)
     std::string fileName;
     std::string fileExt;
     std::string withoutFirstPoint = (req->pathInfo).substr(1);
-    //std::cout << "path info: [" << withoutFirstPoint << "]" << std::endl;
     std::string::size_type dot = (withoutFirstPoint).find('.');
     if (dot != std::string::npos)
     {
@@ -192,7 +191,7 @@ void        splittingPath(t_request *req)
         fileName = (req->pathInfo);
         fileExt = "";
     }
-    if (fileExt == "jpg") // to be : contentType = ft_ext_to_type(ext);
+    if (fileExt == "jpg")
         req->fileType = "image/jpeg";
     else if (fileExt == "ico")
         req->fileType = "image/x-icon";
@@ -233,7 +232,6 @@ t_request  parsingRequest(char *requestBuffer)
     if (req.pathInfo.empty() == false && req.host.empty() == false)
         req.pathTranslated = req.host + req.pathInfo;
     takeBody(&req, requestBuffer);
-    // Added by socket team
     splittingPath(&req);
     return (req);
 }

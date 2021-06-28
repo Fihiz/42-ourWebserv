@@ -17,8 +17,6 @@ void checkingHeader(t_request *req)
     struct stat file;
 
     req->statusCode = "200 OK";
-    //test 
-    // req->requestMethod = "COUCOU";
     if (req->requestMethod.empty() == false && req->requestMethod.compare("GET") != 0 
         && req->requestMethod.compare("POST") != 0
         && req->requestMethod.compare("DELETE") != 0)
@@ -27,9 +25,6 @@ void checkingHeader(t_request *req)
         std::cerr << "Wrong method" << std::endl;
         req->pathInfo = "./pages/405.html";
     }
-    //test 
-    // req->protocol = "HTTP/1.6"; 
-    // if (req->protocol.compare(0, 8, "HTTP/1.1") != 0)
     else if (req->protocol.compare(0, 8, "HTTP/1.1") != 0)
 	{
         req->statusCode = "400 Bad Request";

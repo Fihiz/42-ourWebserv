@@ -85,7 +85,6 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
     std::string files_buf = "";
     struct stat buf;
 
-    //std::cout << T_CB "JE PASSE ICI |" << fileName << "|" << *(files.begin()) << " | " << *(files.end() - 1) << " | " T_N << std::endl;
     while (it != files.end())
     {
         if ((*it)[0] != '.')
@@ -128,6 +127,5 @@ std::string     createAutoIndex( std::string &fileName )
         return (NULL);
     }
     return (fillAutoIndex(files, fileName));
-    //std::cout << content << std::endl;
 }
 

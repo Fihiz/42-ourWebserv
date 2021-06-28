@@ -23,21 +23,11 @@ Socket::Socket(int port)
 {
     this->doSocket();
 
-    // Joel part
     this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     this->_servAddr.sin_family = AF_INET;
     this->_servAddr.sin_port = htons(port);
 
-    // std::cout << "fct.sock: " << getsockname(_masterSock, _servAddr, sizeof(_servAddr)) << std::endl;
-    // int getsockname(int s, struct sockaddr *name, socklen_t *namelen)
-
     this->doBind();
-
-    // this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    // this->_servAddr.sin_family = AF_INET;
-    // this->_servAddr.sin_port = htons(port + 8);
-
-    // this->doBind();
     this->doListen();
     return ;
 }
