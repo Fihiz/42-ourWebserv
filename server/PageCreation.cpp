@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PageCreation.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/18 10:58:16 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/28 15:25:04 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ std::string formatName( std::string src )
     else if ((src.size() == 51) && (src[50] == '/'))
     {
         src[50] = '\0';
-        std::cout << "|" + src + "|" << std::endl;
+        //std::cout << "|" + src + "|" << std::endl;
     }
     else if (src.size() > 50)
         src = src.substr(0, 47) + "..>";
@@ -93,8 +93,8 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
                 stat((fileName + *it).c_str(), &buf);
             else
                 stat((fileName + "/" + *it).c_str(), &buf);
-            printf("%p\n", &(*it));
-            std::cout << T_GYB << *it << " " << S_ISDIR(buf.st_mode) << " " << S_ISREG(buf.st_mode) << T_N << std::endl;
+            //printf("%p\n", &(*it));
+            // std::cout << T_GYB << *it << " " << S_ISDIR(buf.st_mode) << " " << S_ISREG(buf.st_mode) << T_N << std::endl;
             if (S_ISDIR(buf.st_mode))
                 dir_buf += "<a href=\"" + *it + "/\">" + formatName(*it + "/") + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
             else
@@ -111,12 +111,12 @@ std::string     createAutoIndex( std::string &fileName )
     std::vector<std::string> files;
     struct dirent *dirRead;
 
-    std::cout << T_CB << fileName << " begin: " << (files.begin() == files.end()) << T_N << std::endl;
+    // std::cout << T_CB << fileName << " begin: " << (files.begin() == files.end()) << T_N << std::endl;
     if ((dir = opendir((fileName).c_str())) != nullptr)
     {
         while ((dirRead = readdir(dir)) != nullptr)
         {  
-            std::cout << T_RB "dir name : " << dirRead->d_name << T_N << std::endl;
+            // std::cout << T_RB "dir name : " << dirRead->d_name << T_N << std::endl;
             files.push_back((std::string)dirRead->d_name);
         }
         closedir (dir);

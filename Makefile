@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/23 14:45:38 by jobenass         ###   ########lyon.fr    #
+#    Updated: 2021/06/28 16:23:57 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,11 +55,23 @@ all:	draw $(NAME)
 $(OPATH)%.o	:	%.cpp $(HEADERS)
 	$(shell mkdir -p $(OPATH))
 	@echo "$(BLUE)$(HIDDEN)COMPILATION $(NORMAL)$(GREY)\t"$<
-	$(CC) $(CPPFLAGS) -c $< -o $@
+ifeq ($(ARG),noflags)
+	@$(CC) -c $< -o $@
+else ifeq ($(ARG),fsanitize)
+	@$(CC) $(CPPFLAGS) -fsanitize=address -c $< -o $@
+else
+	@$(CC) $(CPPFLAGS) -c $< -o $@
+endif
 
 $(NAME):	$(OBJS)
 	@echo "$(CYAN)\nWEBSERV $(GREEN)\tREADY FOR EXEC$(NORMAL)"
+ifeq ($(ARG),noflags)
+	@$(CC) $(OBJS) -o $(NAME)
+else ifeq ($(ARG),fsanitize)
+	@$(CC) $(CPPFLAGS) -fsanitize=address $(OBJS) -o $(NAME)
+else
 	@$(CC) $(CPPFLAGS) $(OBJS) -o $(NAME)
+endif
 
 # Cleaning
 clean:
@@ -87,5 +99,10 @@ draw:
 	@printf "$(HIDDEN)$(ITALIC)\t\t\t\t\t\t\t La team\n"
 	@printf "$(NORMAL)																\n"
 
+valgrind: re
+	valgrind --leak-check=full --show-leak-kinds=all ./webserv config/nginx.conf
+
 exec: all
 	./webserv ./config/nginx.conf
+
+.PHONY: all clean fclean re exec valgrind draw noflags fsanitize
