@@ -14,11 +14,11 @@ class All
         std::vector<Config>							_setup;
 		std::list<int>								_listPortsSocket;
 		std::map<std::string, Config>				_mapServerName;
-
+        std::list<std::string>						_listHostNames;
 
     public:
         All();
-        All(std::vector<Config> setup, std::list<int> listPortsSocket, std::map<std::string, Config> mapServerName);
+        All(std::vector<Config> setup, std::list<int> listPortsSocket, std::map<std::string, Config> mapServerName, std::list<std::string> listHostNames);
         ~All();
 
         std::vector<Config>							getConfiguration(void) const;

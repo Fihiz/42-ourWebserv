@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:41 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/29 12:16:34 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 12:38:18 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ Socket::Socket(int port)
 {
     this->doSocket();
 
+    // this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     this->_servAddr.sin_family = AF_INET;
     this->_servAddr.sin_port = htons(port);

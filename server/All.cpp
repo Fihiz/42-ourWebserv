@@ -4,8 +4,8 @@ All::All()
 {
 }
 
-All::All(std::vector<Config> setup, std::list<int> listPortsSocket, std::map<std::string, Config> mapServerName)
-: _setup(setup), _listPortsSocket(listPortsSocket), _mapServerName(mapServerName)
+All::All(std::vector<Config> setup, std::list<int> listPortsSocket, std::map<std::string, Config> mapServerName, std::list<std::string> listHostNames)
+: _setup(setup), _listPortsSocket(listPortsSocket), _mapServerName(mapServerName), _listHostNames(listHostNames)
 {
 }
 

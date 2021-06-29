@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/29 12:20:21 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 13:08:24 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,14 +65,6 @@ int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster,
     return (running);
 }
 
-// std::vector<Config> configuration(const std::string & path) {
-// 	Parser	file(path);
-// 	file.setContent();
-// 	file.checkSyntax();
-// 	file.setConfiguration();
-// 	return (file.getConfiguration());
-// }
-
 All configuration(const std::string & path) {
 	Parser	file(path);
 	file.setContent();
@@ -80,26 +72,13 @@ All configuration(const std::string & path) {
 	file.setConfiguration();
     file.setPorts();
     file.setHosts();
-    All General(file.getConfiguration(), file.getListPorts(), file.getMapServerName());
+    file.setHostNames();
+    All General(file.getConfiguration(), file.getListPorts(), file.getMapServerName(), file.getListHostNames());
 	return (General);
 }
 
 int     main(int ac, char *av[], char *env[])
 {
-    // if (ac != 2) {
-	// 	std::cout << T_YB "Error: At least one argument is needed." T_N << std::endl;
-	// 	return (1);
-	// }
-
-	// std::vector<Config> setup;
-	// try {
-	// 	setup = configuration(av[1]);
-	// }
-	// catch (std::exception & err) {
-	// 	std::cout << err.what() << std::endl;
-	// 	return (1);
-	// }
-
     (void)env;
     if (ac != 2) {
 		std::cout << "Error: At least one argument is needed." << std::endl;
@@ -108,7 +87,6 @@ int     main(int ac, char *av[], char *env[])
 	All General;
 	try {
 		General = configuration(av[1]);
-        //std::cout << "Port 1: " << General.getListPorts().front() << std::endl;
 	}
 	catch (std::exception & err) {
 		std::cout << err.what() << std::endl;

@@ -92,7 +92,7 @@ Parser::checkCloseContext(size_t line) {
 
 void
 Parser::checkDirective(size_t line) {
-	if (find(this->_tokens.begin(), this->_tokens.end(), ";") == this->_tokens.begin()) {
+	if (find(this->_tokens.begin(), this->_tokens.end(), ";") == this->_tokens.end()) {
 		std::cerr << "Error at line #" << line << " : ";
 		throw (WrongDirectiveDeclarationException());
 	}
@@ -228,6 +228,26 @@ Parser::setHosts() {
 	std::cout << std::endl;
 }
 
+void
+Parser::setHostNames() {
+	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it) {
+
+		this->_listHostNames.push_back((it)->getServerName());
+	}
+	this->_listHostNames.sort();
+	this->_listHostNames.unique();
+
+	for (std::list<std::string>::iterator it = this->_listHostNames.begin(); it != this->_listHostNames.end(); ++it) {
+		std::cout << T_GYB "_listHostNames: " << *it << T_N << std::endl;
+	}
+
+	std::cout << std::endl;
+}
+
+
+
+
+
 // ------- GETTER -------------------------------------------------------------
 std::string
 Parser::getContext(void) const {
@@ -257,6 +277,12 @@ Parser::getListPorts(void) const {
 std::map<std::string, Config>
 Parser::getMapServerName(void) const {
 	return (this->_mapServerName);
+}
+
+
+std::list<std::string>
+Parser::getListHostNames(void) const{
+	return (this->_listHostNames);
 }
 
 // ------- UTILS --------------------------------------------------------------
