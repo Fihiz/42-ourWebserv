@@ -4,10 +4,16 @@
 # include <fstream>
 # include <istream>
 # include <iostream>
+# include <sstream>
 # include <exception>
 # include <vector>
 # include <map>
+# include <list>
 # include "./Config.hpp"
+# include "../server/Webserv.hpp"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 class   Parser
 {
@@ -16,7 +22,10 @@ class   Parser
 		std::map< int, std::vector<std::string> > 	_content;
 		std::vector<std::string>					_tokens;
 		std::vector<std::string>					_context;
+
 		std::vector<Config>							_setup;
+		std::list<int>								_listPortsSocket;
+		std::map<std::string, Config>				_mapServerName;
 
 		Parser();
 
@@ -29,16 +38,21 @@ class   Parser
 		void										setEndContext(void);
 		void										setConfiguration(void);
 
+		void										setPorts(void);
+		void										setHosts(void);
+
 		std::string									getContext(void) const;
 		std::string									getDirective(void) const;
 		std::vector<Config>							getConfiguration(void) const;
+		std::list<int>								getListPorts(void) const ;
+		std::map<std::string, Config>				getMapServerName(void) const ;
 	
 		void										checkSyntax(void);
-		void										CheckOpenContext(size_t line);
-		void										CheckCloseContext(size_t line);
-		void										CheckDirective(size_t line);
+		void										checkOpenContext(size_t line);
+		void										checkCloseContext(size_t line);
+		void										checkDirective(size_t line);
 		void										reset(void);
-		
+
 		class FileOpeningFailedException : public std::exception {
 			virtual const char * 	what() const throw();
 		};

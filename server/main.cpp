@@ -6,11 +6,12 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/29 11:11:43 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 12:20:21 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
+#include "All.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
 
@@ -22,7 +23,7 @@ void    processMasterSocket(fd_set &readSet, std::vector<Socket *> tabMaster, in
     if (clientSock < 0)
         error("Accept connexion", readSet, tabMaster);
     FD_SET(clientSock, &readSet);
-    std::cout << T_BB "New connexion established on [" T_CB << clientSock << T_BB "]" T_N << std::endl;
+    std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]" T_N << std::endl;
     return ;
 }
 
@@ -54,7 +55,7 @@ int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster,
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
             if (parsedRequest.pathInfo == "./pages/exit.html") // (?)
                 running = 0;
-			std::cout << T_CB << "[" << fd << "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
+			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << T_YB << responseToClient << T_N << std::endl;
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", readSet, tabMaster);
@@ -64,24 +65,50 @@ int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster,
     return (running);
 }
 
-std::vector<Config> configuration(const std::string & path) {
+// std::vector<Config> configuration(const std::string & path) {
+// 	Parser	file(path);
+// 	file.setContent();
+// 	file.checkSyntax();
+// 	file.setConfiguration();
+// 	return (file.getConfiguration());
+// }
+
+All configuration(const std::string & path) {
 	Parser	file(path);
 	file.setContent();
 	file.checkSyntax();
 	file.setConfiguration();
-	return (file.getConfiguration());
+    file.setPorts();
+    file.setHosts();
+    All General(file.getConfiguration(), file.getListPorts(), file.getMapServerName());
+	return (General);
 }
 
 int     main(int ac, char *av[], char *env[])
 {
+    // if (ac != 2) {
+	// 	std::cout << T_YB "Error: At least one argument is needed." T_N << std::endl;
+	// 	return (1);
+	// }
+
+	// std::vector<Config> setup;
+	// try {
+	// 	setup = configuration(av[1]);
+	// }
+	// catch (std::exception & err) {
+	// 	std::cout << err.what() << std::endl;
+	// 	return (1);
+	// }
+
+    (void)env;
     if (ac != 2) {
-		std::cout << T_YB "Error: At least one argument is needed." T_N << std::endl;
+		std::cout << "Error: At least one argument is needed." << std::endl;
 		return (1);
 	}
-
-	std::vector<Config> setup;
+	All General;
 	try {
-		setup = configuration(av[1]);
+		General = configuration(av[1]);
+        //std::cout << "Port 1: " << General.getListPorts().front() << std::endl;
 	}
 	catch (std::exception & err) {
 		std::cout << err.what() << std::endl;
@@ -110,10 +137,11 @@ int     main(int ac, char *av[], char *env[])
     
     std::vector<Socket *> tabMaster;
 
-    std::vector<Config>::iterator it = setup.begin();
-    while (it != setup.end()) {
-        Socket *master = new Socket(it->getListen());
-        //std::cout << T_BB << "On port [" << it->getListen() << "]" << std::endl;
+    std::list<int>  tempListPorts = General.getListPorts();
+    std::list<int>::iterator it = tempListPorts.begin();
+    std::list<int>::iterator ite = tempListPorts.end();
+    while (it != ite) {
+        Socket *master = new Socket(*it);
         tabMaster.push_back(master);
         FD_SET(master->getMasterSock(), &readSet);
         ++it;

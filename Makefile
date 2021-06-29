@@ -6,7 +6,7 @@
 #    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/28 16:23:57 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/06/29 11:20:21 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,6 +34,7 @@ HEADERS		=	Socket.hpp \
 				Webserv.hpp \
 				Request.hpp \
 				Config.hpp \
+				All.hpp \
 				Parser.hpp
 FILES		= Socket.cpp \
 			  PageCreation.cpp \
@@ -43,6 +44,7 @@ FILES		= Socket.cpp \
 			  ParsingRequest.cpp \
 			  Config.cpp \
 			  Parser.cpp \
+			  All.cpp \
 			  main.cpp
 
 OPATH		= objs/

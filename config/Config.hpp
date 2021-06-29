@@ -8,7 +8,6 @@
 # include <vector>
 # include <map>
 
-
 typedef struct s_location {
 	std::vector<std::string>	method;
 	std::string 				root;
@@ -20,7 +19,7 @@ class   Config
 {
 	private:
     	int											_listen;
-		std::vector<std::string>					_serverName;
+		std::string									_serverName;
 		unsigned long								_maxBodySizeClient;
 		std::map<int, std::string>					_errorPage;
 		std::map<std::string, t_location>			_location;
@@ -32,19 +31,19 @@ class   Config
 
 		Config & operator=(const Config & rhs);
 
-		void										setListen(std::vector<std::string> input);
-		void										setServerName(std::vector<std::string> input);
-		void										setMaxBodyClient(std::vector<std::string> input);
-		void										setErrorPage(std::vector<std::string> input);
-		void										setRoutes(std::vector<std::string> input);
-		void										setMethod(std::vector<std::string> input);
-		void										setRoot(std::vector<std::string> input);
-		void										setIndex(std::vector<std::string> input);
-		void										setAutoindex(std::vector<std::string> input);
+		void										setListen(std::vector<std::string> input, size_t line);
+		void										setServerName(std::vector<std::string> input, size_t line);
+		void										setMaxBodyClient(std::vector<std::string> input, size_t line);
+		void										setErrorPage(std::vector<std::string> input, size_t line);
+		void										setRoutes(std::vector<std::string> input, size_t line);
+		void										setMethod(std::vector<std::string> input, size_t line);
+		void										setRoot(std::vector<std::string> input, size_t line);
+		void										setIndex(std::vector<std::string> input, size_t line);
+		void										setAutoindex(std::vector<std::string> input, size_t line);
 		void										setDefault(void);
 
 		int											getListen(void) const;
-		std::vector<std::string>					getServerName(void) const;
+		std::string									getServerName(void) const;
 		unsigned long								getMaxBodySize(void) const;
 		std::map<int, std::string>					getErrorPage(void) const;
 		std::string									getSpecificErrorPage(int ask) const;
@@ -52,6 +51,7 @@ class   Config
 		t_location *								getSpecificLocation(std::string ask) const;
 
 		void										reset(void);
+		void										printListen(void) const;
 		void										printServerName(void) const;
 		void										printMaxBodyClient(void) const;
 		void										printErrorPage(void) const;
