@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParsingRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/18 10:58:13 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/06/29 11:04:15 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,9 +182,9 @@ void        splittingPath(t_request *req)
     if (dot != std::string::npos)
     {
         fileName = (req->pathInfo).substr(0, dot + 1);
-        std::cout << "filename " << fileName <<std::endl;
+        //std::cout << "filename " << fileName <<std::endl;
         fileExt = (req->pathInfo).substr(dot + 1 + 1);
-        std::cout << "fileExt " << fileExt <<std::endl;
+        //std::cout << "fileExt " << fileExt <<std::endl;
     }
     else
     {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:41 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/23 14:48:37 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 11:11:17 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Socket::Socket( void )
 }
 
 Socket::Socket(int port)
+: _usedPort(port)
 {
     this->doSocket();
 
@@ -59,6 +60,11 @@ int     Socket::getMasterSock( void ) const
     return (this->_masterSock);
 }
 
+int     Socket::getUsedPort( void ) const
+{
+    return (this->_usedPort);
+}
+
 void    Socket::doListen( void )
 {
     if (listen(this->_masterSock, 5) < 0)
@@ -76,7 +82,7 @@ void    Socket::doSocket( void )
 		perror("socket");
         exit(EXIT_FAILURE); // To deal with exceptions later
 	}
-    std::cout << T_BB "Using fd [" << this->_masterSock << "] for listening" T_N << std::endl;
+    std::cout << T_BB "Using fd [" T_GNB << this->_masterSock << T_BB "] for listening on port [" T_GNB << getUsedPort() << T_BB "]" << T_N << std::endl;
     
     int opt = 1;
     if (setsockopt(this->_masterSock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)))

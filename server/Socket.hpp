@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:35 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/23 15:25:55 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 11:02:40 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class Socket
 {
 	private:
 		int		_masterSock;
+		int		_usedPort;
 		struct sockaddr_in _servAddr;
 
 
@@ -33,7 +34,8 @@ class Socket
 		~Socket( void );
 
 		int			getMasterSock( void ) const;
-		
+		int			getUsedPort( void ) const;
+
 		void		doSocket( void );
 		void		doBind( void );
 		void		doListen( void );

@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/15 13:26:10 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/28 16:21:05 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 10:44:12 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,13 @@ int isTabMaster(std::vector<Socket *> tabMaster, int ind)
 }
 
 
-void    closeAllFdUnlessMaster(fd_set &read_set, std::vector<Socket *> tabMaster)
+void    closeAllFdUnlessMaster(fd_set &readSet, std::vector<Socket *> tabMaster)
 {
-    (void) read_set;
+    (void) readSet;
     (void) tabMaster;
     for (int ind = 0; ind <= FD_SETSIZE; ++ind)
     {
-        if (/*FD_ISSET(ind, &read_set) && (isTabMaster(tabMaster, ind) == 0) */0)
+        if (/*FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0) */0)
         {
             std::cerr << T_YB << "Connection lost... fd=" << ind << T_N << std::endl;
             close(ind);
@@ -48,18 +48,18 @@ void    closeAllFdUnlessMaster(fd_set &read_set, std::vector<Socket *> tabMaster
     return ;
 }
 
-int     error(std::string str, fd_set &read_set, std::vector<Socket *> tabMaster)
+int     error(std::string str, fd_set &readSet, std::vector<Socket *> tabMaster)
 {
     perror(str.c_str());
-    closeAllFdUnlessMaster(read_set, tabMaster);
+    closeAllFdUnlessMaster(readSet, tabMaster);
     destroyTabMaster(tabMaster);
     exit(EXIT_FAILURE);
 }
 
-void    losingConnexion(int fd, fd_set &read_set, std::string const type)
+void    losingConnexion(int fd, fd_set &readSet, std::string const type)
 {
     std::cerr << T_YB << type << "fd=" << fd << "]" T_N << std::endl;
-    FD_CLR(fd, &read_set);
+    FD_CLR(fd, &readSet);
     close(fd);
     return ;
 }

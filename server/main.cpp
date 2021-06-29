@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jobenass <jobenass@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/23 16:34:09 by jobenass         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 11:11:43 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,30 +14,30 @@
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
 
-void    processMasterSocket(fd_set &read_set, std::vector<Socket *> tabMaster, int fd)
+void    processMasterSocket(fd_set &readSet, std::vector<Socket *> tabMaster, int fd)
 {
     int     clientSock;
 
     clientSock = accept(fd, NULL, NULL);
     if (clientSock < 0)
-        error("Accept connexion", read_set, tabMaster);
-    FD_SET(clientSock, &read_set);
-    std::cout << T_BB "New connexion established on [" << clientSock << "]" T_N << std::endl;
+        error("Accept connexion", readSet, tabMaster);
+    FD_SET(clientSock, &readSet);
+    std::cout << T_BB "New connexion established on [" T_CB << clientSock << T_BB "]" T_N << std::endl;
     return ;
 }
 
-int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster, char **env)
+int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster, char **env)
 {
     char    requestBuffer[20000];
     int     running = 1;
 
     if (isTabMaster(tabMaster, fd) == 1)
-        processMasterSocket(read_set, tabMaster, fd);
+        processMasterSocket(readSet, tabMaster, fd);
     else
     {
         ssize_t len = recv(fd, requestBuffer, 19999, 0); // Flags to check later
         if (len < 0)
-            losingConnexion(fd, read_set, "Connexion lost... (");
+            losingConnexion(fd, readSet, "Connexion lost... (");
         else
         {
             requestBuffer[len] = '\0';
@@ -57,8 +57,8 @@ int     processSockets(int fd, fd_set &read_set, std::vector<Socket *> tabMaster
 			std::cout << T_CB << "[" << fd << "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << T_YB << responseToClient << T_N << std::endl;
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
-                error("Send", read_set, tabMaster);
-            losingConnexion( fd, read_set, "Closing... [");
+                error("Send", readSet, tabMaster);
+            losingConnexion( fd, readSet, "Closing... [");
         }
     }
     return (running);
@@ -75,9 +75,10 @@ std::vector<Config> configuration(const std::string & path) {
 int     main(int ac, char *av[], char *env[])
 {
     if (ac != 2) {
-		std::cout << "Error: At least one argument is needed." << std::endl;
+		std::cout << T_YB "Error: At least one argument is needed." T_N << std::endl;
 		return (1);
 	}
+
 	std::vector<Config> setup;
 	try {
 		setup = configuration(av[1]);
@@ -101,20 +102,20 @@ int     main(int ac, char *av[], char *env[])
 	// }
 	// // ^
 
-    fd_set read_set;
-    fd_set read_copy;
+    fd_set readSet;
+    fd_set readCopy;
 
-    FD_ZERO(&read_set);
-    FD_ZERO(&read_copy);
+    FD_ZERO(&readSet);
+    FD_ZERO(&readCopy);
     
     std::vector<Socket *> tabMaster;
 
     std::vector<Config>::iterator it = setup.begin();
     while (it != setup.end()) {
-        Socket *master = new Socket( it->getListen() );
-        std::cout << it->getListen() << std::endl;
+        Socket *master = new Socket(it->getListen());
+        //std::cout << T_BB << "On port [" << it->getListen() << "]" << std::endl;
         tabMaster.push_back(master);
-        FD_SET(master->getMasterSock(), &read_set);
+        FD_SET(master->getMasterSock(), &readSet);
         ++it;
     }
 
@@ -122,20 +123,20 @@ int     main(int ac, char *av[], char *env[])
 
     while (running)
     {
-        std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
-        read_copy = read_set;
-        if (select(FD_SETSIZE, &read_copy, 0, 0, 0) < 0)
-            error("Select", read_set, tabMaster);
+        std::cout << T_GYB "\nWaiting in passive mode" T_N << std::endl;
+        readCopy = readSet;
+        if (select(FD_SETSIZE, &readCopy, 0, 0, 0) < 0)
+            error("Select", readSet, tabMaster);
         for (int fd = 0; fd <= FD_SETSIZE; ++fd)
         {
-            if (FD_ISSET(fd, &read_copy))
+            if (FD_ISSET(fd, &readCopy))
             {
-                running = processSockets(fd, read_set, tabMaster, env);
+                running = processSockets(fd, readSet, tabMaster, env);
                 break ;
             }
         }
     }
-    closeAllFdUnlessMaster(read_set, tabMaster); // Destructor destroys the master
+    closeAllFdUnlessMaster(readSet, tabMaster); // Destructor destroys the master
     destroyTabMaster(tabMaster);
     return (0);
 }
