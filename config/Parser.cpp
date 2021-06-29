@@ -196,58 +196,6 @@ Parser::setEndContext(void) {
 		this->_context.pop_back();
 }
 
-// /****************/
-void
-Parser::setPorts(void) {
-	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it)
-		this->_listPortsSocket.push_back(it->getListen());
-	/**/
-	this->_listPortsSocket.sort();
-	this->_listPortsSocket.unique();
-	for (std::list<int>::iterator it = this->_listPortsSocket.begin(); it != this->_listPortsSocket.end(); ++it) {
-		std::cout << T_GYB "Ports to enable: " << *it << T_N << std::endl;
-	}
-	std::cout << std::endl;
-	/**/
-}
-// /*****/ // ^
-
-void
-Parser::setHosts() {
-	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it) {
-		std::stringstream number;
-		number << it->getListen();
-		std::string port = number.str();
-		std::string tmp = it->getServerName() + ":" + port;
-		this->_mapServerName.insert(std::pair<std::string, Config>(tmp, *it));
-	}
-	for (std::map<std::string, Config>::iterator it = this->_mapServerName.begin(); it != this->_mapServerName.end(); ++it) {
-		std::cout << "Hosts 1: " << it->first << std::endl;
-		std::cout << "Hosts 2: " << it->second.getListen() << std::endl;
-	}
-	std::cout << std::endl;
-}
-
-void
-Parser::setHostNames() {
-	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it) {
-
-		this->_listHostNames.push_back((it)->getServerName());
-	}
-	this->_listHostNames.sort();
-	this->_listHostNames.unique();
-
-	for (std::list<std::string>::iterator it = this->_listHostNames.begin(); it != this->_listHostNames.end(); ++it) {
-		std::cout << T_GYB "_listHostNames: " << *it << T_N << std::endl;
-	}
-
-	std::cout << std::endl;
-}
-
-
-
-
-
 // ------- GETTER -------------------------------------------------------------
 std::string
 Parser::getContext(void) const {
@@ -267,22 +215,6 @@ Parser::getDirective(void) const {
 std::vector<Config>
 Parser::getConfiguration(void) const {
 	return (this->_setup);
-}
-
-std::list<int>
-Parser::getListPorts(void) const {
-	return (this->_listPortsSocket);
-}
-
-std::map<std::string, Config>
-Parser::getMapServerName(void) const {
-	return (this->_mapServerName);
-}
-
-
-std::list<std::string>
-Parser::getListHostNames(void) const{
-	return (this->_listHostNames);
 }
 
 // ------- UTILS --------------------------------------------------------------

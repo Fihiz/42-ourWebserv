@@ -10,7 +10,6 @@
 # include <map>
 # include <list>
 # include "./Config.hpp"
-# include "../server/Webserv.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,11 +21,7 @@ class   Parser
 		std::map< int, std::vector<std::string> > 	_content;
 		std::vector<std::string>					_tokens;
 		std::vector<std::string>					_context;
-
 		std::vector<Config>							_setup;
-		std::list<int>								_listPortsSocket;
-		std::map<std::string, Config>				_mapServerName;
-		std::list<std::string>						_listHostNames;
 
 		Parser();
 
@@ -39,16 +34,9 @@ class   Parser
 		void										setEndContext(void);
 		void										setConfiguration(void);
 
-		void										setPorts(void);
-		void										setHosts(void);
-		void										setHostNames(void);
-
 		std::string									getContext(void) const;
 		std::string									getDirective(void) const;
 		std::vector<Config>							getConfiguration(void) const;
-		std::list<int>								getListPorts(void) const ;
-		std::map<std::string, Config>				getMapServerName(void) const ;
-		std::list<std::string>						getListHostNames(void) const;
 	
 		void										checkSyntax(void);
 		void										checkOpenContext(size_t line);

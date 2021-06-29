@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/29 13:08:24 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/29 16:10:35 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,18 +65,13 @@ int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster,
     return (running);
 }
 
-All configuration(const std::string & path) {
+std::vector<Config> configuration(const std::string & path) {
 	Parser	file(path);
 	file.setContent();
 	file.checkSyntax();
 	file.setConfiguration();
-    file.setPorts();
-    file.setHosts();
-    file.setHostNames();
-    All General(file.getConfiguration(), file.getListPorts(), file.getMapServerName(), file.getListHostNames());
-	return (General);
+	return (file.getConfiguration());
 }
-
 int     main(int ac, char *av[], char *env[])
 {
     (void)env;
@@ -84,40 +79,30 @@ int     main(int ac, char *av[], char *env[])
 		std::cout << "Error: At least one argument is needed." << std::endl;
 		return (1);
 	}
-	All General;
+	std::vector<Config> setup;
 	try {
-		General = configuration(av[1]);
+		setup = configuration(av[1]);
 	}
 	catch (std::exception & err) {
 		std::cout << err.what() << std::endl;
 		return (1);
 	}
 
-	// // DISPLAY SERVER
-	// int i = 1;
-	// for (std::vector<Config>::const_iterator it = setup.begin(); it != setup.end(); it++)
-	// {
-	// 	std::cout << "-- [ " << "SETUP " << i++ << " ]" << std::endl;
-	// 	it->printListen();
-	// 	it->printServerName();
-	// 	it->printMaxBodyClient();
-	// 	it->printErrorPage();
-	// 	it->printLocation();
-	// 	std::cout << std::endl;
-	// }
-	// // ^
-
     fd_set readSet;
     fd_set readCopy;
 
     FD_ZERO(&readSet);
     FD_ZERO(&readCopy);
+
+    All General(setup);
     
     std::vector<Socket *> tabMaster;
 
+    General.setPorts();
     std::list<int>  tempListPorts = General.getListPorts();
     std::list<int>::iterator it = tempListPorts.begin();
     std::list<int>::iterator ite = tempListPorts.end();
+
     while (it != ite) {
         Socket *master = new Socket(*it);
         tabMaster.push_back(master);
