@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/30 12:48:07 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/30 14:12:54 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster,
 			
 
             setContentDependingOnFileOrDirectory(parsedRequest);
-            std::string responseToClient = "HTTP/1.1 200 OK\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+            std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
             if (parsedRequest.pathInfo == "./pages/exit.html") // (?)
                 running = 0;
@@ -72,6 +72,7 @@ std::vector<Config> configuration(const std::string & path) {
 	file.setConfiguration();
 	return (file.getConfiguration());
 }
+
 int     main(int ac, char *av[], char *env[])
 {
     (void)env;
