@@ -6,7 +6,7 @@
 #    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/29 11:20:21 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/06/30 12:27:55 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ PURPLE = \033[35m
 RED = \033[31m
 HIDDEN = \033[2m
 ITALIC = \033[3m
+CLEAN = \e[1;1H\e[2J
 
 # Pre-compiling
 NAME		= webserv
@@ -89,6 +90,7 @@ re: fclean all
 
 # Designing
 draw:
+	@printf "$(CLEAN)"
 	@printf "\n"
 	@printf "$(BLUE)[..        [..          [..                                         \n"
 	@printf "$(BLUE)[..        [..          [..                                         \n"
@@ -97,7 +99,7 @@ draw:
 	@printf "$(BLUE)[.. [. [.. [..[..... [..[..   [..  [... [..... [.. [..     [.. [..  \n"
 	@printf "$(BLUE)[. [.    [....[.        [..   [..    [..[.         [..      [.[..   \n"
 	@printf "$(BLUE)[..        [..  [....   [.. [..  [.. [..  [....   [...       [..    \n"
-	@printf "$(ITALIC)\t\t\t\t\t\t\tWebserv\n"
+	@printf "$(ITALIC)\t\t\t\t\t\t\t Webserv\n"
 	@printf "$(HIDDEN)$(ITALIC)\t\t\t\t\t\t\t La team\n"
 	@printf "$(NORMAL)																\n"
 
@@ -105,6 +107,6 @@ valgrind: re
 	valgrind --leak-check=full --show-leak-kinds=all ./webserv config/nginx.conf
 
 exec: all
-	./webserv ./config/nginx.conf
+	@./webserv ./config/nginx.conf
 
 .PHONY: all clean fclean re exec valgrind draw noflags fsanitize
