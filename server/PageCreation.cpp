@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/28 15:25:04 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/30 12:51:13 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest)
         parsedRequest.fileContent = getFileContent(parsedRequest.pathInfo);
     else
     {
-        std::cout << "parsedRequest.pathInfo: " << parsedRequest.pathInfo << std::endl;
+        std::cout << T_GYB "AUTO INDEX HAS BEEN ASKED " T_N;
+        std::cout << T_GYB "parsedRequest.pathInfo: " T_N << parsedRequest.pathInfo << std::endl;
         parsedRequest.fileContent = createAutoIndex(parsedRequest.pathInfo);
         /* return 404 ?*/
     }

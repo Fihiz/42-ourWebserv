@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/30 12:26:36 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/06/30 12:48:07 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void    processMasterSocket(fd_set &readSet, std::vector<Socket *> tabMaster, in
     if (clientSock < 0)
         error("Accept connexion", readSet, tabMaster);
     FD_SET(clientSock, &readSet);
-    std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]" T_N << std::endl;
+    std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
     return ;
 }
 
@@ -111,10 +111,11 @@ int     main(int ac, char *av[], char *env[])
     }
 
     int running = 1;
+    std::cout << std::endl;
 
     while (running)
     {
-        std::cout << T_GYB "\nWaiting in passive mode" T_N << std::endl;
+        std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
         readCopy = readSet;
         if (select(FD_SETSIZE, &readCopy, 0, 0, 0) < 0)
             error("Select", readSet, tabMaster);

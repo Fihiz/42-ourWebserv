@@ -6,7 +6,7 @@
 #    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/30 12:27:55 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/06/30 12:47:32 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,7 @@ else
 endif
 
 $(NAME):	$(OBJS)
-	@echo "$(CYAN)\nWEBSERV $(GREEN)\tREADY FOR EXEC$(NORMAL)"
+	@echo "$(CYAN)\nWEBSERV $(GREEN)\tREADY FOR EXEC\n$(NORMAL)"
 ifeq ($(ARG),noflags)
 	@$(CC) $(OBJS) -o $(NAME)
 else ifeq ($(ARG),fsanitize)
