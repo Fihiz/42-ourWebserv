@@ -1,20 +1,20 @@
-#include "./All.hpp"
+#include "./WebservData.hpp"
 
-All::All()
+WebservData::WebservData()
 {
 }
 
-All::All(std::vector<Config> setup)
+WebservData::WebservData(std::vector<Config> setup)
 : _setup(setup)
 {
 }
 
-All::~All()
+WebservData::~WebservData()
 {
 }
 
 void
-All::setPorts(void) {
+WebservData::setPorts(void) {
 	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it)
 		this->_listPortsSocket.push_back(it->getListen());
 	this->_listPortsSocket.sort();
@@ -22,7 +22,7 @@ All::setPorts(void) {
 }
 
 void
-All::setHosts() {
+WebservData::setHosts() {
 	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it) {
 		std::stringstream number;
 		number << it->getListen();
@@ -33,17 +33,17 @@ All::setHosts() {
 	std::cout << std::endl;
 }
 
-std::vector<Config>
-All::getConfiguration(void) const {
+const std::vector<Config> &
+WebservData::getConfiguration(void) const {
 	return (this->_setup);
 }
 
 std::list<int>
-All::getListPorts(void) const {
+WebservData::getListPorts(void) const {
 	return (this->_listPortsSocket);
 }
 
-std::map<std::string, Config>
-All::getMapServerName(void) const {
+std::map<std::string, Config> &
+WebservData::getMapServerName(void) {
 	return (this->_mapServerName);
 }

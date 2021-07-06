@@ -1,5 +1,5 @@
-#ifndef ALL_HPP
-# define ALL_HPP
+#ifndef WEBSERVDATA_HPP
+# define WEBSERVDATA_HPP
 
 # include "../config/Config.hpp"
 # include <string>
@@ -9,7 +9,7 @@
 # include <sstream>
 
 
-class All
+class WebservData
 {
     private:
         std::vector<Config>							_setup;
@@ -18,13 +18,13 @@ class All
         //std::list<std::string>						_listHostNames;
 
     public:
-        All();
-        All(std::vector<Config> setup);
-        ~All();
+        WebservData();
+        WebservData(std::vector<Config> setup);
+        ~WebservData();
 
-        std::vector<Config>							getConfiguration(void) const;
+        const std::vector<Config>	&						getConfiguration(void) const;
 		std::list<int>								getListPorts(void) const ;
-		std::map<std::string, Config>				getMapServerName(void) const ;
+		std::map<std::string, Config> &				getMapServerName(void) ;
 
         void                                        setPorts(void);
         void                                        setHosts(void);

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/06/30 12:47:32 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/07/06 15:02:58 by agathe           ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ HEADERS		=	Socket.hpp \
 				Webserv.hpp \
 				Request.hpp \
 				Config.hpp \
-				All.hpp \
+				WebservData.hpp \
 				Parser.hpp
 FILES		= Socket.cpp \
 			  PageCreation.cpp \
@@ -45,7 +45,7 @@ FILES		= Socket.cpp \
 			  ParsingRequest.cpp \
 			  Config.cpp \
 			  Parser.cpp \
-			  All.cpp \
+			  WebservData.cpp \
 			  main.cpp
 
 OPATH		= objs/

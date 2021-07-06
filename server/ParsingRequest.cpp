@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParsingRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/29 11:04:15 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/06 16:27:43 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ std::string onlyTheGood(std::string str)
 		i++;
     if (tmp[i + 1] == ' ')
         i++;
-	str = str.substr(i + 1, ss_str.length() - i - 1);
+	str = str.substr(i + 1, ss_str.length() - i - 2);
 	return (str);
 }
 
@@ -75,6 +75,7 @@ void       parsingRequestQuater(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
+        std::cout << "VALUE[9]" << value.size() << " " << (int)value[value.size() - 1] << std::endl;
         req->host = value;
     }
     pos = word.find("Last-Modified", 0);
@@ -137,6 +138,8 @@ void       parsingRequestBis(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
+        std::cout << "VALUE  LANGUAGE " << (int)value[value.size() - 1] << std::endl;
+    
         req->acceptedLanguage = value;
     }
     pos = word.find("Accept-Charset", 0);
