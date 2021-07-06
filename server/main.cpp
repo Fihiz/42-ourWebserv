@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/06 16:18:17 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/06 17:18:36 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,7 @@ void    processMasterSocket(fd_set &readSet, std::vector<Socket *> tabMaster, in
     if (clientSock < 0)
         error("Accept connexion", readSet, tabMaster);
     FD_SET(clientSock, &readSet);
-
-
-    
-    std::cout << "client sock : " << clientSock << std::endl;
-    std::cout << "fd : " << fd << std::endl;
-    
-    std::cout << "port master : " << findSpecificMasterSocket(tabMaster, fd)->getUsedPort() << std::endl;
-    
     portLinkedToClientFd[clientSock] = findSpecificMasterSocket(tabMaster, fd)->getUsedPort();
-    
-    std::cout << "portLinkedToClientFd : " << portLinkedToClientFd[clientSock] << std::endl;
-    
-    
     std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
     return ;
 }
@@ -54,29 +42,14 @@ void    processMasterSocket(fd_set &readSet, std::vector<Socket *> tabMaster, in
 
 Config *findConfigForClient(WebservData &Data, std::string host)
 {
-    std::string test = (std::string)host.c_str();
-    std::cout << "start host : " << host << std::endl;
-
-    std::string eighty = ":80";
-    //host = (std::string)"LOCALHOST" + (std::string)".500" ;
-    
-    if (test.find(":") == std::string::npos)
+    if (host.find(":") == std::string::npos)
     {
-       test = test + eighty; 
+       host = host + ":80"; 
     }
-
-    std::cout << "0 test 00 : |" << (int)test[9] << "|" << std::endl;
-    
- 
-    
-    // std::cout << "port : " << host << std::endl;
-
     if (Data.getMapServerName().find(host) != Data.getMapServerName().end())
     {
-        std::cout << "1 test 11 : " << test << std::endl;
         return (&(Data.getMapServerName()[host]));
     }
-    std::cout << "2 test 22 : " << test << std::endl;
     return (NULL);
 }
 
@@ -105,27 +78,28 @@ int     processSockets(int fd, fd_set &readSet, std::vector<Socket *> tabMaster,
 			parsedRequest = parsingRequest(requestBuffer);
             checkingHeader(&parsedRequest);
 			
-            
-
-            setContentDependingOnFileOrDirectory(parsedRequest);
-            
             Config *configForClient;
             
             configForClient = findConfigForClient(Data, parsedRequest.host);
-
+            if (!configForClient)
+            {
+                parsedRequest.statusCode = "400 Bad Request";
+                parsedRequest.pathInfo = "./pages/400.html";
+            }
             
+
+            setContentDependingOnFileOrDirectory(parsedRequest);
+             
             std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
             if (parsedRequest.pathInfo == "./pages/exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
-            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", readSet, tabMaster);
             losingConnexion( fd, readSet, "Closing... [");
             portLinkedToClientFd.erase(portLinkedToClientFd.find(fd));
-            // std::cout << "portLinkedToClientFd AFTER ERASE: " << portLinkedToClientFd[fd] << std::endl;
-            
         }
     }
     return (running);
@@ -167,6 +141,7 @@ int     main(int ac, char *av[], char *env[])
 
     std::map<int, int> portLinkedToClientFd;
 
+    Data.setHosts();
     Data.setPorts();
     std::list<int>  tempListPorts = Data.getListPorts();
     std::list<int>::iterator it = tempListPorts.begin();
