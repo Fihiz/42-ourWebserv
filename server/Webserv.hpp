@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/08 13:47:38 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/08 16:11:50 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 #include <stdexcept> // To do: try and catch
 #include <time.h>
 #include <vector>
-// #include "./WebservData.hpp"
+#include <fcntl.h>
 #include "Request.hpp"
 
 # define CLEAN "\e[1;1H\e[2J"
