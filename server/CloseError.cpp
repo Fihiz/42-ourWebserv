@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   CloseError.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/15 13:26:10 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/29 10:44:12 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/08 13:50:01 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Socket.hpp"
+#include "./WebservData.hpp"
 
 void destroyTabMaster(std::vector<Socket *> tabMaster)
 {
@@ -39,7 +39,8 @@ void    closeAllFdUnlessMaster(fd_set &readSet, std::vector<Socket *> tabMaster)
     (void) tabMaster;
     for (int ind = 0; ind <= FD_SETSIZE; ++ind)
     {
-        if (/*FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0) */0)
+        // if (/*FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0) */0)
+        if (FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0))
         {
             std::cerr << T_YB << "Connection lost... fd=" << ind << T_N << std::endl;
             close(ind);
@@ -48,11 +49,11 @@ void    closeAllFdUnlessMaster(fd_set &readSet, std::vector<Socket *> tabMaster)
     return ;
 }
 
-int     error(std::string str, fd_set &readSet, std::vector<Socket *> tabMaster)
+int     error(std::string str, WebservData &Data)
 {
     perror(str.c_str());
-    closeAllFdUnlessMaster(readSet, tabMaster);
-    destroyTabMaster(tabMaster);
+    closeAllFdUnlessMaster(Data.getReadSet(), Data.getTabMaster());
+    destroyTabMaster(Data.getTabMaster());
     exit(EXIT_FAILURE);
 }
 

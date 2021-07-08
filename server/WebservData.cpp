@@ -1,5 +1,6 @@
 #include "./WebservData.hpp"
 
+
 WebservData::WebservData()
 {
 }
@@ -7,6 +8,12 @@ WebservData::WebservData()
 WebservData::WebservData(std::vector<Config> setup)
 : _setup(setup)
 {
+	FD_ZERO(&_readSet);
+    FD_ZERO(&_readCopy);
+
+	_initHosts();
+	_initPorts();
+	_initSocket();
 }
 
 WebservData::~WebservData()
@@ -14,7 +21,7 @@ WebservData::~WebservData()
 }
 
 void
-WebservData::setPorts(void) {
+WebservData::_initPorts(void) {
 	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it)
 		this->_listPortsSocket.push_back(it->getListen());
 	this->_listPortsSocket.sort();
@@ -22,7 +29,7 @@ WebservData::setPorts(void) {
 }
 
 void
-WebservData::setHosts() {
+WebservData::_initHosts() {
 	for (std::vector<Config>::iterator it = this->_setup.begin(); it != this->_setup.end(); ++it) {
 		std::stringstream number;
 		number << it->getListen();
@@ -31,6 +38,21 @@ WebservData::setHosts() {
 		this->_mapServerName.insert(std::pair<std::string, Config>(tmp, *it));
 	}
 	std::cout << std::endl;
+}
+
+
+void
+WebservData::_initSocket() 
+{
+	Socket *master;
+
+	std::list<int>::iterator ite = this->_listPortsSocket.end();
+	for ( std::list<int>::iterator it = this->_listPortsSocket.begin(); it != ite ; it++)
+	{
+		master = new Socket(*it);
+        _tabMaster.push_back(master);
+        FD_SET(master->getMasterSock(), &_readSet);
+	}
 }
 
 const std::vector<Config> &
@@ -46,4 +68,22 @@ WebservData::getListPorts(void) const {
 std::map<std::string, Config> &
 WebservData::getMapServerName(void) {
 	return (this->_mapServerName);
+}
+
+fd_set &
+WebservData::getReadSet(void)
+{
+	return(_readSet);
+}
+
+fd_set &
+WebservData::getReadCopy(void)
+{
+	return(_readCopy);
+}
+
+std::vector<Socket *> &
+WebservData::getTabMaster(void)
+{
+	return(_tabMaster);
 }

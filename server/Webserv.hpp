@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/06 11:54:08 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/08 13:47:38 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include <stdexcept> // To do: try and catch
 #include <time.h>
 #include <vector>
+// #include "./WebservData.hpp"
 #include "Request.hpp"
 
 # define CLEAN "\e[1;1H\e[2J"
@@ -38,6 +39,7 @@
 # define T_RB "\033[01;31m"
 
 class Socket;
+class WebservData;
 
 typedef struct s_serv
 {
@@ -64,7 +66,7 @@ int            isTabMaster(std::vector<Socket *> tabMaster, int ind);
 class Socket; // Need to deal with it later
 
 void           losingConnexion( int fd, fd_set &readSet, std::string const type );
-int				error( std::string str, fd_set &readSet, std::vector<Socket *> tabMaster);
+int				error( std::string str, WebservData &Data);
 void			   closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
 
 /* REQUEST */
@@ -77,6 +79,7 @@ int             tabSize( char **tab );
 t_request       parsingRequest( char *buffer );
 void            checkingHeader( t_request *req );
 
-
+#include "./WebservData.hpp"
+#include "./Socket.hpp"
 
 #endif
