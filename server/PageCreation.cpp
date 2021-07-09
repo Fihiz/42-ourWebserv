@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PageCreation.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/06/30 12:51:13 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/09 18:15:24 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,14 @@ std::string formatName( std::string src )
 void    setContentDependingOnFileOrDirectory(t_request &parsedRequest)
 {
     struct stat statBuf;
-    stat((parsedRequest.pathInfo).c_str(), &statBuf); /* need to be protected  */
+    stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
     if (!S_ISDIR(statBuf.st_mode))
-        parsedRequest.fileContent = getFileContent(parsedRequest.pathInfo);
+        parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
     else
     {
         std::cout << T_GYB "AUTO INDEX HAS BEEN ASKED " T_N;
         std::cout << T_GYB "parsedRequest.pathInfo: " T_N << parsedRequest.pathInfo << std::endl;
-        parsedRequest.fileContent = createAutoIndex(parsedRequest.pathInfo);
+        parsedRequest.fileContent = createAutoIndex(parsedRequest.fullPathInfo, parsedRequest.pathInfo);
         /* return 404 ?*/
     }
 }
@@ -106,14 +106,14 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
     return (content += dir_buf + files_buf + "\t</pre><hr></body>\n</html>");
 }
 
-std::string     createAutoIndex( std::string &fileName )
+std::string     createAutoIndex( std::string &fullFileName, std::string &fileName )
 {
     DIR *dir;
     std::vector<std::string> files;
     struct dirent *dirRead;
 
     // std::cout << T_CB << fileName << " begin: " << (files.begin() == files.end()) << T_N << std::endl;
-    if ((dir = opendir((fileName).c_str())) != nullptr)
+    if ((dir = opendir((fullFileName).c_str())) != nullptr)
     {
         while ((dirRead = readdir(dir)) != nullptr)
         {  

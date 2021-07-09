@@ -2,7 +2,7 @@
 
 // ------- CONSTRUCTOR --------------------------------------------------------
 Config::Config(void)
-: _listen(-1), _serverName(""), _maxBodySizeClient(0) // How set default value of map or vector
+: _listen(-1), _serverName(""), _maxBodySizeClient(0), _defaultRoot("/") // How set default value of map or vector
 {
 }
 
@@ -244,6 +244,7 @@ Config::setDefault(void) {
 		bloc.autoindex = -1;
 		this->_location.insert(std::pair<std::string, t_location>("/", bloc));
 	}
+	this->_defaultRoot = this->_location.find("/")->second.root;
 	for (std::map<std::string, t_location>::iterator it = this->_location.begin(); it != this->_location.end(); ++it) {
 		if (it->second.method.empty() == true)
 			it->second.method.push_back("GET");
@@ -290,12 +291,19 @@ Config::getSpecificErrorPage(int ask) const {
 // 	return (this->_location);
 // }
 
-// t_location *
-// Config::getSpecificLocation(std::string ask) const {
-// 	if (this->_errorPage.find(ask) != this->_errorPage.end())
-// 		return (this->_location[ask]);
-// 	return (NULL);
-// }
+const t_location *
+Config::getSpecificLocation(std::string ask) const {
+	if (this->_location.find(ask) != this->_location.end())
+		return (&(this->_location.find(ask)->second));
+	return (NULL);
+}
+
+std::string
+Config::getDefautlRoot(void) const
+{
+	return (_defaultRoot);
+}
+
 
 // ------- UTILS --------------------------------------------------------------
 void

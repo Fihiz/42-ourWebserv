@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/17 18:38:48 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/09 18:06:29 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ typedef struct s_request
     std::string fileContent;
     std::string fileType;
     std::string statusCode;
+    std::string fullPathInfo;
     //std::string fileContent; (?)
     
 

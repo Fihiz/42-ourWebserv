@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/08 18:14:12 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/09 18:31:11 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,6 @@ int     processSockets(int fd, WebservData &Data, char **env)
             (void) env;
 
 			parsedRequest = parsingRequest(requestBuffer);
-            checkingHeader(&parsedRequest);
-			
             Config *configForClient;
             
             configForClient = findConfigForClient(Data, parsedRequest.host);
@@ -87,17 +85,24 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             else
             {
+                parsedRequest.fullPathInfo = configForClient->getDefautlRoot() + parsedRequest.pathInfo.substr(2);
+                std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
+                
+                const t_location  *locationForClient;
+                // to do :comparer les location et choisir la plus coherente
+                locationForClient = configForClient->getSpecificLocation("/"); // temporaire
+                checkingHeader(&parsedRequest, locationForClient->method);
                 std::cout << "PORT CONFIG : ";
                 configForClient->printListen();
                 std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
             }
+			
             
-
             setContentDependingOnFileOrDirectory(parsedRequest);
              
             std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
-            if (parsedRequest.pathInfo == "./pages/exit.html") // (?)
+            if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;

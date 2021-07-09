@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/08 16:11:50 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/09 18:22:30 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ std::string     getFileContent( std::string fullFileName );
 void            getFileInfo( char *request, std::string &fileName, std::string &ext, std::string &contentType );
 std::string     getDateFormat( time_t &date );
 std::string     numFormat( int nb );
-std::string     createAutoIndex( std::string &fileName );
+std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
 void            setContentDependingOnFileOrDirectory( t_request &parsedRequest );
 
 
@@ -77,7 +77,7 @@ int             deleteAnswer( t_request const &req );
 char **         initEnv( char **env, t_request const &req, t_serv serv );
 int             tabSize( char **tab );
 t_request       parsingRequest( char *buffer );
-void            checkingHeader( t_request *req );
+void            checkingHeader( t_request *req, const std::vector<std::string> method );
 
 #include "./WebservData.hpp"
 #include "./Socket.hpp"

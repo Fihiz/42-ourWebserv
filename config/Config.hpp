@@ -24,6 +24,7 @@ class   Config
 		std::map<int, std::string>					_errorPage;
 		std::map<std::string, t_location>			_location;
 		std::string									_routes;
+		std::string									_defaultRoot;
 
 	public:
 		Config();
@@ -48,7 +49,8 @@ class   Config
 		std::map<int, std::string>					getErrorPage(void) const;
 		std::string									getSpecificErrorPage(int ask) const;
 		std::map<std::string, t_location>			getLocation(void) const;
-		t_location *								getSpecificLocation(std::string ask) const;
+		const t_location *							getSpecificLocation(std::string ask) const;
+		std::string									getDefautlRoot(void) const;
 
 		void										reset(void);
 		void										printListen(void) const;
