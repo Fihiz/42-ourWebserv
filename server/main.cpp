@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/09 18:31:11 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/19 15:26:19 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ Config *findConfigForClient(WebservData &Data, std::string host)
     }
     if (Data.getMapServerName().find(host) != Data.getMapServerName().end())
     {
+        std::cout << "Config has been found" << std::endl;
         return (&(Data.getMapServerName()[host]));
     }
     return (NULL);
@@ -77,6 +78,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
 			parsedRequest = parsingRequest(requestBuffer);
             Config *configForClient;
             
+            //std::cout << "Into configForClient, host: " << parsedRequest.host << std::endl;
             configForClient = findConfigForClient(Data, parsedRequest.host);
             if (!configForClient)
             {
@@ -85,18 +87,22 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             else
             {
-                parsedRequest.fullPathInfo = configForClient->getDefautlRoot() + parsedRequest.pathInfo.substr(2);
+                parsedRequest.fullPathInfo = configForClient->getRoot("") + parsedRequest.pathInfo.substr(2);
                 std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
                 
-                const t_location  *locationForClient;
+                // const t_location  *locationForClient;
                 // to do :comparer les location et choisir la plus coherente
-                locationForClient = configForClient->getSpecificLocation("/"); // temporaire
-                checkingHeader(&parsedRequest, locationForClient->method);
+                // locationForClient = configForClient->getLocation("/"); // temporaire
+                // if (locationForClient)
+                //     checkingHeader(&parsedRequest, locationForClient->method);
+                std::vector<std::string>    method;
+                method.push_back("GET");
+                checkingHeader(&parsedRequest, method);
                 std::cout << "PORT CONFIG : ";
                 configForClient->printListen();
                 std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
             }
-			
+            // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
             
             setContentDependingOnFileOrDirectory(parsedRequest);
              
@@ -106,6 +112,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
@@ -115,10 +122,15 @@ int     processSockets(int fd, WebservData &Data, char **env)
     return (running);
 }
 
-std::vector<Config> configuration(const std::string & path) {
+std::vector<Config> configuration(int argc, char **argv) {
+	std::string path;
+	if (argc != 2)
+		path = "config/default";
+	else
+		path = argv[1];
 	Parser	file(path);
-	file.setContent();
-	file.checkSyntax();
+	file.setContentFile();
+	file.checkGeneralSyntax();
 	file.setConfiguration();
 	return (file.getConfiguration());
 }
@@ -126,13 +138,9 @@ std::vector<Config> configuration(const std::string & path) {
 int     main(int ac, char *av[], char *env[])
 {
     (void)env;
-    if (ac != 2) {
-		std::cout << "Error: At least one argument is needed." << std::endl;
-		return (1);
-	}
 	std::vector<Config> setup;
 	try {
-		setup = configuration(av[1]);
+		setup = configuration(ac, av);
 	}
 	catch (std::exception & err) {
 		std::cout << err.what() << std::endl;

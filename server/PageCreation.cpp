@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   PageCreation.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/09 18:15:24 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/19 15:25:48 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,10 @@ std::string formatName( std::string src )
 void    setContentDependingOnFileOrDirectory(t_request &parsedRequest)
 {
     struct stat statBuf;
-    stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
-    if (!S_ISDIR(statBuf.st_mode))
+    int ret = stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
+    if (ret == -1)
+        parsedRequest.statusCode = "404 Not Found";
+    else if (!S_ISDIR(statBuf.st_mode))
         parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
     else
     {
