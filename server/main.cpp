@@ -65,8 +65,8 @@ void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRe
     {
         std::vector<std::string>    method;
         method.push_back("GET");
-        checkingHeader(&parsedRequest, method);
         parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
+        checkingHeader(&parsedRequest, method);
     }
 }
 
@@ -135,7 +135,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                 // to do :comparer les location et choisir la plus coherente
                 // locationForClient = configForClient->getLocation("/"); // temporaire
                 // if (locationForClient)
-                //     checkingHeader(&parsedRequest, locationForClient->method);
+                    // checkingHeader(&parsedRequest, locationForClient->method);
                 // std::vector<std::string>    method;
                 // method.push_back("GET");
                 // checkingHeader(&parsedRequest, method);
@@ -154,7 +154,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
             std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
-            fcntl(fd, F_SETFL, O_NONBLOCK);
+            // fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
             losingConnexion( fd, Data.getReadSet(), "Closing... [");
@@ -173,6 +173,9 @@ std::vector<Config> configuration(int argc, char **argv) {
 	file.setContentFile();
 	file.checkGeneralSyntax();
 	file.setConfiguration();
+
+    file.printConfigs();
+
 	return (file.getConfiguration());
 }
 
@@ -187,7 +190,7 @@ int     main(int ac, char *av[], char *env[])
 		std::cout << err.what() << std::endl;
 		return (1);
 	}
-    
+
     WebservData Data(setup);
     
     int running = 1;

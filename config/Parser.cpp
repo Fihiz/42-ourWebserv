@@ -199,10 +199,12 @@ Parser::checkRoutes(Config & virtualHost) {
 	std::vector<std::string>::iterator it = this->_tokens.begin();
 	if (it->compare("location") == 0)
 		it++;
-	if (it->at(0) != '/') {
+	if (it[0][0] != '/' || it->compare("//") == 0 ) {
 		std::cerr << "Error at line #" << this->_line << " : ";
 		throw(WrongDataValueDeclarationException());
 	}
+	if (it[0][it->length() - 1] != '/')
+		*it += '/';
 	this->_routes = *it;
 	virtualHost.setRoutes(this->_routes);
 }
@@ -241,10 +243,12 @@ Parser::checkRoot(Config & virtualHost) {
 	int step = 0;
 	while (it != this->_tokens.end() && it->compare(";") != 0) {
 		step++;
-		if (it->at(0) != '/') {
+		if (it[0][0] != '/' || it->compare("//") == 0 ) {
 			std::cerr << "Error at line #" << this->_line << " : ";
 			throw(WrongDataValueDeclarationException());
 		}
+		if (it[0][it->length() - 1] != '/')
+			*it += '/';
 		virtualHost.setRoot(this->_routes, *it);
 		it++;
 	}
