@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/19 15:26:19 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/20 15:15:23 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,7 @@ Config *findConfigForClient(WebservData &Data, std::string host)
        host = host + ":80"; 
     }
     if (Data.getMapServerName().find(host) != Data.getMapServerName().end())
-    {
-        std::cout << "Config has been found" << std::endl;
         return (&(Data.getMapServerName()[host]));
-    }
     return (NULL);
 }
 
@@ -104,12 +101,11 @@ int     processSockets(int fd, WebservData &Data, char **env)
             requestBuffer[len] = '\0';
 			t_request	parsedRequest;
  
-            (void) env;
+            (void) env; // Env to deal with later
 
 			parsedRequest = parsingRequest(requestBuffer);
             Config *configForClient;
-            
-            //std::cout << "Into configForClient, host: " << parsedRequest.host << std::endl;
+
             configForClient = findConfigForClient(Data, parsedRequest.host);
             const t_location  *locationForClient = NULL;
             if (!configForClient)
@@ -127,33 +123,25 @@ int     processSockets(int fd, WebservData &Data, char **env)
                     loc.autoindex = 0;
                     locationForClient = &loc;
                 }
-                (void) locationForClient;
 
-                std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
-
-                // const t_location  *locationForClient;
-                // to do :comparer les location et choisir la plus coherente
-                // locationForClient = configForClient->getLocation("/"); // temporaire
-                // if (locationForClient)
-                //     checkingHeader(&parsedRequest, locationForClient->method);
-                // std::vector<std::string>    method;
-                // method.push_back("GET");
-                // checkingHeader(&parsedRequest, method);
-                std::cout << "PORT CONFIG : ";
-                configForClient->printListen();
-                std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
+                /* PRINT DE LA CONFIG */
+                // std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;
+                // std::cout << "PORT CONFIG : ";
+                // configForClient->printListen();
+                // std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;
+                /* FIN */
+               
             }
-            // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
+            std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB "]" << T_N << std::endl;
 
             setContentDependingOnFileOrDirectory(parsedRequest);
-             
+
             std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
-            std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
@@ -203,7 +191,7 @@ int     main(int ac, char *av[], char *env[])
         {
             if (FD_ISSET(fd, &Data.getReadCopy()))
             {
-                running = processSockets(fd, Data, env); // reduire nbr arg, clean 
+                running = processSockets(fd, Data, env);
                 break ;
             }
         }

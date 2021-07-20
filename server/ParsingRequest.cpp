@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParsingRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/06 17:19:10 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/20 15:14:40 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,10 @@ void        splittingPath(t_request *req)
     if (fileExt == "jpg")
         req->fileType = "image/jpeg";
     else if (fileExt == "ico")
+    {
+        std::cout << "\t🐄🐄🐄🐄🐄🐄🐄🐄..." << std::endl; 
         req->fileType = "image/x-icon";
+    }
     else
         req->fileType = "text/html";
 }
