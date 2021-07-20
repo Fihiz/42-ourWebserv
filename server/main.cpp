@@ -145,7 +145,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
 
-            setContentDependingOnFileOrDirectory(parsedRequest);
+            setContentDependingOnFileOrDirectory(parsedRequest, locationForClient);
              
             std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
@@ -154,7 +154,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
             // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
             std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
-            // fcntl(fd, F_SETFL, O_NONBLOCK);
+            fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
             losingConnexion( fd, Data.getReadSet(), "Closing... [");

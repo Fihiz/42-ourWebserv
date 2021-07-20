@@ -38,6 +38,9 @@ void
 Config::setRoutes(std::string routes) {
 	t_location bloc;
 	bloc.autoindex = -1;
+	// if (routes == "/"))
+	// 	if (bloc.index.empty() == true)
+	// 		bloc.index = ;
 	this->_location.insert(std::pair<std::string, t_location>(routes, bloc));
 }
 

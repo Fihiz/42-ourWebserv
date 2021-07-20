@@ -61,24 +61,58 @@ std::string formatName( std::string src )
     return(src + spaces);
 }
 
-void    setContentDependingOnFileOrDirectory(t_request &parsedRequest)
+void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc)
 {
     struct stat statBuf;
     int ret = stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
     if (ret == -1)
+    {
         parsedRequest.statusCode = "404 Not Found";
-    else if (!S_ISDIR(statBuf.st_mode))
-        parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
+        parsedRequest.fullPathInfo = "./pages/404.html";
+    }
     else
     {
-        //chercher le premier index de la location auquel on a acces
-        //si on trouve on get le content du fichier
-        //si y en a pas, if (autoindex == on)
-        std::cout << T_GYB "AUTO INDEX HAS BEEN ASKED " T_N;
-        std::cout << T_GYB "parsedRequest.pathInfo: " T_N << parsedRequest.pathInfo << std::endl;
-        parsedRequest.fileContent = createAutoIndex(parsedRequest.fullPathInfo, parsedRequest.pathInfo);
-        //else 
-        /* return 404 ?*/
+        if (!S_ISDIR(statBuf.st_mode))
+            parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
+        else
+        {
+            std::string tmpFileName;
+            ret = -1;
+            for (std::vector<std::string>::const_iterator it = loc->index.cbegin(); it != loc->index.cend(); it++)
+            {
+                tmpFileName = parsedRequest.fullPathInfo + *it;
+                ret = stat(tmpFileName.c_str(), &statBuf);
+                if (ret != -1)
+                    break;
+            }
+            if (ret == -1)
+            {
+                if (loc->autoindex)
+                {
+                    std::cout << T_GYB "AUTO INDEX HAS BEEN ASKED " T_N;
+                    std::cout << T_GYB "parsedRequest.pathInfo: " T_N << parsedRequest.pathInfo << std::endl;
+                    parsedRequest.fileContent = createAutoIndex(parsedRequest.fullPathInfo, parsedRequest.pathInfo);
+                }
+                else
+                {
+                    parsedRequest.statusCode = "403 Forbidden";
+                    parsedRequest.fullPathInfo = "./pages/403.html";
+                    parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
+                }
+            }
+            else
+            {
+                parsedRequest.fileContent = getFileContent(tmpFileName);
+            }
+            //chercher le premier index de la location auquel on a acces
+            //si on trouve on get le content du fichier
+            //si y en a pas, if (autoindex == on)
+            // std::cout << T_GYB "AUTO INDEX HAS BEEN ASKED " T_N;
+            // std::cout << T_GYB "parsedRequest.pathInfo: " T_N << parsedRequest.pathInfo << std::endl;
+            // parsedRequest.fileContent = createAutoIndex(parsedRequest.fullPathInfo, parsedRequest.pathInfo);
+            //else 
+            /* return 404 ?*/
+        }
     }
 }
 
