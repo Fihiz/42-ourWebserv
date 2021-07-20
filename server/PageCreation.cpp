@@ -71,9 +71,13 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest)
         parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
     else
     {
+        //chercher le premier index de la location auquel on a acces
+        //si on trouve on get le content du fichier
+        //si y en a pas, if (autoindex == on)
         std::cout << T_GYB "AUTO INDEX HAS BEEN ASKED " T_N;
         std::cout << T_GYB "parsedRequest.pathInfo: " T_N << parsedRequest.pathInfo << std::endl;
         parsedRequest.fileContent = createAutoIndex(parsedRequest.fullPathInfo, parsedRequest.pathInfo);
+        //else 
         /* return 404 ?*/
     }
 }

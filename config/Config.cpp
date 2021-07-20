@@ -43,7 +43,7 @@ Config::setRoutes(std::string routes) {
 void
 Config::setMethod(std::string routes, std::string valMethod) {
 	std::map<std::string, t_location>::iterator it = this->_location.find(routes);
-	it->second.index.push_back(valMethod);
+	it->second.method.push_back(valMethod);
 }
 
 void
