@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CloseError.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/15 13:26:10 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/08 13:50:01 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/20 16:45:15 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void    closeAllFdUnlessMaster(fd_set &readSet, std::vector<Socket *> tabMaster)
         // if (/*FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0) */0)
         if (FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0))
         {
-            std::cerr << T_YB << "Connection lost... fd=" << ind << T_N << std::endl;
+            std::cerr << T_YB << "Connection lost... [fd=" << ind << "]" << T_N << std::endl;
             close(ind);
         }
     }

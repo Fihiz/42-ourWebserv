@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/20 15:20:05 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/20 16:33:48 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ void    takeBody(t_request *req, char *requestBuffer)
     }
 }
 
-void        splittingPath(t_request *req)
+void        setFileTypeForResponse(t_request *req)
 {
     std::string fileName;
     std::string fileExt;
@@ -237,6 +237,6 @@ t_request  parsingRequest(char *requestBuffer)
     if (req.pathInfo.empty() == false && req.host.empty() == false)
         req.pathTranslated = req.host + req.pathInfo;
     takeBody(&req, requestBuffer);
-    splittingPath(&req);
+    setFileTypeForResponse(&req);
     return (req);
 }

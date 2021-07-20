@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/20 15:15:23 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/20 17:06:01 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRe
     {
         std::vector<std::string>    method;
         method.push_back("GET");
-        checkingHeader(&parsedRequest, method);
         parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
+        checkingHeader(&parsedRequest, method);
     }
 }
 
@@ -130,7 +130,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                 // configForClient->printListen();
                 // std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;
                 /* FIN */
-               
+
             }
             std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB "]" << T_N << std::endl;
 
@@ -154,7 +154,10 @@ int     processSockets(int fd, WebservData &Data, char **env)
 std::vector<Config> configuration(int argc, char **argv) {
 	std::string path;
 	if (argc != 2)
+    {
+        std::cout << "In view of arguments, the default configuration is used." << std::endl;
 		path = "config/default";
+    }
 	else
 		path = argv[1];
 	Parser	file(path);
