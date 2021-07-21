@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/19 15:26:19 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/21 16:54:20 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,14 +89,14 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
 int     processSockets(int fd, WebservData &Data, char **env)
 {
     (void) Data;
-    char    requestBuffer[20000];
+    char    requestBuffer[20000000];
     int     running = 1;
 
     if (isTabMaster(Data.getTabMaster(), fd) == 1)
         processMasterSocket(Data, fd);
     else
     {
-        ssize_t len = recv(fd, requestBuffer, 19999, 0); // Flags to check later
+        ssize_t len = recv(fd, requestBuffer, 19999999, 0); // Flags to check later
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
         else
@@ -119,29 +119,32 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             else
             {
-                locationForClient = findLocationForClient(*configForClient, parsedRequest);
-                if (!locationForClient)
-                {
-                    t_location  loc;
-                    loc.index = configForClient->getIndex("");
-                    loc.autoindex = 0;
-                    locationForClient = &loc;
-                }
-                (void) locationForClient;
-
-                std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
-
-                // const t_location  *locationForClient;
-                // to do :comparer les location et choisir la plus coherente
-                // locationForClient = configForClient->getLocation("/"); // temporaire
-                // if (locationForClient)
-                    // checkingHeader(&parsedRequest, locationForClient->method);
-                // std::vector<std::string>    method;
-                // method.push_back("GET");
-                // checkingHeader(&parsedRequest, method);
-                std::cout << "PORT CONFIG : ";
-                configForClient->printListen();
-                std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
+                // if (parsedRequest.statusCode == "200 OK")
+                // {
+                    locationForClient = findLocationForClient(*configForClient, parsedRequest);
+                    if (!locationForClient)
+                    {
+                        t_location  loc;
+                        loc.index = configForClient->getIndex("");
+                        loc.autoindex = 0;
+                        locationForClient = &loc;
+                    }
+                    (void) locationForClient;
+    
+                    std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
+    
+                    // const t_location  *locationForClient;
+                    // to do :comparer les location et choisir la plus coherente
+                    // locationForClient = configForClient->getLocation("/"); // temporaire
+                    // if (locationForClient)
+                        // checkingHeader(&parsedRequest, locationForClient->method);
+                    // std::vector<std::string>    method;
+                    // method.push_back("GET");
+                    // checkingHeader(&parsedRequest, method);
+                    std::cout << "PORT CONFIG : ";
+                    configForClient->printListen();
+                    std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;
+                // }               
             }
             // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
 
@@ -152,7 +155,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
-            // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
             std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)

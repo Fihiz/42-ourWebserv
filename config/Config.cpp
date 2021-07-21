@@ -94,7 +94,7 @@ Config::setDefaultValue(void) {
 	if (this->_index.empty() == true)
 		this->_index.push_back("index.html");
 	if (this->_maxBodySizeClient == 0)
-		this->_maxBodySizeClient = 1000;
+		this->_maxBodySizeClient = 1000000;
 	if (this->_location.find("/") == this->_location.end())
 		this->setRoutes("/");
 	for (std::map<std::string, t_location>::iterator it = this->_location.begin(); it != this->_location.end(); ++it) {
