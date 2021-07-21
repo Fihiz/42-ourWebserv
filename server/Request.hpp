@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/09 18:06:29 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/19 14:36:03 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct s_request
     std::string uri; // -
     std::string remoteUser; //-
     std::string remoteAddr; // -
-    std::string auth_type; //-
+    std::string authType; //-
     // Added by socket team
     std::string fileContent;
     std::string fileType;

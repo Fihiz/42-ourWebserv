@@ -19,17 +19,19 @@ class   Parser
 	private:
 		std::fstream								_file;
 		std::map< int, std::vector<std::string> > 	_content;
+		size_t									 	_line;
 		std::vector<std::string>					_tokens;
 		std::vector<std::string>					_context;
+		std::string									_routes;
 		std::vector<Config>							_setup;
 
 		Parser();
 
 	public:
-		Parser(const std::string & path);
+		Parser(std::string const & path);
 		~Parser();
 
-		void										setContent(void);
+		void										setContentFile(void);
 		void										setStartContext(void);
 		void										setEndContext(void);
 		void										setConfiguration(void);
@@ -37,12 +39,27 @@ class   Parser
 		std::string									getContext(void) const;
 		std::string									getDirective(void) const;
 		std::vector<Config>							getConfiguration(void) const;
-	
-		void										checkSyntax(void);
-		void										checkOpenContext(size_t line);
-		void										checkCloseContext(size_t line);
-		void										checkDirective(size_t line);
+
+		void										checkGeneralSyntax(void);
+		void										checkOpenContext();
+		void										checkCloseContext();
+		void										checkDirective();
+		void										checkListen(Config & virtualHost);
+		void										checkServerName(Config & virtualHost);
+		void										checkMaxBodyClient(Config & virtualHost);
+		void										checkErrorPage(Config & virtualHost);
+
+		void										checkMethod(Config & virtualHost);
+		void										checkRoot(Config & virtualHost);
+		void										checkIndex(Config & virtualHost);
+		void										checkRoutes(Config & virtualHost);
+		void										checkCgi(Config & virtualHost);
+		void										checkAutoindex(Config & virtualHost);
+		
 		void										reset(void);
+	
+		void										printContent(void);
+		void										printConfigs(void);
 
 		class FileOpeningFailedException : public std::exception {
 			virtual const char * 	what() const throw();
@@ -60,6 +77,12 @@ class   Parser
 			virtual const char * 	what() const throw();
 		};
 		class WrongDirectiveDeclarationException : public std::exception {
+			virtual const char * 	what() const throw();
+		};
+		class WrongDataValueDeclarationException : public std::exception {
+			virtual const char * 	what() const throw();
+		};
+		class WrongPathValueDeclarationException : public std::exception {
 			virtual const char * 	what() const throw();
 		};
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   CheckingHeader.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 09:32:20 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/09 18:07:45 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/19 15:13:28 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void checkingHeader(t_request *req, const std::vector<std::string> method)
     //     && req->requestMethod.compare("DELETE") != 0))
     // if (((std::vector<std::string>)method).find(req->requestMethod) == method.end())
     
-    
+    // std::cout << T_GYB "Current status code [" << req->statusCode << "]" << T_N << std::endl;
     if( std::find(method.begin(), method.end(), req->requestMethod) == method.end() )
     {
         req->statusCode = "405 Method Not Allowed";
