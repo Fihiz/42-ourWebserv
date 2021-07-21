@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   ParsingRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/06 17:19:10 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/21 16:12:33 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
+#include "Respond.hpp"
 
 
 std::string onlyTheGood(std::string str)
@@ -176,24 +177,23 @@ void    takeBody(t_request *req, char *requestBuffer)
 void        splittingPath(t_request *req)
 {
     std::string fileName;
-    std::string fileExt;
     std::string withoutFirstPoint = (req->pathInfo).substr(1);
     std::string::size_type dot = (withoutFirstPoint).find('.');
     if (dot != std::string::npos)
     {
         fileName = (req->pathInfo).substr(0, dot + 1);
-        //std::cout << "filename " << fileName <<std::endl;
-        fileExt = (req->pathInfo).substr(dot + 1 + 1);
-        //std::cout << "fileExt " << fileExt <<std::endl;
+        // std::cout << "filename " << fileName <<std::endl;
+        req->fileExt = (req->pathInfo).substr(dot + 1 + 1);
+        // std::cout << "fileExt " << req->fileExt <<std::endl;
     }
     else
     {
         fileName = (req->pathInfo);
-        fileExt = "";
+        req->fileExt = "";
     }
-    if (fileExt == "jpg")
+    if (req->fileExt == "jpg")
         req->fileType = "image/jpeg";
-    else if (fileExt == "ico")
+    else if (req->fileExt == "ico")
         req->fileType = "image/x-icon";
     else
         req->fileType = "text/html";
@@ -210,6 +210,9 @@ t_request  parsingRequest(char *requestBuffer)
     req.requestMethod = word;
     std::getline(ss, word, ' ');
     req.pathInfo = "." + word;
+	// (void)config;
+	// std::cout << config->getCgi("../cgi-bin/");
+	//req.pathInfoCgi = config->getCgi("/images/"); // changer le root
 	std::getline(ss, word, '\n');
     req.protocol = word;
     word = requestBuffer;

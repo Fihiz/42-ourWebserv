@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/09 18:22:30 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/21 16:19:05 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 #include <fcntl.h>
 #include "Request.hpp"
 
+#include "../config/Config.hpp"
+
 # define CLEAN "\e[1;1H\e[2J"
 # define T_N "\033[00m"
 # define T_YB "\033[01;33m"
@@ -40,6 +42,7 @@
 
 class Socket;
 class WebservData;
+class Respond;
 
 typedef struct s_serv
 {
@@ -76,10 +79,12 @@ int             postAnswer( t_request const &req );
 int             deleteAnswer( t_request const &req );
 char **         initEnv( char **env, t_request const &req, t_serv serv );
 int             tabSize( char **tab );
-t_request       parsingRequest( char *buffer );
-void            checkingHeader( t_request *req, const std::vector<std::string> method );
+t_request       parsingRequest( char *requestBuffer);
+Respond         checkingHeader( t_request *req, const std::vector<std::string> method, Config conf);
+void			redirectCgiOutputToClient(char **env, int fd, t_request req, Respond &resp, WebservData &Data);
 
 #include "./WebservData.hpp"
 #include "./Socket.hpp"
+#include "Respond.hpp"
 
 #endif

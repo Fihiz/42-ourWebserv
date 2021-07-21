@@ -152,6 +152,20 @@ Config::getLocation(std::string ask) const {
 	return (NULL);
 }
 
+std::string
+Config::getCgi(std::string routes) const {
+	if (this->_location.empty() == false){
+		std::map<std::string, t_location>::const_iterator it = this->_location.find(routes);
+		if (it != this->_location.end())
+		{
+			std::map<std::string, std::string>::const_iterator it2 = it->second.cgi.begin();
+			if (it2 != it->second.cgi.end())
+				return (it2->second);
+		}
+	}
+	return ("");
+}
+
 // ------- UTILS --------------------------------------------------------------
 void
 Config::reset(void) {
