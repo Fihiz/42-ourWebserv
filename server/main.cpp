@@ -53,7 +53,38 @@ Config *findConfigForClient(WebservData &Data, std::string host)
     return (NULL);
 }
 
+void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
+{
+    if (locationForClient)
+    {
+        parsedRequest.fullPathInfo = parsedRequest.pathInfo;
+        parsedRequest.fullPathInfo.replace(0, tmpFile.size() + 1, configForClient.getRoot(tmpFile));
+        checkingHeader(&parsedRequest, locationForClient->method);
+    }
+    else
+    {
+        std::vector<std::string>    method;
+        method.push_back("GET");
+        parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
+        checkingHeader(&parsedRequest, method);
+    }
+}
 
+const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest)
+{
+    const t_location  *locationForClient = NULL;
+    std::string tmpFile = parsedRequest.pathInfo.substr(1);
+
+    while(tmpFile.size() > 0 && locationForClient == NULL)
+    {
+        locationForClient = configForClient.getLocation(tmpFile);
+        if (!locationForClient)
+            tmpFile.resize(tmpFile.size() - 1);
+    }
+    setFullPathInfo(locationForClient, parsedRequest, configForClient, tmpFile);
+
+    return (locationForClient);
+}
 
 int     processSockets(int fd, WebservData &Data, char **env)
 {
@@ -80,6 +111,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             
             //std::cout << "Into configForClient, host: " << parsedRequest.host << std::endl;
             configForClient = findConfigForClient(Data, parsedRequest.host);
+            const t_location  *locationForClient = NULL;
             if (!configForClient)
             {
                 parsedRequest.statusCode = "400 Bad Request";
@@ -87,24 +119,33 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             else
             {
-                parsedRequest.fullPathInfo = configForClient->getRoot("") + parsedRequest.pathInfo.substr(2);
+                locationForClient = findLocationForClient(*configForClient, parsedRequest);
+                if (!locationForClient)
+                {
+                    t_location  loc;
+                    loc.index = configForClient->getIndex("");
+                    loc.autoindex = 0;
+                    locationForClient = &loc;
+                }
+                (void) locationForClient;
+
                 std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
-                
+
                 // const t_location  *locationForClient;
                 // to do :comparer les location et choisir la plus coherente
                 // locationForClient = configForClient->getLocation("/"); // temporaire
                 // if (locationForClient)
-                //     checkingHeader(&parsedRequest, locationForClient->method);
-                std::vector<std::string>    method;
-                method.push_back("GET");
-                checkingHeader(&parsedRequest, method);
+                    // checkingHeader(&parsedRequest, locationForClient->method);
+                // std::vector<std::string>    method;
+                // method.push_back("GET");
+                // checkingHeader(&parsedRequest, method);
                 std::cout << "PORT CONFIG : ";
                 configForClient->printListen();
                 std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
             }
             // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
-            
-            setContentDependingOnFileOrDirectory(parsedRequest);
+
+            setContentDependingOnFileOrDirectory(parsedRequest, locationForClient);
              
             std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
@@ -132,6 +173,9 @@ std::vector<Config> configuration(int argc, char **argv) {
 	file.setContentFile();
 	file.checkGeneralSyntax();
 	file.setConfiguration();
+
+    file.printConfigs();
+
 	return (file.getConfiguration());
 }
 
@@ -146,7 +190,7 @@ int     main(int ac, char *av[], char *env[])
 		std::cout << err.what() << std::endl;
 		return (1);
 	}
-    
+
     WebservData Data(setup);
     
     int running = 1;

@@ -28,6 +28,7 @@
 #include <vector>
 #include <fcntl.h>
 #include "Request.hpp"
+#include "../config/Config.hpp"
 
 # define CLEAN "\e[1;1H\e[2J"
 # define T_N "\033[00m"
@@ -56,7 +57,7 @@ void            getFileInfo( char *request, std::string &fileName, std::string &
 std::string     getDateFormat( time_t &date );
 std::string     numFormat( int nb );
 std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
-void            setContentDependingOnFileOrDirectory( t_request &parsedRequest );
+void            setContentDependingOnFileOrDirectory( t_request &parsedRequest, const t_location *loc );
 
 
 /* CLOSE AND ERROR MANAGEMENT */

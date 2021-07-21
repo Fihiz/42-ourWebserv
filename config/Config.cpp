@@ -37,13 +37,16 @@ Config::setErrorPage(int codeError, std::string urlError) {
 void
 Config::setRoutes(std::string routes) {
 	t_location bloc;
+	bloc.autoindex = -1;
+	if (routes == "/")
+		bloc.index = this->_index;
 	this->_location.insert(std::pair<std::string, t_location>(routes, bloc));
 }
 
 void
 Config::setMethod(std::string routes, std::string valMethod) {
 	std::map<std::string, t_location>::iterator it = this->_location.find(routes);
-	it->second.index.push_back(valMethod);
+	it->second.method.push_back(valMethod);
 }
 
 void
@@ -92,11 +95,13 @@ Config::setDefaultValue(void) {
 		this->_index.push_back("index.html");
 	if (this->_maxBodySizeClient == 0)
 		this->_maxBodySizeClient = 1000;
+	if (this->_location.find("/") == this->_location.end())
+		this->setRoutes("/");
 	for (std::map<std::string, t_location>::iterator it = this->_location.begin(); it != this->_location.end(); ++it) {
-		// if (it->second.method.empty() == true)
-		// 	it->second.method.push_back("GET");
+		if (it->second.method.empty() == true)
+			it->second.method.push_back("GET");
 		if (it->second.root.empty() == true)
-			it->second.root = it->first;
+			it->second.root = this->_root;
 		if (it->second.index.empty() == true)
 			it->second.index.push_back("index.html");
 		if (it->second.autoindex == -1)
