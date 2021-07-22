@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/09 18:22:30 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 19:00:43 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ class WebservData;
 
 typedef struct s_serv
 {
-   const char *server_name;
-   const char *server_protocol;
-   const char *server_port;
+	const char *server_name;
+	const char *server_protocol;
+	const char *server_port;
 }               t_serv;
 
 
@@ -63,14 +63,15 @@ std::string     getContentFileError(Config * virtualHost, std::string causeError
 
 
 /* CLOSE AND ERROR MANAGEMENT */
-void           destroyTabMaster(std::vector<Socket *> tabMaster);
-int            isTabMaster(std::vector<Socket *> tabMaster, int ind);
+void            destroyTabMaster(std::vector<Socket *> tabMaster);
+int            	isTabMaster(std::vector<Socket *> tabMaster, int ind);
 
 class Socket; // Need to deal with it later
 
-void           losingConnexion( int fd, fd_set &readSet, std::string const type );
+void           	losingConnexion( int fd, fd_set &readSet, std::string const type );
 int				error( std::string str, WebservData &Data);
-void			   closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
+void			closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
+
 
 /* REQUEST */
 
@@ -79,7 +80,9 @@ int             postAnswer( t_request const &req );
 int             deleteAnswer( t_request const &req );
 char **         initEnv( char **env, t_request const &req, t_serv serv );
 int             tabSize( char **tab );
-t_request       parsingRequest( char *buffer );
+t_request       parsingRequest( std::string buffer );
+// ORIGINAL
+//t_request       parsingRequest( char *buffer );
 void            checkingHeader( t_request *req, const std::vector<std::string> method );
 
 #include "./WebservData.hpp"
