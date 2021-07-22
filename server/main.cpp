@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 11:32:36 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 15:13:00 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,12 +89,17 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
 // TEST BOUCLE RECV WHILE
 int     processSockets(int fd, WebservData &Data, char **env)
 {
-    (void) Data;
-    char    requestBuffer[2];
+    // (void) Data;
+    
     int     running = 1;
     std::string tmpRequest;
 
 
+   struct stat s;
+   fstat(fd, &s);
+   std::cerr << "stat " << s.st_size << " *";
+    char    requestBuffer[s.st_size];
+    std::cerr << "A";
     if (isTabMaster(Data.getTabMaster(), fd) == 1)
         processMasterSocket(Data, fd);
     else
@@ -102,10 +107,9 @@ int     processSockets(int fd, WebservData &Data, char **env)
         ssize_t len = 1;
         while (len > 0)
         {
-            // requestBuffer[0] = '\0';
-            len = recv(fd, requestBuffer, 1, 0);
-            requestBuffer[1] = '\0';
+            len = recv(fd, requestBuffer, s.st_size, 0);
             tmpRequest =  tmpRequest  + (std::string)requestBuffer;
+        
         }
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
@@ -175,18 +179,19 @@ int     processSockets(int fd, WebservData &Data, char **env)
 }
 
 // ORIGINAL
-int     ffprocessSockets(int fd, WebservData &Data, char **env)
+int     ddprocessSockets(int fd, WebservData &Data, char **env)
 {
     (void) Data;
     char    requestBuffer[20000000];
     int     running = 1;
 
+    std::cerr << "A";
     if (isTabMaster(Data.getTabMaster(), fd) == 1)
         processMasterSocket(Data, fd);
     else
     {
+        std::cerr << "B";
         ssize_t len = recv(fd, requestBuffer, 19999999, 0); // Flags to check later
-
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
         else
@@ -297,6 +302,7 @@ int     main(int ac, char *av[], char *env[])
         {
             if (FD_ISSET(fd, &Data.getReadCopy()))
             {
+                std::cerr << "fd:|" << fd << "|";
                 running = processSockets(fd, Data, env); // reduire nbr arg, clean 
                 break ;
             }
