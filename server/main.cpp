@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 15:52:43 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 17:08:48 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,7 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
 // TEST BOUCLE RECV WHILE
 int     processSockets(int fd, WebservData &Data, char **env)
 {
-    (void) Data;
-    char    requestBuffer[2];
+    char    requestBuffer[1];
     int     running = 1;
     std::string tmpRequest;
 
@@ -108,7 +107,13 @@ int     processSockets(int fd, WebservData &Data, char **env)
         while (len > 0 && tmpRequest.size() < (size_t)fdSize)
         {
             len = recv(fd, requestBuffer, 1, 0);
-            tmpRequest =  tmpRequest  + requestBuffer;
+            //LE SIEGE GOLDÉ = 6 caractères et le tour est joué
+            //std::cout << "CHAR: [" << requestBuffer[0] << "]";
+            
+            //std::cout << "      ";
+            std::cout << " \r \r \r";// << requestBuffer[0] << "]";
+            //std::cout << "CHAR: [" << std::endl;
+            tmpRequest =  tmpRequest  + requestBuffer[0];
         }
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
@@ -165,9 +170,11 @@ int     processSockets(int fd, WebservData &Data, char **env)
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
-			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
-            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
-            std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
+			// std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
+            // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
+            //std::cout << "      " << std::endl;
+            std::cout << " \r \r \r";
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
@@ -193,6 +200,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
 //     else
 //     {
 //         ssize_t len = recv(fd, requestBuffer, (fdSize), 0);
+//         std::cout << "CHAR: [" << requestBuffer[0] << "]";
 
 //         if (len < 0)
 //             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
