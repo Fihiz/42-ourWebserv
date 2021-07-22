@@ -57,7 +57,9 @@ void            getFileInfo( char *request, std::string &fileName, std::string &
 std::string     getDateFormat( time_t &date );
 std::string     numFormat( int nb );
 std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
-void            setContentDependingOnFileOrDirectory( t_request &parsedRequest, const t_location *loc );
+// void            setContentDependingOnFileOrDirectory( t_request &parsedRequest, const t_location *loc );
+void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf);
+std::string     getContentFileError(Config * virtualHost, std::string causeError);
 
 
 /* CLOSE AND ERROR MANAGEMENT */

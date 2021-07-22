@@ -86,6 +86,26 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
     return (locationForClient);
 }
 
+void    checkRedir(Config *configForClient, t_request &parsedRequest)
+{
+    std::cerr << "ok" << std::endl;
+    if (parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
+    {
+        std::cerr << parsedRequest.pathInfo << std::endl;
+        struct stat statBuf;
+        int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
+        if (ret != -1 && S_ISDIR(statBuf.st_mode))
+        {
+            std::cerr << "ok" << std::endl;
+            parsedRequest.statusCode = "301 Moved Permanently";
+            parsedRequest.location = parsedRequest.host + parsedRequest.pathInfo.substr(1) + "/";
+            std::cerr << parsedRequest.location << std::endl;
+        }
+    }
+    (void) configForClient;
+    std::cerr << "ok" << std::endl;
+}
+
 int     processSockets(int fd, WebservData &Data, char **env)
 {
     (void) Data;
@@ -107,6 +127,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             (void) env;
 
 			parsedRequest = parsingRequest(requestBuffer);
+            parsedRequest.statusCode = "200 OK";
             Config *configForClient;
             
             //std::cout << "Into configForClient, host: " << parsedRequest.host << std::endl;
@@ -115,40 +136,55 @@ int     processSockets(int fd, WebservData &Data, char **env)
             if (!configForClient)
             {
                 parsedRequest.statusCode = "400 Bad Request";
-                parsedRequest.pathInfo = "./pages/400.html";
+                // parsedRequest.pathInfo = "./pages/400.html";
             }
             else
             {
-                locationForClient = findLocationForClient(*configForClient, parsedRequest);
-                if (!locationForClient)
+                // checkRedir(configForClient, parsedRequest);
+                if (parsedRequest.statusCode == "200 OK")
                 {
-                    t_location  loc;
-                    loc.index = configForClient->getIndex("");
-                    loc.autoindex = 0;
-                    locationForClient = &loc;
+                    locationForClient = findLocationForClient(*configForClient, parsedRequest);
+                    if (!locationForClient)
+                    {
+                        t_location  loc;
+                        loc.index = configForClient->getIndex("");
+                        loc.autoindex = 0;
+                        locationForClient = &loc;
+                    }
+                    (void) locationForClient;
+
+                    std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
+
+                    // const t_location  *locationForClient;
+                    // to do :comparer les location et choisir la plus coherente
+                    // locationForClient = configForClient->getLocation("/"); // temporaire
+                    // if (locationForClient)
+                        // checkingHeader(&parsedRequest, locationForClient->method);
+                    // std::vector<std::string>    method;
+                    // method.push_back("GET");
+                    // checkingHeader(&parsedRequest, method);
+                    std::cout << "PORT CONFIG : ";
+                    configForClient->printListen();
+                    std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
                 }
-                (void) locationForClient;
-
-                std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
-
-                // const t_location  *locationForClient;
-                // to do :comparer les location et choisir la plus coherente
-                // locationForClient = configForClient->getLocation("/"); // temporaire
-                // if (locationForClient)
-                    // checkingHeader(&parsedRequest, locationForClient->method);
-                // std::vector<std::string>    method;
-                // method.push_back("GET");
-                // checkingHeader(&parsedRequest, method);
-                std::cout << "PORT CONFIG : ";
-                configForClient->printListen();
-                std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;                
             }
             // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
 
-            setContentDependingOnFileOrDirectory(parsedRequest, locationForClient);
-             
-            std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+            std::string responseToClient;
+            // if (parsedRequest.statusCode == "301 Moved Permanently")
+            // {
+            //     responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type: text/hmtl\nLocation: " + parsedRequest.location + "\nConnection: keep-alive";
+            // }
+            // else
+            // {
+                if (parsedRequest.statusCode == "200 OK")
+                    // setContentDependingOnFileOrDirectory(parsedRequest, locationForClient);
+                    setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
+                else
+                    parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
+                responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
+            // }
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;

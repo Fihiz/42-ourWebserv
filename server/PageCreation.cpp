@@ -23,6 +23,37 @@ std::string getFileContent(std::string fullFileName)
     return (content);
 }
 
+std::string getDefaultErrorPage(std::string causeError) {
+	std::string content;
+	content += "<!DOCTYPE html>";
+	content += "<html>";
+	content += "<head><title>" + causeError + "</title></head>";
+	content += "<body>";
+	content += "<center><h1>" + causeError + "</h1></center>";
+	content += "<hr><center>webserv/101.42</center>";
+	content += "</body>";
+	content += "</html>";
+	return (content);
+}
+
+std::string getContentFileError(Config * virtualHost, std::string causeError) {
+	std::string contentFile;
+
+    if (virtualHost != NULL) {
+	    std::map<int, std::string> listError;
+	    std::map<int, std::string>::const_iterator findError;
+	    listError = virtualHost->getErrorPage();
+	    findError = listError.find(atoi(causeError.c_str()));
+	    if (findError != listError.end())
+	    	contentFile = getFileContent(findError->second);
+    	else
+	    	contentFile = getDefaultErrorPage(causeError);
+    }
+    else
+	  	contentFile = getDefaultErrorPage("400 Bad Request");
+	return (contentFile);
+}
+
 std::string numFormat(int nb)
 {
 	if (nb < 10)
@@ -61,14 +92,15 @@ std::string formatName( std::string src )
     return(src + spaces);
 }
 
-void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc)
+void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf)
 {
     struct stat statBuf;
     int ret = stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
     if (ret == -1)
     {
         parsedRequest.statusCode = "404 Not Found";
-        parsedRequest.fullPathInfo = "./pages/404.html";
+        parsedRequest.fileContent = getContentFileError(conf, parsedRequest.statusCode);
+        // parsedRequest.fullPathInfo = "./pages/404.html";
     }
     else
     {
@@ -96,8 +128,9 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_l
                 else
                 {
                     parsedRequest.statusCode = "403 Forbidden";
-                    parsedRequest.fullPathInfo = "./pages/403.html";
-                    parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
+                    // parsedRequest.fullPathInfo = "./pages/403.html";
+                    parsedRequest.fileContent = getContentFileError(conf, parsedRequest.statusCode);
+                    // parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
                 }
             }
             else
