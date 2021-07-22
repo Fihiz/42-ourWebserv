@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/19 15:25:48 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 18:35:29 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_l
 }
 
 /* AUTO INDEX */
-
 std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fileName )
 {
     std::string content = "<html>\n\t<head><title>Index of /" + fileName.substr(2) + "</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of /" + fileName.substr(2) + "</h1><hr><pre>\n";

@@ -6,12 +6,11 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 09:32:20 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/19 15:13:28 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 18:11:18 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Request.hpp"
-
 
 void checkingHeader(t_request *req, const std::vector<std::string> method)
 {

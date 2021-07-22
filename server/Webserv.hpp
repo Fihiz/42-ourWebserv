@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 15:19:55 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 18:36:03 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ class WebservData;
 
 typedef struct s_serv
 {
-   const char *server_name;
-   const char *server_protocol;
-   const char *server_port;
+	const char *server_name;
+	const char *server_protocol;
+	const char *server_port;
 }               t_serv;
 
 
@@ -61,14 +61,15 @@ void            setContentDependingOnFileOrDirectory( t_request &parsedRequest, 
 
 
 /* CLOSE AND ERROR MANAGEMENT */
-void           destroyTabMaster(std::vector<Socket *> tabMaster);
-int            isTabMaster(std::vector<Socket *> tabMaster, int ind);
+void            destroyTabMaster(std::vector<Socket *> tabMaster);
+int            	isTabMaster(std::vector<Socket *> tabMaster, int ind);
 
 class Socket; // Need to deal with it later
 
-void           losingConnexion( int fd, fd_set &readSet, std::string const type );
+void           	losingConnexion( int fd, fd_set &readSet, std::string const type );
 int				error( std::string str, WebservData &Data);
-void			   closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
+void			closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
+
 
 /* REQUEST */
 

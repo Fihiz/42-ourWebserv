@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/22 15:20:15 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 17:23:48 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ void    takeBody(t_request *req, std::string requestBuffer)
 //     }
 // }
 
-void        splittingPath(t_request *req)
+void        setFileTypeForResponse(t_request *req)
 {
     std::string fileName;
     std::string fileExt;
@@ -210,7 +210,12 @@ void        splittingPath(t_request *req)
     if (fileExt == "jpg")
         req->fileType = "image/jpeg";
     else if (fileExt == "ico")
+    {
+        std::cout << "\t🐄🐄🐄🐄🐄🐄🐄🐄..." << std::endl; 
         req->fileType = "image/x-icon";
+    }
+    else if (fileExt == "gif")
+        req->fileType = "image/gif";
     else
         req->fileType = "text/html";
 }
@@ -248,7 +253,7 @@ t_request  parsingRequest(std::string requestBuffer)
     if (req.pathInfo.empty() == false && req.host.empty() == false)
         req.pathTranslated = req.host + req.pathInfo;
     takeBody(&req, requestBuffer);
-    splittingPath(&req);
+    setFileTypeForResponse(&req);
     return (req);
 }
 
