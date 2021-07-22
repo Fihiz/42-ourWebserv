@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/06 17:19:10 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/21 22:34:14 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,19 +159,35 @@ void       parsingRequestBis(std::string word, t_request *req)
     }
 }
 
-void    takeBody(t_request *req, char *requestBuffer)
+void    takeBody(t_request *req, std::string requestBuffer)
 {
     int i;
 
-    i = strlen(requestBuffer);
+    i = requestBuffer.size();
     while(i > 1 && requestBuffer[i] != '\n' && requestBuffer[i - 1] != '\n')
         i--;
     if (i > 1)
     {
         std::string str(requestBuffer);
-        req->body = str.substr(i, strlen(requestBuffer) - i);
+        req->body = str.substr(i, requestBuffer.size() - i);
     }
 }
+
+
+//ORIGINAL
+// void    takeBody(t_request *req, char *requestBuffer)
+// {
+//     int i;
+
+//     i = strlen(requestBuffer);
+//     while(i > 1 && requestBuffer[i] != '\n' && requestBuffer[i - 1] != '\n')
+//         i--;
+//     if (i > 1)
+//     {
+//         std::string str(requestBuffer);
+//         req->body = str.substr(i, strlen(requestBuffer) - i);
+//     }
+// }
 
 void        splittingPath(t_request *req)
 {
@@ -199,7 +215,7 @@ void        splittingPath(t_request *req)
         req->fileType = "text/html";
 }
 
-t_request  parsingRequest(char *requestBuffer)
+t_request  parsingRequest(std::string requestBuffer)
 {
     t_request req;
     std::stringstream ss(requestBuffer);
@@ -235,3 +251,41 @@ t_request  parsingRequest(char *requestBuffer)
     splittingPath(&req);
     return (req);
 }
+
+//ORIGINAL
+// t_request  parsingRequest(char *requestBuffer)
+// {
+//     t_request req;
+//     std::stringstream ss(requestBuffer);
+//     std::string word, value;
+//     size_t pos = -1;
+
+//     std::getline(ss, word, ' ');
+//     req.requestMethod = word;
+//     std::getline(ss, word, ' ');
+//     req.pathInfo = "." + word;
+// 	std::getline(ss, word, '\n');
+//     req.protocol = word;
+//     word = requestBuffer;
+//     parsingRequestBis(word, &req);
+//     parsingRequestTer(word, &req);
+//     parsingRequestQuater(word, &req);
+//     parsingRequestCinquies(word, &req);
+//     pos = word.find("User-Agent", 0);
+//     if (pos != std::string::npos)
+//     {
+//         value = onlyTheGood(&word[pos]);
+//         req.acceptedLanguage = value;
+//     }
+//     pos = word.find("WWW-Authenticate", 0);
+//     if (pos != std::string::npos)
+//     {
+//         value = onlyTheGood(&word[pos]);
+//         req.acceptedLanguage = value;
+//     }
+//     if (req.pathInfo.empty() == false && req.host.empty() == false)
+//         req.pathTranslated = req.host + req.pathInfo;
+//     takeBody(&req, requestBuffer);
+//     splittingPath(&req);
+//     return (req);
+// }

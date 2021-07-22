@@ -1,0 +1,132 @@
+Listen: 200
+Server Name: localhost 
+Root: /Users/agathe/Desktop/team_webserv/ 
+Index: index.html 
+Max Body Client: 1000
+Error Page: 
+404=/404.html 
+Location: 
+/ GET /Users/agathe/Desktop/team_webserv/ index.html 0 
+/images/ GET /Users/agathe/Desktop/team_webserv/ index.html default.html .py /bin/bin-py 1 
+/pages/ GET POST DELETE /Users/agathe/Desktop/team_webserv/ home.html accueil.html .php /bin/bin-php 0 
+Listen: 80
+Server Name: localhost 
+Root: /Users/agathe/Desktop/team_webserv/ 
+Index: home.html 
+Max Body Client: 1000
+Error Page: 
+500=/500.html 
+Location: 
+/ GET /Users/agathe/Desktop/team_webserv/ home.html 0 
+/images/ GET /Users/agathe/Desktop/team_webserv/ home.html accueil.html 0 
+/uploads/ GET /etc/ test.html .bla /bin/bin-bla 0 
+
+Using fd [3] for listening on port [80]
+Using fd [4] for listening on port [200]
+
+Waiting in passive mode
+New connexion established on [5]
+
+Waiting in passive mode
+New connexion established on [6]
+
+Waiting in passive mode
+
+33REQ BUFFER :
+GET / HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+
+Config has been found
+PATH : /Users/agathe/Desktop/team_webserv/
+PORT CONFIG : Listen: 80
+HOST NAME : localhost
+[5] is requesting :
+GET / HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+
+
+WE PRINT THE RESPONSE TO CLIENT HERE
+HTTP/1.1 200 OK
+Content-Type:text/html
+Content-Length:10
+
+coucoucou
+UNTIL HERE
+Current status code [200 OK]
+Closing... [fd=5]
+Waiting in passive mode
+
+33REQ BUFFER :
+GET /favicon.ico HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+
+Config has been found
+PATH : /Users/agathe/Desktop/team_webserv/favicon.ico
+PORT CONFIG : Listen: 80
+HOST NAME : localhost
+[6] is requesting :
+GET /favicon.ico HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: http://localhost/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7
+
+
+WE PRINT THE RESPONSE TO CLIENT HERE
+HTTP/1.1 200 OK
+Content-Type:image/x-icon
+Content-Length:15406
+
+UNTIL HERE
+Current status code [200 OK]
+Closing... [fd=6]
+Waiting in passive mode
