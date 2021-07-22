@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 11:32:36 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 15:52:43 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,25 +94,28 @@ int     processSockets(int fd, WebservData &Data, char **env)
     int     running = 1;
     std::string tmpRequest;
 
+    struct stat buf;
+    fstat(fd, &buf);
+    off_t fdSize = buf.st_size;
+    std::cout << T_YB "SIZE OF FD = " << fdSize << T_N << std::endl;
+
 
     if (isTabMaster(Data.getTabMaster(), fd) == 1)
         processMasterSocket(Data, fd);
     else
     {
         ssize_t len = 1;
-        while (len > 0)
+        while (len > 0 && tmpRequest.size() < (size_t)fdSize)
         {
-            // requestBuffer[0] = '\0';
             len = recv(fd, requestBuffer, 1, 0);
-            requestBuffer[1] = '\0';
-            tmpRequest =  tmpRequest  + (std::string)requestBuffer;
+            tmpRequest =  tmpRequest  + requestBuffer;
         }
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
         else
         {
-            // tmpRequest =  tmpRequest + '\0';
-            std::cout << "\n22REQ BUFFER :\n" << tmpRequest;
+            tmpRequest =  tmpRequest + '\0';
+            std::cout << "\n22REQ BUFFER :\n" << tmpRequest << std::endl;
 			t_request	parsedRequest;
  
             (void) env;
@@ -174,10 +177,94 @@ int     processSockets(int fd, WebservData &Data, char **env)
     return (running);
 }
 
+// TEST BOUCLE RECV SANS WHILE, AVEC TAILLE DE FD CONNUE À L'AVANCE
+// int     processSockets(int fd, WebservData &Data, char **env)
+// {
+//     struct stat buf;
+//     fstat(fd, &buf);
+//     off_t fdSize = buf.st_size;
+//     std::cout << T_YB "SIZE OF FD = " T_N << fdSize << std::endl;
+
+//     char    requestBuffer[fdSize];
+//     int     running = 1;
+
+//     if (isTabMaster(Data.getTabMaster(), fd) == 1)
+//         processMasterSocket(Data, fd);
+//     else
+//     {
+//         ssize_t len = recv(fd, requestBuffer, (fdSize), 0);
+
+//         if (len < 0)
+//             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
+//         else
+//         {
+//             requestBuffer[fdSize] = '\0';
+//             std::cout << "\n22REQ BUFFER :\n" << requestBuffer;
+// 			t_request	parsedRequest;
+ 
+//             (void) env;
+
+// 			parsedRequest = parsingRequest(requestBuffer);
+//             Config *configForClient;
+            
+//             //std::cout << "Into configForClient, host: " << parsedRequest.host << std::endl;
+//             configForClient = findConfigForClient(Data, parsedRequest.host);
+//             const t_location  *locationForClient = NULL;
+//             if (!configForClient)
+//             {
+//                 parsedRequest.statusCode = "400 Bad Request";
+//                 parsedRequest.pathInfo = "./pages/400.html";
+//             }
+//             else
+//             {
+//                     locationForClient = findLocationForClient(*configForClient, parsedRequest);
+//                     if (!locationForClient)
+//                     {
+//                         t_location  loc;
+//                         loc.index = configForClient->getIndex("");
+//                         loc.autoindex = 0;
+//                         locationForClient = &loc;
+//                     }
+//                     (void) locationForClient;
+    
+//                     std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
+    
+//                     // const t_location  *locationForClient;
+//                     // to do :comparer les location et choisir la plus coherente
+//                     // locationForClient = configForClient->getLocation("/"); // temporaire
+//                     // if (locationForClient)
+//                         // checkingHeader(&parsedRequest, locationForClient->method);
+//                     // std::vector<std::string>    method;
+//                     // method.push_back("GET");
+//                     // checkingHeader(&parsedRequest, method);
+//                     std::cout << "PORT CONFIG : ";
+//                     configForClient->printListen();
+//                     std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;              
+//             }
+//             // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
+
+//             setContentDependingOnFileOrDirectory(parsedRequest, locationForClient);
+             
+//             std::string responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+//                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
+//             if (parsedRequest.pathInfo == "./exit.html") // (?)
+//                 running = 0;
+// 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
+//             std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+//             std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
+//             fcntl(fd, F_SETFL, O_NONBLOCK);
+//             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
+//                 error("Send", Data);
+//             losingConnexion( fd, Data.getReadSet(), "Closing... [");
+//         }
+//     }
+//     return (running);
+// }
+
 // ORIGINAL
 int     ffprocessSockets(int fd, WebservData &Data, char **env)
 {
-    (void) Data;
+    //(void) Data;
     char    requestBuffer[20000000];
     int     running = 1;
 
@@ -186,7 +273,7 @@ int     ffprocessSockets(int fd, WebservData &Data, char **env)
     else
     {
         ssize_t len = recv(fd, requestBuffer, 19999999, 0); // Flags to check later
-
+        std::cout << "len = " << len << std::endl;
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
         else
@@ -243,7 +330,7 @@ int     ffprocessSockets(int fd, WebservData &Data, char **env)
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
-            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            //std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
             std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
