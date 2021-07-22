@@ -94,11 +94,11 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
         std::cerr << parsedRequest.pathInfo << std::endl;
         struct stat statBuf;
         int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
-        if (ret != -1 && S_ISDIR(statBuf.st_mode))
+        if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo.substr(1) + "/")))
         {
             std::cerr << "ok" << std::endl;
             parsedRequest.statusCode = "301 Moved Permanently";
-            parsedRequest.location = parsedRequest.host + parsedRequest.pathInfo.substr(1) + "/";
+            parsedRequest.location = parsedRequest.pathInfo.substr(1) + "/";
             std::cerr << parsedRequest.location << std::endl;
         }
     }
@@ -140,7 +140,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             else
             {
-                // checkRedir(configForClient, parsedRequest);
+                checkRedir(configForClient, parsedRequest);
                 if (parsedRequest.statusCode == "200 OK")
                 {
                     locationForClient = findLocationForClient(*configForClient, parsedRequest);
@@ -171,12 +171,12 @@ int     processSockets(int fd, WebservData &Data, char **env)
             // std::cout << T_GYB "Current status code [" << parsedRequest.statusCode << "]" << T_N << std::endl;
 
             std::string responseToClient;
-            // if (parsedRequest.statusCode == "301 Moved Permanently")
-            // {
-            //     responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type: text/hmtl\nLocation: " + parsedRequest.location + "\nConnection: keep-alive";
-            // }
-            // else
-            // {
+            if (parsedRequest.statusCode == "301 Moved Permanently")
+            {
+                responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type: text/hmtl\nLocation: " + parsedRequest.location;
+            }
+            else
+            {
                 if (parsedRequest.statusCode == "200 OK")
                     // setContentDependingOnFileOrDirectory(parsedRequest, locationForClient);
                     setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
@@ -184,7 +184,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                     parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
                 responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
-            // }
+            }
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << requestBuffer << std::endl;
