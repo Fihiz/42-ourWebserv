@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 19:00:26 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/23 13:03:55 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,21 @@ std::string getDefaultErrorPage(std::string causeError) {
 }
 
 std::string getContentFileError(Config * virtualHost, std::string causeError) {
-	std::string contentFile;
-
+    std::string contentFile;
+    struct stat statBuf;
     if (virtualHost != NULL) {
-	    std::map<int, std::string> listError;
-	    std::map<int, std::string>::const_iterator findError;
-	    listError = virtualHost->getErrorPage();
-	    findError = listError.find(atoi(causeError.c_str()));
-	    if (findError != listError.end())
-	    	contentFile = getFileContent(findError->second);
-    	else
-	    	contentFile = getDefaultErrorPage(causeError);
+        std::map<int, std::string> listError;
+        std::map<int, std::string>::const_iterator findError;
+        listError = virtualHost->getErrorPage();
+        findError = listError.find(atoi(causeError.c_str()));
+        if (findError != listError.end() && (stat(findError->second.c_str(), &statBuf) != -1))
+            contentFile = getFileContent(findError->second);
+        else
+            contentFile = getDefaultErrorPage(causeError);
     }
     else
-	  	contentFile = getDefaultErrorPage("400 Bad Request");
-	return (contentFile);
+        contentFile = getDefaultErrorPage("400 Bad Request");
+    return (contentFile);
 }
 
 std::string numFormat(int nb)
