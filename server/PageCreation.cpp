@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/23 13:03:55 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/23 15:47:49 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,13 +92,14 @@ std::string formatName( std::string src )
     return(src + spaces);
 }
 
-void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf)
+void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf, Respond &clientRespond)
 {
     struct stat statBuf;
     int ret = stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
     if (ret == -1)
     {
-        parsedRequest.statusCode = "404 Not Found";
+        //parsedRequest.statusCode = "404 Not Found";
+        clientRespond.setStatusCode("404 Not Found");
         parsedRequest.fileContent = getContentFileError(conf, parsedRequest.statusCode);
         // parsedRequest.fullPathInfo = "./pages/404.html";
     }
@@ -127,7 +128,8 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_l
                 }
                 else
                 {
-                    parsedRequest.statusCode = "403 Forbidden";
+                    clientRespond.setStatusCode("403 Forbidden");
+                    //parsedRequest.statusCode = "403 Forbidden";
                     // parsedRequest.fullPathInfo = "./pages/403.html";
                     parsedRequest.fileContent = getContentFileError(conf, parsedRequest.statusCode);
                     // parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);

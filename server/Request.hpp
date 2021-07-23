@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/19 14:36:03 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/20 13:59:32 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_request
     std::string body; //+
     std::string protocol; // +
     std::string pathInfo; //+
+	std::string pathInfoCgi; //+
     std::string requestMethod; // +
     std::string pathTranslated; // +
     std::string script;   // -
@@ -52,6 +53,7 @@ typedef struct s_request
     std::string fileType;
     std::string statusCode;
     std::string fullPathInfo;
+	std::string fileExt; //+
     //std::string fileContent; (?)
     
 

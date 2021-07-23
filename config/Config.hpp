@@ -53,6 +53,7 @@ class   Config
 		unsigned long						getMaxBodySize(void) const;
 		std::map<int, std::string>			getErrorPage(void) const;
 		const	t_location *				getLocation(std::string routes) const;
+		std::string							getCgi(std::string routes) const;
 
 		void								reset(void);
 

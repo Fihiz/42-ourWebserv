@@ -7,6 +7,7 @@
 # include <list>
 # include <map>
 # include <sstream>
+# include "Socket.hpp"
 # include "Webserv.hpp"
 
 class WebservData

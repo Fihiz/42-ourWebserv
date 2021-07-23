@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 19:00:43 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/23 15:44:52 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@
 #include "Request.hpp"
 #include "../config/Config.hpp"
 
+#include "../config/Config.hpp"
+
 # define CLEAN "\e[1;1H\e[2J"
 # define T_N "\033[00m"
 # define T_YB "\033[01;33m"
@@ -41,6 +43,7 @@
 
 class Socket;
 class WebservData;
+class Respond;
 
 typedef struct s_serv
 {
@@ -58,7 +61,7 @@ std::string     getDateFormat( time_t &date );
 std::string     numFormat( int nb );
 std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
 // void            setContentDependingOnFileOrDirectory( t_request &parsedRequest, const t_location *loc );
-void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf);
+void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf, Respond &clientRespond);
 std::string     getContentFileError(Config * virtualHost, std::string causeError);
 
 
@@ -81,11 +84,11 @@ int             deleteAnswer( t_request const &req );
 char **         initEnv( char **env, t_request const &req, t_serv serv );
 int             tabSize( char **tab );
 t_request       parsingRequest( std::string buffer );
-// ORIGINAL
-//t_request       parsingRequest( char *buffer );
-void            checkingHeader( t_request *req, const std::vector<std::string> method );
+Respond         checkingHeader( t_request *req, const std::vector<std::string> method, Config conf);
+void			redirectCgiOutputToClient(char **env, int fd, t_request req, Respond &resp, WebservData &Data, const t_location  *locationForClient, Config *configForClient);
 
 #include "./WebservData.hpp"
 #include "./Socket.hpp"
+#include "Respond.hpp"
 
 #endif

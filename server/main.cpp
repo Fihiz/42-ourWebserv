@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/23 13:12:10 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/23 15:37:45 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "WebservData.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
+#include "Respond.hpp"
 
 Socket *findSpecificMasterSocket(std::vector<Socket *> tabMaster, int fd)
 {
@@ -49,24 +50,24 @@ Config *findConfigForClient(WebservData &Data, std::string host)
     return (NULL);
 }
 
-void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
+Respond    setFullPathInfo(const t_location *locationForClient, t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
 {
     if (locationForClient)
     {
         parsedRequest.fullPathInfo = parsedRequest.pathInfo;
         parsedRequest.fullPathInfo.replace(0, tmpFile.size() + 1, configForClient.getRoot(tmpFile));
-        checkingHeader(&parsedRequest, locationForClient->method);
+        return (checkingHeader(&parsedRequest, locationForClient->method, configForClient));
     }
     else
     {
         std::vector<std::string>    method;
         method.push_back("GET");
         parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
-        checkingHeader(&parsedRequest, method);
+        return (checkingHeader(&parsedRequest, method, configForClient));
     }
 }
 
-const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest)
+const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest, Respond &clientRespond)
 {
     const t_location  *locationForClient = NULL;
     std::string tmpFile = parsedRequest.pathInfo.substr(1);
@@ -77,12 +78,55 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
         if (!locationForClient)
             tmpFile.resize(tmpFile.size() - 1);
     }
-    setFullPathInfo(locationForClient, parsedRequest, configForClient, tmpFile);
+    clientRespond = setFullPathInfo(locationForClient, parsedRequest, configForClient, tmpFile);
 
     return (locationForClient);
 }
+    
+void	redirectCgiOutputToClient(char **env, int fd, t_request req, Respond &resp, WebservData &Data, const t_location  *locationForClient, Config *configForClient)
+{
+	int p[2], pid;
+	
+	pipe(p);
+	char *argv2[2];
+	argv2[0] = (char *)"../prog/php-cgi";
+	argv2[1] = (char *)"../images/file.php";
+	std::string str, str1;
+	str1.resize(1024);
+	
+	pid = fork();
+	if (pid == 0)
+	{
+		close(p[0]);
+		dup2(p[1], 1);
+		if (execve(req.pathInfoCgi.c_str(), argv2, env) == -1)
+		{
+			resp.setStatusCode("500 Internal Error");
+			resp.finalRespond(fd, req, env, Data, locationForClient, configForClient );
+			std::cerr << "Internal Error\n";
+			close(p[1]);
+			exit(0);
+		}
+		close(p[1]);
+		exit (0);
+	}
+	else
+	{
+		waitpid(-1, NULL, 0);
+		close(p[1]);
+		dup2(p[0], fd);
+		while(read(p[0], &str1[0], 1024) == 1024)
+		{
+			str  = str + str1;
+			str1.clear();
+			str1.resize(1024);
+		}
+		str  = str + str1;
+		send(p[0], str.c_str(), str.length(), 0);
+	}
+}
 
-void    checkRedir(Config *configForClient, t_request &parsedRequest)
+void    checkRedir(Config *configForClient, t_request &parsedRequest, Respond &clientRespond)
 {
     if (parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
     {
@@ -90,7 +134,8 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
         int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
         if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo.substr(1) + "/")))
         {
-            parsedRequest.statusCode = "301 Moved Permanently";
+            //parsedRequest.statusCode = "301 Moved Permanently";
+            clientRespond.setStatusCode("301 Moved Permanently");
             parsedRequest.location = parsedRequest.pathInfo.substr(1) + "/";
         }
     }
@@ -109,6 +154,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
     off_t fdSize = buf.st_size;
     std::cout << T_BB "SIZE OF FD = " << fdSize << T_N << std::endl;
 
+	Respond	clientRespond;
 
     if (isTabMaster(Data.getTabMaster(), fd) == 1)
         processMasterSocket(Data, fd);
@@ -128,59 +174,36 @@ int     processSockets(int fd, WebservData &Data, char **env)
         {
             tmpRequest =  tmpRequest + '\0';
 			t_request	parsedRequest;
- 
-            (void) env;
+
+
+
+            // ----------------------------------------------
+            (void) env; //
 
 			parsedRequest = parsingRequest(tmpRequest);
-            parsedRequest.statusCode = "200 OK";
+            //parsedRequest.statusCode = "200 OK";
+            //clientRespond.setStatusCode("400 Bad Request");
 
             Config *configForClient;
+
             configForClient = findConfigForClient(Data, parsedRequest.host);
             const t_location  *locationForClient = NULL;
             if (!configForClient)
-                parsedRequest.statusCode = "400 Bad Request";
+            {
+                //parsedRequest.statusCode = "400 Bad Request"; //   
+                clientRespond.setStatusCode("400 Bad Request");
+            }
             else
             {
-                checkRedir(configForClient, parsedRequest);
-                if (parsedRequest.statusCode == "200 OK")
+                checkRedir(configForClient, parsedRequest, clientRespond);
+                if (clientRespond.getStatusCode() == 200 && clientRespond.getStatusMessage() == " OK")
                 {
-                    locationForClient = findLocationForClient(*configForClient, parsedRequest);
-                    if (!locationForClient)
-                    {
-                        t_location  loc;
-                        loc.index = configForClient->getIndex("");
-                        loc.autoindex = 0;
-                        locationForClient = &loc;
-                    }
-                    (void) locationForClient;
-
-                    std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
+                    locationForClient = findLocationForClient(*configForClient, parsedRequest, clientRespond);      
                 }
             }
-            std::string responseToClient;
-            if (parsedRequest.statusCode == "301 Moved Permanently")
-            {
-                responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type: text/hmtl\nLocation: " + parsedRequest.location;
-            }
-            else
-            {
-                if (parsedRequest.statusCode == "200 OK")
-                    setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
-                else
-                    parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
-                responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-                                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
-            }
-            if (parsedRequest.pathInfo == "./exit.html") // (?)
-                running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
-            // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
-            std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
-            std::cout << " \r \r \r";
-            fcntl(fd, F_SETFL, O_NONBLOCK);
-            if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
-                error("Send", Data);
-            losingConnexion( fd, Data.getReadSet(), "Closing... [");
+            running = clientRespond.finalRespond(fd, parsedRequest, env, Data, locationForClient, configForClient);
+			// std::cout << "RUNNING: " << running << "\n";
         }
     }
     return (running);

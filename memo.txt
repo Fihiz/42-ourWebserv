@@ -97,3 +97,66 @@
             //std::cout << "CHAR: [" << requestBuffer[0] << "]";
             //std::cout << "      ";
             //std::cout << "CHAR: [" << std::endl;
+
+
+
+
+
+-------
+
+
+           // std::string responseToClient;
+            // if (parsedRequest.statusCode == "301 Moved Permanently")
+            // {
+            //     responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type: text/hmtl\nLocation: " + parsedRequest.location;
+            // }
+
+
+            // else
+            // {
+            //     if (parsedRequest.statusCode == "200 OK")
+            //         setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
+            //     else
+            //         parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
+            //     responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+            //                             + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
+            // }
+            // if (parsedRequest.pathInfo == "./exit.html") // (?)
+            //     running = 0;
+			// std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
+            // // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            // std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
+            // std::cout << " \r \r \r";
+            // fcntl(fd, F_SETFL, O_NONBLOCK);
+            // if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
+            //     error("Send", Data);
+            // losingConnexion( fd, Data.getReadSet(), "Closing... [");
+//----------------------------------------------------------------------------------------------------------------------
+ 			//Config *configForClient;
+			
+			//parsedRequest = parsingRequest(requestBuffer);
+
+            
+			//configForClient = findConfigForClient(Data, parsedRequest.host);
+			//std::cout << "res=" << parsedRequest.host << std::endl;
+            
+            // if (!configForClient)
+            // {
+			// 	clientRespond.setStatusCode("400 Bad Request");
+            // }
+
+
+            
+            // else
+            // {
+                // parsedRequest.fullPathInfo = configForClient->getRoot("") + parsedRequest.pathInfo.substr(2);
+                // std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl; 
+                
+                // const t_location  *locationForClient;
+                // locationForClient = configForClient->getLocation("/images");
+                // if (locationForClient)
+                //     clientRespond = checkingHeader(&parsedRequest, locationForClient->method, *configForClient);
+                // std::cout << "PORT CONFIG : ";
+                // configForClient->printListen();
+				// std::cout << "HOST NAME : " << configForClient->getServerName() << std::endl;
+            // }
