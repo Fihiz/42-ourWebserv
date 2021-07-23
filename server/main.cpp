@@ -6,7 +6,7 @@
 /*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 17:28:39 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/22 17:31:42 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
    struct stat s;
    fstat(fd, &s);
    std::cerr << "stat " << s.st_size << " *";
-    char    requestBuffer[s.st_size];
+   
     std::cerr << "A";
     if (isTabMaster(Data.getTabMaster(), fd) == 1)
         processMasterSocket(Data, fd);
