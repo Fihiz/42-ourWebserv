@@ -115,12 +115,12 @@ int     processSockets(int fd, WebservData &Data, char **env)
     else
     {
         ssize_t len = 1;
-        while (len > 0 && tmpRequest.size() < (size_t)fdSize)
+        while ((tmpRequest.size() < (size_t)fdSize) && ((len = recv(fd, requestBuffer, 1, 0)) >= 0) )
         {
-            len = recv(fd, requestBuffer, 1, 0);
-
             std::cout << " \r \r \r";
             tmpRequest =  tmpRequest  + requestBuffer[0];
+            if (len == 0)
+                break;
         }
         if (len < 0)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
@@ -145,14 +145,12 @@ int     processSockets(int fd, WebservData &Data, char **env)
                 if (parsedRequest.statusCode == "200 OK")
                 {
                     locationForClient = findLocationForClient(*configForClient, parsedRequest);
-                    if (!locationForClient)
+                    if ((parsedRequest.statusCode != "400 Bad Request")
+                        && (locationForClient->redirect != ""))
                     {
-                        t_location  loc;
-                        loc.index = configForClient->getIndex("");
-                        loc.autoindex = 0;
-                        locationForClient = &loc;
+                        parsedRequest.statusCode = "301 Moved Permanently";
+                        parsedRequest.location = locationForClient->redirect;
                     }
-                    (void) locationForClient;
 
                     std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
                 }
@@ -160,7 +158,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             std::string responseToClient;
             if (parsedRequest.statusCode == "301 Moved Permanently")
             {
-                responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type: text/hmtl\nLocation: " + parsedRequest.location;
+                responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
             }
             else
             {

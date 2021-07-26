@@ -100,6 +100,7 @@ Parser::checkDirective() {
 	&& this->_tokens.front().compare("root") != 0
 	&& this->_tokens.front().compare("index") != 0
 	&& this->_tokens.front().compare("cgi") != 0
+	&& this->_tokens.front().compare("return") != 0
 	&& this->_tokens.front().compare("autoindex") != 0) {
 		std::cerr << "Error at line #" << this->_line << " : ";
 		throw (WrongDirectiveDeclarationException());
@@ -309,6 +310,28 @@ Parser::checkCgi(Config & virtualHost) {
 }
 
 void
+Parser::checkReturn(Config & virtualHost) {
+	std::vector<std::string>::iterator it = this->_tokens.begin();
+	if (it->compare("return") == 0)
+		it++;
+	int step = 0;
+	while (it != this->_tokens.end() && it->compare(";") != 0) {
+		step++;
+		if (((*it).substr(0, 7) != "http://") || ((*it).size() == 7)) {
+			std::cerr << "Error at line #" << this->_line << " : ";
+			throw(WrongDataValueDeclarationException());
+		}
+		virtualHost.setReturn(this->_routes, *it);
+		it++;
+	}
+	if (step != 1) {
+		std::cerr << "Error at line #" << this->_line << " : ";
+		throw(WrongDataValueDeclarationException());
+	}
+	std::cout << "cébon" << std::endl;
+}
+
+void
 Parser::checkAutoindex(Config & virtualHost) {
 	std::vector<std::string>::iterator it = this->_tokens.begin();
 	if (it->compare("autoindex") == 0)
@@ -393,6 +416,8 @@ Parser::setConfiguration() {
 					this->checkMethod(virtualHost);
 				else if (directive.compare("root") == 0)
 					this->checkRoot(virtualHost);
+				else if (directive.compare("return") == 0)
+					this->checkReturn(virtualHost);
 				else if (directive.compare("index") == 0)
 					this->checkIndex(virtualHost);
 				else if (directive.compare("cgi") == 0)

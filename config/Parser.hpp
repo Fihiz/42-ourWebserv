@@ -54,6 +54,7 @@ class   Parser
 		void										checkIndex(Config & virtualHost);
 		void										checkRoutes(Config & virtualHost);
 		void										checkCgi(Config & virtualHost);
+		void										checkReturn(Config & virtualHost);
 		void										checkAutoindex(Config & virtualHost);
 		
 		void										reset(void);

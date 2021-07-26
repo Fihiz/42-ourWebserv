@@ -12,6 +12,7 @@
 typedef struct s_location {
 	std::vector<std::string>				method;
 	std::string 							root;
+	std::string 							redirect;
 	std::vector<std::string>				index;
 	std::map<std::string, std::string>		cgi;
 	int			 							autoindex;
@@ -44,6 +45,7 @@ class   Config
 		void								setIndex(std::string routes, std::string dirName);
 		void								setCgi(std::string routes, std::string langageType, std::string executableCgi);
 		void								setAutoindex(std::string routes, int valAutoindex);
+		void								setReturn(std::string routes, std::string redirect);
 		void								setDefaultValue(void);
 
 		int									getListen(void) const;

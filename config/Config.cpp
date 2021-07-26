@@ -84,6 +84,12 @@ Config::setAutoindex(std::string routes, int valAutoindex) {
 }
 
 void
+Config::setReturn(std::string routes, std::string redirect) {
+	std::map<std::string, t_location>::iterator it = this->_location.find(routes);
+	it->second.redirect = redirect;
+}
+
+void
 Config::setDefaultValue(void) {
 	if (this->_listen == -1)
 		this->_listen = 80;
