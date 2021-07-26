@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParsingRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/22 17:23:48 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/26 14:57:21 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,29 +192,29 @@ void    takeBody(t_request *req, std::string requestBuffer)
 void        setFileTypeForResponse(t_request *req)
 {
     std::string fileName;
-    std::string fileExt;
+    // std::string fileExt;
     std::string withoutFirstPoint = (req->pathInfo).substr(1);
     std::string::size_type dot = (withoutFirstPoint).find('.');
     if (dot != std::string::npos)
     {
         fileName = (req->pathInfo).substr(0, dot + 1);
         //std::cout << "filename " << fileName <<std::endl;
-        fileExt = (req->pathInfo).substr(dot + 1 + 1);
+        req->fileExt = (req->pathInfo).substr(dot + 1 + 1);
         //std::cout << "fileExt " << fileExt <<std::endl;
     }
     else
     {
         fileName = (req->pathInfo);
-        fileExt = "";
+        req->fileExt = "";
     }
-    if (fileExt == "jpg")
+    if (req->fileExt == "jpg")
         req->fileType = "image/jpeg";
-    else if (fileExt == "ico")
+    else if (req->fileExt == "ico")
     {
         std::cout << "\t🐄🐄🐄🐄🐄🐄🐄🐄..." << std::endl; 
         req->fileType = "image/x-icon";
     }
-    else if (fileExt == "gif")
+    else if (req->fileExt == "gif")
         req->fileType = "image/gif";
     else
         req->fileType = "text/html";
