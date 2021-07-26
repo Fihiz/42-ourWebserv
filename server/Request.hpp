@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/20 13:59:32 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/23 11:52:57 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_request
     std::string allow; //+
     std::string authorization; //+
     std::string contentLanguage; //+
-    std::string contentLenght; //+
+    std::string contentlength; //+
     std::string contentLocation; //+
     std::string contentType; //+
     std::string date; //+

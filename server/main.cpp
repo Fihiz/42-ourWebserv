@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/21 16:24:39 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/24 10:48:53 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,45 +56,130 @@ Config *findConfigForClient(WebservData &Data, std::string host)
 
 void	redirectCgiOutputToClient(char **env, int fd, t_request req, Respond &resp, WebservData &Data)
 {
-	int p[2], pid;
+	int p[2];
+	int pid;
 	
 	pipe(p);
-	char *argv2[2];
-	argv2[0] = (char *)"../prog/php-cgi";
-	argv2[1] = (char *)"../images/file.php";
+	
+	char *argv2[4];
+	argv2[0] = (char *)"./cgi-bin/php-cgi";
+	argv2[1] = (char *)"-q";
+	argv2[2] = const_cast<char *>(req.fullPathInfo.c_str());
+	argv2[3] = NULL;
+
 	std::string str, str1;
 	str1.resize(1024);
 	
+	(void)p;
+	(void)str;
+	(void)str1;
+	(void)env;
+	(void)fd;
+	// (void)req;
+	(void)resp;
+	(void)Data;
+	
 	pid = fork();
-	if (pid == 0)
-	{
-		close(p[0]);
-		dup2(p[1], 1);
-		if (execve(req.pathInfoCgi.c_str(), argv2, env) == -1)
-		{
-			resp.setStatusCode("500 Internal Error");
-			resp.finalRespond(fd, req, env, Data);
-			std::cerr << "Internal Error\n";
+
+	// if (pid == 0)
+	// {
+	// 	// if (stat("./cgi-bin/php-cgi") != 0)
+	// 	// 	std::cerr << "test" << "errno=" << errno << "\n";
+	// 	close(p[0]);
+	// 	dup2(p[1], fd);
+	// 	(void)req;
+	// 	(void)resp;
+	// 	(void)Data;
+	// 	if (execve(argv2[0], argv2, env) == -1)
+	// 	{
+	// 		// resp.setStatusCode("500 Internal Error");
+	// 		// resp.finalRespond(fd, req, env, Data);
+	// 		std::cerr << "Internal Error" << " errno=" << errno << "\n";
+	// 		close(p[1]);
+	// 		exit(0);
+	// 	}
+	// 	close(p[1]);
+	// 	exit (0);
+	// }
+	// else
+	// {
+	// 	waitpid(-1, NULL, 0);
+	// 	close(p[1]);
+	// 	dup2(p[0], 1);
+	// 	while(read(p[0], &str1[0], 1024) == 1024)
+	// 	{
+	// 		str  = str + str1;
+	// 		str1.clear();
+	// 		str1.resize(1024);
+	// 	}
+	// 	str  = str + str1;
+	// 	send(p[0], str.c_str(), str.length(), 0);
+	// }
+
+	/************************/
+
+	// // VERSION AVEC PIPE
+	if (pid == -1)
+		std::cout << "ERROR" << std::endl;
+	else if (pid == 0) {
+		close(p[0]); // READ SIDE
+		dup2(fd, STDOUT_FILENO);
+		if (execve(argv2[0], argv2, env) == -1) {
+			std::cerr << "Internal Error" << " errno=" << errno << "\n";
 			close(p[1]);
-			exit(0);
+			exit(1);
 		}
 		close(p[1]);
-		exit (0);
+		exit(0);
 	}
-	else
-	{
-		waitpid(-1, NULL, 0);
-		close(p[1]);
-		dup2(p[0], fd);
-		while(read(p[0], &str1[0], 1024) == 1024)
-		{
-			str  = str + str1;
-			str1.clear();
-			str1.resize(1024);
-		}
-		str  = str + str1;
-		send(p[0], str.c_str(), str.length(), 0);
+	else {
+		close(p[1]); // WRITE SIDE
+		waitpid(pid, NULL, 0);
+		
+		struct stat buf;
+		fstat(fd, &buf);
+    	off_t fdSize = buf.st_size;
+		char tmp[fdSize];
+		read(fd, tmp, fdSize);
+		req.fileContent = tmp;
+		req.fileContent += "\0";
+		close(p[0]);
 	}
+
+	// // VERSION SANS PIPE
+	// if (pid == -1)
+	// 	std::cout << "ERROR" << std::endl;
+	// else if (pid == 0) {
+	// 	dup2(fd, STDOUT_FILENO);
+	// 	if (execve(argv2[0], argv2, env) == -1) {
+	// 		std::cerr << "Internal Error" << " errno=" << errno << "\n";
+	// 		exit(1);
+	// 	}
+	// 	exit(0);
+	// }
+	// else {
+	// 	waitpid(pid, NULL, 0);
+	// }
+
+	// /**/ SIMPLE TEST /**/
+	// if (pid == -1)
+	// 	std::cout << "ERROR" << std::endl;
+	// else if (pid == 0) {
+	// 	close(p[0]); // READ SIDE
+	// 	dup2(p[1], STDOUT_FILENO);
+	// 	write(p[1], "salut\n", strlen("salut\n"));
+	// 	close(p[1]);
+	// 	exit(0);
+	// }
+	// else {
+	// 	close(p[1]); // WRITE SIDE
+	// 	waitpid(pid, NULL, 0);
+	// 	char buffer[6];
+	// 	read(p[0], buffer, 6);
+	// 	buffer[5] = '\0';
+	// 	close(p[0]);
+	// 	dprintf(1, "%s\n", buffer);
+	// }
 }
 
 int     processSockets(int fd, WebservData &Data, char **env)

@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/21 16:12:33 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/23 11:52:57 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void       parsingRequestBis(std::string word, t_request *req)
     if (pos != (int)std::string::npos)
     {
         value = onlyTheGood(&word[pos]);
-        req->contentLenght = value;
+        req->contentlength = value;
     }
     pos = word.find("Content-Location", 0);
     if (pos != (int)std::string::npos)
