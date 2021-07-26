@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/26 17:09:07 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/26 23:20:30 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "WebservData.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
+#include <signal.h>
 
 Socket *findSpecificMasterSocket(std::vector<Socket *> tabMaster, int fd)
 {
@@ -107,14 +108,15 @@ void	redirectCgiOutputToClient(char **env, int fd, t_request req, WebservData &D
 	pipe(p);
 	
 	char *argv2[4];
-	argv2[0] = (char *)"./cgi-bin/php-cgi";
+	argv2[0] = (char *)"/usr/local/bin/php-cgi";
 	argv2[1] = (char *)"-q";
 	argv2[2] = const_cast<char *>(req.fullPathInfo.c_str());
 	argv2[3] = NULL;
 	
 
 
-	(void)Data;
+	(void)fd;
+    (void)Data;
 	pid = fork();
 
 	if (pid == -1)
@@ -133,13 +135,15 @@ void	redirectCgiOutputToClient(char **env, int fd, t_request req, WebservData &D
 	else {
 		close(p[1]); // WRITE SIDE
 		waitpid(pid, NULL, 0);
-		struct stat buf;
-		fstat(fd, &buf);
-    	off_t fdSize = buf.st_size;
-		char tmp[fdSize];
-		read(fd, tmp, fdSize);
-		req.fileContent = tmp;
-		req.fileContent += "\0";
+        // kill(pid, SIGTERM);
+		// struct stat buf;
+		// fstat(fd, &buf);
+    	// off_t fdSize = buf.st_size;
+		// char tmp[fdSize];
+		// read(fd, tmp, fdSize);
+		// req.fileContent = tmp;
+		// req.fileContent += "\0";
+        // std::cout << "content:::" << req.fileContent << '\n';
 		close(p[0]);
 	}
 }
@@ -216,12 +220,11 @@ int     processSockets(int fd, WebservData &Data, char **env)
 				if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
 				{
 					redirectCgiOutputToClient(env, fd, parsedRequest, Data);
-					
-					// responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-                	//                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
+                    std::cout << "111111\n";
 				}
 				else
 				{
+                    std::cout << "222222\n";
                 	if (parsedRequest.statusCode == "200 OK")
                 	    setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
                 	else
@@ -230,6 +233,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                 	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
 				}
 			}
+            std::cout << "333333\n";
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;

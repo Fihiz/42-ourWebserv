@@ -6,7 +6,7 @@
 #    By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/07/06 15:02:58 by agathe           ###   ########lyon.fr    #
+#    Updated: 2021/07/26 22:25:57 by agathe           ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ CLEAN = \e[1;1H\e[2J
 # Pre-compiling
 NAME		= webserv
 CC		 	= clang++
-CPPFLAGS 	= -g -Wall -Wextra -Werror
+CPPFLAGS 	= -g3 -Wall -Wextra -Werror
 VPATH		=	./config \
 				./server \
 				./

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   InitEnvp.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 14:07:57 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/06/18 10:58:18 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/26 22:37:10 by agathe           ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ char **initEnv(char **env, t_request const &req, t_serv serv)
     associate(&var[i], "REQUEST_METHOD=", req.requestMethod, &i);
     associate(&var[i], "REQUEST_URI=", req.uri, &i);
     associate(&var[i], "SCRIPT_NAME=", req.script, &i);
+
+    
+    
     // associate(&var[i], "SERVER_NAME=", serv.server_name, &i);
     // associate(&var[i], "SERVER_PORT=", serv.server_port, &i);
     // associate(&var[i], "SERVER_PROTOCOL=", serv.server_protocol, &i);
