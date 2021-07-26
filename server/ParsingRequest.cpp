@@ -191,20 +191,22 @@ void    takeBody(t_request *req, std::string requestBuffer)
 
 void        setFileTypeForResponse(t_request *req)
 {
-    std::string fileName;
+    // std::string fileName;
     std::string fileExt;
-    std::string withoutFirstPoint = (req->pathInfo).substr(1);
-    std::string::size_type dot = (withoutFirstPoint).find('.');
+    // std::string withoutFirstPoint = (req->pathInfo).substr(1);
+    // std::string::size_type dot = (withoutFirstPoint).find('.');
+    std::string::size_type dot = (req->pathInfo).find('.');
     if (dot != std::string::npos)
     {
-        fileName = (req->pathInfo).substr(0, dot + 1);
+        // fileName = (req->pathInfo).substr(0, dot + 1);
         //std::cout << "filename " << fileName <<std::endl;
-        fileExt = (req->pathInfo).substr(dot + 1 + 1);
+        // fileExt = (req->pathInfo).substr(dot + 1 + 1);
         //std::cout << "fileExt " << fileExt <<std::endl;
+        fileExt = (req->pathInfo).substr(dot + 1);
     }
     else
     {
-        fileName = (req->pathInfo);
+        // fileName = (req->pathInfo);
         fileExt = "";
     }
     if (fileExt == "jpg")
@@ -230,7 +232,8 @@ t_request  parsingRequest(std::string requestBuffer)
     std::getline(ss, word, ' ');
     req.requestMethod = word;
     std::getline(ss, word, ' ');
-    req.pathInfo = "." + word;
+    req.pathInfo = word;
+	// req.pathInfo = "." + word;
 	std::getline(ss, word, '\n');
     req.protocol = word;
     word = requestBuffer;

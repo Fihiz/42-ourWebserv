@@ -328,7 +328,6 @@ Parser::checkReturn(Config & virtualHost) {
 		std::cerr << "Error at line #" << this->_line << " : ";
 		throw(WrongDataValueDeclarationException());
 	}
-	std::cout << "cébon" << std::endl;
 }
 
 void

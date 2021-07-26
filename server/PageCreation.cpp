@@ -152,7 +152,8 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_l
 /* AUTO INDEX */
 std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fileName )
 {
-    std::string content = "<html>\n\t<head><title>Index of /" + fileName.substr(2) + "</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of /" + fileName.substr(2) + "</h1><hr><pre>\n";
+    std::string content = "<html>\n\t<head><title>Index of " + fileName + "</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of " + fileName + "</h1><hr><pre>\n";
+    // std::string content = "<html>\n\t<head><title>Index of /" + fileName.substr(2) + "</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of /" + fileName.substr(2) + "</h1><hr><pre>\n";
     std::vector<std::string>::iterator   it = files.begin();
     std::string dir_buf = "<a href=\"../\">../</a>\n"; 
     std::string files_buf = "";

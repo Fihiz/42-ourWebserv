@@ -54,14 +54,16 @@ void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRe
     if (locationForClient)
     {
         parsedRequest.fullPathInfo = parsedRequest.pathInfo;
-        parsedRequest.fullPathInfo.replace(0, tmpFile.size() + 1, configForClient.getRoot(tmpFile));
+        parsedRequest.fullPathInfo.replace(0, tmpFile.size(), configForClient.getRoot(tmpFile));
+        // parsedRequest.fullPathInfo.replace(0, tmpFile.size() + 1, configForClient.getRoot(tmpFile));
         checkingHeader(&parsedRequest, locationForClient->method);
     }
     else
     {
         std::vector<std::string>    method;
         method.push_back("GET");
-        parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
+        parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(1);
+        // parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
         checkingHeader(&parsedRequest, method);
     }
 }
@@ -69,7 +71,8 @@ void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRe
 const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest)
 {
     const t_location  *locationForClient = NULL;
-    std::string tmpFile = parsedRequest.pathInfo.substr(1);
+    std::string tmpFile = parsedRequest.pathInfo;
+    // std::string tmpFile = parsedRequest.pathInfo.substr(1);
 
     while(tmpFile.size() > 0 && locationForClient == NULL)
     {
@@ -88,10 +91,12 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
     {
         struct stat statBuf;
         int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
-        if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo.substr(1) + "/")))
+        // if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo.substr(1) + "/")))
+        if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo + "/")))
         {
             parsedRequest.statusCode = "301 Moved Permanently";
-            parsedRequest.location = parsedRequest.pathInfo.substr(1) + "/";
+            parsedRequest.location = parsedRequest.pathInfo + "/";
+            // parsedRequest.location = parsedRequest.pathInfo.substr(1) + "/";
         }
     }
     (void) configForClient;
@@ -126,7 +131,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
         else
         {
-            tmpRequest =  tmpRequest + '\0';
+            tmpRequest = tmpRequest + '\0';
 			t_request	parsedRequest;
  
             (void) env;
@@ -207,6 +212,7 @@ int     main(int ac, char *av[], char *env[])
 {
     (void)env;
 	std::vector<Config> setup;
+
 	try {
 		setup = configuration(ac, av);
 	}
@@ -220,20 +226,30 @@ int     main(int ac, char *av[], char *env[])
     int running = 1;
     std::cout << std::endl;
 
+    struct timeval  tv;
+    tv.tv_sec = 120;
+    tv.tv_usec = 0;
+    int ret;
+
     while (running)
     {
         std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
         Data.getReadCopy() = Data.getReadSet();
-        if (select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, 0) < 0)
+        ret = select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, &tv);
+        if (ret < 0)
+        // if (select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, &tv) < 0)
             error("Select", Data);
-        for (int fd = 0; fd <= FD_SETSIZE; ++fd)
-        {
-            if (FD_ISSET(fd, &Data.getReadCopy()))
+        else if (ret == 0)
+            running = 0;
+        else
+            for (int fd = 0; fd <= FD_SETSIZE; ++fd)
             {
-                running = processSockets(fd, Data, env);
-                break ;
+                if (FD_ISSET(fd, &Data.getReadCopy()))
+                {
+                    running = processSockets(fd, Data, env);
+                    break ;
+                }
             }
-        }
     }
     closeAllFdUnlessMaster(Data.getReadSet(), Data.getTabMaster()); // Destructor destroys the master
     destroyTabMaster(Data.getTabMaster());
