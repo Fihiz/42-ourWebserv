@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/23 13:12:10 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 14:38:13 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,16 +213,17 @@ int     main(int ac, char *av[], char *env[])
     int running = 1;
     std::cout << std::endl;
 
+    /* TIMEOUT
     struct timeval  tv;
     tv.tv_sec = 120;
-    tv.tv_usec = 0;
+    tv.tv_usec = 0; */
     int ret;
 
     while (running)
     {
         std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
         Data.getReadCopy() = Data.getReadSet();
-        ret = select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, &tv);
+        ret = select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, 0);
         if (ret < 0)
             error("Select", Data);
         else if (ret == 0)
