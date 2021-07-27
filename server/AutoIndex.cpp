@@ -26,7 +26,6 @@ std::string	getDateFormat( time_t &date )
 	struct tm	*formated;
 
 	formated = gmtime(&date);
-    std::cerr << formated->tm_year << std::endl;
 	ret = numFormat(formated->tm_mday) + "-" + month[formated->tm_mon] + "-" + std::to_string(1900 + formated->tm_year);
 	ret += " " + numFormat(formated->tm_hour) + ":" + numFormat(formated->tm_min);
 	return (ret);
@@ -48,7 +47,7 @@ std::string formatName( std::string src )
     return(src + spaces);
 }
 
-std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fileName )
+std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fileName, std::string &fullFileName )
 {
     std::string content = "<html>\n\t<head><title>Index of " + fileName + "</title></head>\n\t<body bgcolor=\"white\">\n\t<h1>Index of " + fileName + "</h1><hr><pre>\n";
     std::vector<std::string>::iterator   it = files.begin();
@@ -60,7 +59,7 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
     {
         if ((*it)[0] != '.')
         {
-            stat((fileName + *it).c_str(), &buf);
+            stat((fullFileName + *it).c_str(), &buf);
             if (S_ISDIR(buf.st_mode))
                 dir_buf += "<a href=\"" + *it + "/\">" + formatName(*it + "/") + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
             else
@@ -80,7 +79,9 @@ std::string     createAutoIndex( std::string &fullFileName, std::string &fileNam
     if ((dir = opendir((fullFileName).c_str())) != nullptr)
     {
         while ((dirRead = readdir(dir)) != nullptr)
+        {
             files.push_back((std::string)dirRead->d_name);
+        }
         closedir (dir);
     }
     else
@@ -88,5 +89,5 @@ std::string     createAutoIndex( std::string &fullFileName, std::string &fileNam
         perror ("opendir");
         return (NULL);
     }
-    return (fillAutoIndex(files, fileName));
+    return (fillAutoIndex(files, fileName, fullFileName));
 }
