@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+         #
+#    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/07/06 15:02:58 by agathe           ###   ########lyon.fr    #
+#    Updated: 2021/07/27 18:33:31 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ HEADERS		=	Socket.hpp \
 FILES		= Socket.cpp \
 			  CreatingPage.cpp \
 			  FdManager.cpp \
-			  InitEnvp.cpp \
+			  InitEnv.cpp \
 			  CheckingHeader.cpp \
 			  ParsingRequest.cpp \
 			  Config.cpp \

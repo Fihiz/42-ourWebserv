@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 18:25:24 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 19:50:21 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,83 +19,79 @@
 
 Socket *findSpecificMasterSocket(std::vector<Socket *> tabMaster, int fd)
 {
-    std::vector<Socket *>::iterator ite = tabMaster.end();
-    for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != ite; it++)
-    {
-        if ((*it)->getMasterSock() == fd)
-            return(*it);
-    }
-    return (NULL);
+	std::vector<Socket *>::iterator ite = tabMaster.end();
+	for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != ite; it++)
+	{
+		if ((*it)->getMasterSock() == fd)
+			return(*it);
+	}
+	return (NULL);
 }
 
 void    processMasterSocket(WebservData &Data, int fd)
 {
-    int     clientSock;
+	int     clientSock;
 
-    clientSock = accept(fd, NULL, NULL);
-    if (clientSock < 0)
-        error("Accept connexion", Data);
-    FD_SET(clientSock, &Data.getReadSet());
-    std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
-    return ;
+	clientSock = accept(fd, NULL, NULL);
+	if (clientSock < 0)
+		error("Accept connexion", Data);
+	FD_SET(clientSock, &Data.getReadSet());
+	std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
+	return ;
 }
 
-Config *findConfigForClient(WebservData &Data, std::string host)
+Config *findServerConfigBlock(WebservData &Data, std::string host)
 {
-    if (host.find(":") == std::string::npos)
-    {
-       host = host + ":80"; 
-    }
-    if (Data.getMapServerName().find(host) != Data.getMapServerName().end())
-        return (&(Data.getMapServerName()[host]));
-    return (NULL);
+	if (host.find(":") == std::string::npos)
+	{
+	   host = host + ":80"; 
+	}
+	if (Data.getMapServerName().find(host) != Data.getMapServerName().end())
+		return (&(Data.getMapServerName()[host]));
+	return (NULL);
 }
 
-void    setFullPathInfo(t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
+void    setFullPathInfo(t_request &parsedRequest, Config &serverConfigBlock, std::string &tmpFile)
 {
-    parsedRequest.fullPathInfo = parsedRequest.pathInfo;
-    parsedRequest.fullPathInfo.replace(0, tmpFile.size(), configForClient.getRoot(tmpFile));
+	parsedRequest.fullPathInfo = parsedRequest.pathInfo;
+	parsedRequest.fullPathInfo.replace(0, tmpFile.size(), serverConfigBlock.getRoot(tmpFile));
 }
 
-const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest)
+const t_location *findLocationBlock(Config &serverConfigBlock, t_request &parsedRequest)
 {
-    const t_location  *locationForClient = NULL;
-    std::string tmpFile = parsedRequest.pathInfo;
+	const t_location  *locationBlock = NULL;
+	std::string tmpFile = parsedRequest.pathInfo;
 
-    while(tmpFile.size() > 0 && locationForClient == NULL)
-    {
-        locationForClient = configForClient.getLocation(tmpFile);
-        if (!locationForClient)
-            tmpFile.resize(tmpFile.size() - 1);
-    }
-    setFullPathInfo(parsedRequest, configForClient, tmpFile);
-    checkingMethod(parsedRequest, locationForClient->method);
+	while(tmpFile.size() > 0 && locationBlock == NULL)
+	{
+		locationBlock = serverConfigBlock.getLocation(tmpFile);
+		if (!locationBlock)
+			tmpFile.resize(tmpFile.size() - 1);
+	}
+	setFullPathInfo(parsedRequest, serverConfigBlock, tmpFile);
+	checkingMethod(parsedRequest, locationBlock->method);
 
-    return (locationForClient);
+	return (locationBlock);
 }
 
-void    checkRedir(Config *configForClient, t_request &parsedRequest)
+void    checkRedir(Config *serverConfigBlock, t_request &parsedRequest)
 {
-    if (parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
-    {
-        struct stat statBuf;
-        int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
-        if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo + "/")))
-        {
-            parsedRequest.statusCode = "301 Moved Permanently";
-            parsedRequest.location = parsedRequest.pathInfo + "/";
-        }
-    }
-    (void) configForClient;
+	if (parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
+	{
+		struct stat statBuf;
+		int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
+		if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (serverConfigBlock->getLocation(parsedRequest.pathInfo + "/")))
+		{
+			parsedRequest.statusCode = "301 Moved Permanently";
+			parsedRequest.location = parsedRequest.pathInfo + "/";
+		}
+	}
 }
 
-void	redirectCgiOutputToClient(char **env, t_request &req)
+void	redirectCgiOutputToClient(t_request &req)
 {
-	int p[2];
 	int pid;
-	
-	pipe(p);
-	
+
 	char *argv[4];
 	argv[0] = (char *)"./cgi-bin/php-cgi";
 	argv[1] = (char *)"-q";
@@ -108,20 +104,15 @@ void	redirectCgiOutputToClient(char **env, t_request &req)
 	if (pid == -1)
 		std::cout << "ERROR" << std::endl;
 	else if (pid == 0) {
-		close(p[0]); // READ SIDE
 		dup2(fdTmp, STDOUT_FILENO);
-		if (execve(argv[0], argv, env) == -1) {
+		if (execve(argv[0], argv, NULL) == -1) {
 			std::cerr << "Internal Error" << " errno=" << errno << "\n";
-			close(p[1]);
 			exit(1);
 		}
-		close(p[1]);
 		exit(0);
 	}
 	else {
-		close(p[1]); // WRITE SIDE
 		waitpid(pid, NULL, 0);
-		close(p[0]);
 		close(fdTmp);
 		
 	}
@@ -129,112 +120,162 @@ void	redirectCgiOutputToClient(char **env, t_request &req)
 	remove("transferCgi.html");
 }
 
-int     processSockets(int fd, WebservData &Data, char **env)
+off_t     getFdSize(int fd)
 {
-    char    requestBuffer[1];
-    int     running = 1;
-    std::string tmpRequest;
+	struct stat buf;
+	fstat(fd, &buf);
+	off_t fdSize = buf.st_size;
+	std::cout << T_BB "SIZE OF FD = " << fdSize << T_N << std::endl;
+	return (fdSize);
+}
 
-    struct stat buf;
-    fstat(fd, &buf);
-    off_t fdSize = buf.st_size;
-    std::cout << T_BB "SIZE OF FD = " << fdSize << T_N << std::endl;
+ssize_t     receiveClientRequest(int fd, std::string &clientRequest)
+{
+	char    requestBuffer[1];
+	ssize_t len = 1;
+	off_t fdSize = getFdSize(fd);
+	while ((clientRequest.size() < (size_t)fdSize) && ((len = recv(fd, requestBuffer, 1, 0)) >= 0) )
+	{
+		std::cout << " \r \r \r";
+		clientRequest =  clientRequest  + requestBuffer[0];
+		if (len == 0)
+			break;
+	}
+	clientRequest = clientRequest + '\0';
+	return (len);
+}
 
+void    checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlock)
+{
+	if (!serverConfigBlock)
+		parsedRequest.statusCode = "400 Bad Request";
+	else
+	{
+		if ((unsigned long)atoi(parsedRequest.contentLenght.c_str()) > serverConfigBlock->getMaxBodySize())
+		{
+			parsedRequest.statusCode = "413 Request Entity Too Large"; // A changer ?
+			return ;
+		}
+	   
+	}
+}
 
-    if (isTabMaster(Data.getTabMaster(), fd) == 1)
-        processMasterSocket(Data, fd);
-    else
-    {
-        ssize_t len = 1;
-        while ((tmpRequest.size() < (size_t)fdSize) && ((len = recv(fd, requestBuffer, 1, 0)) >= 0) )
-        {
-            std::cout << " \r \r \r";
-            tmpRequest =  tmpRequest  + requestBuffer[0];
-            if (len == 0)
-                break;
-        }
-        if (len < 0)
-            losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
-        else
-        {
-            tmpRequest = tmpRequest + '\0';
-			t_request	parsedRequest;
- 
-            (void) env;
+const t_location  *checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock)
+{
+	const t_location  *locationBlock = NULL;
+	
+	if (parsedRequest.statusCode == "200 OK")
+	{
+		locationBlock = findLocationBlock(*serverConfigBlock, parsedRequest);
+		if ((parsedRequest.statusCode != "400 Bad Request")
+			&& (locationBlock->redirect != ""))
+		{
+			parsedRequest.statusCode = "301 Moved Permanently";
+			parsedRequest.location = locationBlock->redirect;
+		}
+		//std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
+	}
+	return (locationBlock);
+}
 
-			parsedRequest = parsingRequest(tmpRequest);
-            Config *configForClient;
-            const t_location  *locationForClient = NULL;
+std::string     buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
+{
+	std::string responseToClient;
 
-            if (parsedRequest.statusCode == "200 OK")
-            {
-                configForClient = findConfigForClient(Data, parsedRequest.host);
-                if (!configForClient)
-                    parsedRequest.statusCode = "400 Bad Request";
-                else
-                {
-                    if ((unsigned long)atoi(parsedRequest.contentLenght.c_str()) > configForClient->getMaxBodySize())
-                        parsedRequest.statusCode = "413 Request Entity Too Large"; // A changer ?
-                    checkRedir(configForClient, parsedRequest);
-                    if (parsedRequest.statusCode == "200 OK")
-                    {
-                        locationForClient = findLocationForClient(*configForClient, parsedRequest);
-                        if ((parsedRequest.statusCode != "400 Bad Request")
-                            && (locationForClient->redirect != ""))
-                        {
-                            parsedRequest.statusCode = "301 Moved Permanently";
-                            parsedRequest.location = locationForClient->redirect;
-                        }
-                        //std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
-                    }
-                }
-            }
-            std::string responseToClient;
-            if (parsedRequest.statusCode == "301 Moved Permanently")
-            {
-                responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
-            }
-            else
-            {
-				parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
-				if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
-				{
-					redirectCgiOutputToClient(env, parsedRequest);
-					responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-                	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
-				}
-				else
-				{
-                	if (parsedRequest.statusCode == "200 OK")
-                	    setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
-                	else
-                	    parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
-                	responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-                	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
-				}
-			}
-            if (parsedRequest.pathInfo == "/exit.html") // (?)
-                running = 0;
-			// std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
-            //std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
-            // std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
-            // std::cout << " \r \r \r";
-            fcntl(fd, F_SETFL, O_NONBLOCK);
-            if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
-                error("Send", Data);
-            losingConnexion( fd, Data.getReadSet(), "Closing... [");
-        }
-    }
-    return (running);
+	if (parsedRequest.statusCode == "301 Moved Permanently")
+	{
+		responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
+	}
+	else
+	{
+		parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
+		if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
+		{
+			redirectCgiOutputToClient(parsedRequest);
+			responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+									+ std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
+		}
+		else
+		{
+			if (parsedRequest.statusCode == "200 OK")
+				setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
+			else
+				parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
+			responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+								+ std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
+		}
+	}
+	return (responseToClient);
+}
+
+void	printOutputs(t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
+{
+	(void)parsedRequest;
+	(void)clientRequest;
+	(void)responseToClient;
+	//std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N << clientRequest << std::endl;
+	// std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+	// std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
+}
+
+void	sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient)
+{
+	fcntl(fd, F_SETFL, O_NONBLOCK); // Keeping it ?
+	if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
+		error("Send", Data);
+	losingConnexion( fd, Data.getReadSet(), "Closing... [");
+}
+
+int     processClientSocket(WebservData &Data, int fd)
+{
+	int running = 1;
+	std::string clientRequest;
+
+	if (receiveClientRequest(fd, clientRequest) < 0)
+		losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
+	else
+	{
+		t_request	parsedRequest = parsingRequest(clientRequest);
+
+		if (parsedRequest.statusCode != "200 OK")
+			return (running);
+
+		Config *serverConfigBlock = findServerConfigBlock(Data, parsedRequest.host);
+		const t_location  *locationBlock = NULL;
+
+		checkServerConfigBlock(parsedRequest, serverConfigBlock);
+		checkRedir(serverConfigBlock, parsedRequest);
+		locationBlock = checkLocationBlock(parsedRequest, serverConfigBlock);
+		std::string responseToClient = buildClientResponse(parsedRequest, locationBlock, serverConfigBlock);
+
+		if (parsedRequest.pathInfo == "/exit.html")
+			running = 0;
+
+		printOutputs(parsedRequest, clientRequest, responseToClient);
+		// std::cout << " \r \r \r";
+		sendResponseToClient(fd, Data, responseToClient);
+	}
+	return (running);
+}
+
+int     processSockets(int fd, WebservData &Data)
+{
+	int     running = 1;
+
+	if (isTabMaster(Data.getTabMaster(), fd) == 1)
+		processMasterSocket(Data, fd);
+	else
+		processClientSocket(Data, fd);
+	return (running);
 }
 
 std::vector<Config> configuration(int argc, char **argv) {
 	std::string path;
 	if (argc != 2)
-    {
-        std::cout << "In view of arguments, the default configuration is used." << std::endl;
+	{
+		std::cout << "In view of arguments, the default configuration is used." << std::endl;
 		path = "config/default";
-    }
+	}
 	else
 		path = argv[1];
 	Parser	file(path);
@@ -242,16 +283,36 @@ std::vector<Config> configuration(int argc, char **argv) {
 	file.checkGeneralSyntax();
 	file.setConfiguration();
 
-    file.printConfigs();
+	//file.printConfigs();
 
 	return (file.getConfiguration());
 }
 
-int     main(int ac, char *av[], char *env[])
+void    serverLoop(WebservData &Data)
 {
-    (void)env;
-	std::vector<Config> setup;
+	int running = 1;
 
+	while (running)
+	{
+		std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
+		Data.getReadCopy() = Data.getReadSet();
+		if (select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, 0) < 0)
+			error("Select", Data);
+		else
+			for (int fd = 0; fd <= FD_SETSIZE; ++fd)
+			{
+				if (FD_ISSET(fd, &Data.getReadCopy()))
+				{
+					running = processSockets(fd, Data);
+					break ;
+				}
+			}
+	}
+}
+
+int     main(int ac, char *av[])
+{
+	std::vector<Config> setup;
 	try {
 		setup = configuration(ac, av);
 	}
@@ -260,37 +321,11 @@ int     main(int ac, char *av[], char *env[])
 		return (1);
 	}
 
-    WebservData Data(setup);
-    
-    int running = 1;
-    std::cout << std::endl;
+	WebservData Data(setup);
+	std::cout << std::endl;
 
-    /* TIMEOUT
-    struct timeval  tv;
-    tv.tv_sec = 120;
-    tv.tv_usec = 0; */
-    int ret;
-
-    while (running)
-    {
-        std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
-        Data.getReadCopy() = Data.getReadSet();
-        ret = select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, 0);
-        if (ret < 0)
-            error("Select", Data);
-        else if (ret == 0)
-            running = 0;
-        else
-            for (int fd = 0; fd <= FD_SETSIZE; ++fd)
-            {
-                if (FD_ISSET(fd, &Data.getReadCopy()))
-                {
-                    running = processSockets(fd, Data, env);
-                    break ;
-                }
-            }
-    }
-    closeAllFdUnlessMaster(Data.getReadSet(), Data.getTabMaster()); // Destructor destroys the master
-    destroyTabMaster(Data.getTabMaster());
-    return (0);
+	serverLoop(Data);
+	closeAllFdUnlessMaster(Data.getReadSet(), Data.getTabMaster()); // Destructor destroys the master
+	destroyTabMaster(Data.getTabMaster());
+	return (0);
 }

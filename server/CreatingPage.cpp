@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 14:46:47 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 18:35:51 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,9 +73,9 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_l
             ret = -1;
             for (std::vector<std::string>::const_iterator it = loc->index.cbegin(); it != loc->index.cend(); it++)
             {
-                std::cout << "fullPathInfo: " << parsedRequest.fullPathInfo << std::endl;
-                std::cout << " + : " << *it << std::endl;
-                std::cout << "loc: " << loc->root << std::endl;
+                // std::cout << "fullPathInfo: " << parsedRequest.fullPathInfo << std::endl;
+                // std::cout << " + : " << *it << std::endl;
+                // std::cout << "loc: " << loc->root << std::endl;
                 
                 tmpFileName = loc->root + *it;
                 ret = stat(tmpFileName.c_str(), &statBuf);
