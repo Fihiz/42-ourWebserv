@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 17:46:33 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 17:58:18 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,21 +89,20 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
     (void) configForClient;
 }
 
-
-void	redirectCgiOutputToClient(char **env, int fd, t_request &req, WebservData &Data)
+void	redirectCgiOutputToClient(char **env, t_request &req, WebservData &Data)
 {
 	int p[2];
 	int pid;
 	
 	pipe(p);
 	
-	char *argv2[4];
-	argv2[0] = (char *)"./cgi-bin/php-cgi";
-	argv2[1] = (char *)"-q";
-	argv2[2] = const_cast<char *>(req.fullPathInfo.c_str());
-	argv2[3] = NULL;
+	char *argv[4];
+	argv[0] = (char *)"./cgi-bin/php-cgi";
+	argv[1] = (char *)"-q";
+	argv[2] = const_cast<char *>(req.fullPathInfo.c_str());
+	argv[3] = NULL;
 	int fdTmp;
-	(void)fd;
+
 	fdTmp = open("transferCgi.html", O_RDWR | O_CREAT, 0777);
 				std::cout << fdTmp << std::endl;
 	(void)Data;
@@ -114,7 +113,7 @@ void	redirectCgiOutputToClient(char **env, int fd, t_request &req, WebservData &
 	else if (pid == 0) {
 		close(p[0]); // READ SIDE
 		dup2(fdTmp, STDOUT_FILENO);
-		if (execve(argv2[0], argv2, env) == -1) {
+		if (execve(argv[0], argv, env) == -1) {
 			std::cerr << "Internal Error" << " errno=" << errno << "\n";
 			close(p[1]);
 			exit(1);
@@ -133,8 +132,6 @@ void	redirectCgiOutputToClient(char **env, int fd, t_request &req, WebservData &
 	remove("transferCgi.html");
 }
 
-
-/* TEST BOUCLE RECV WHILE AVEC TAILLE DE 1 */
 int     processSockets(int fd, WebservData &Data, char **env)
 {
     char    requestBuffer[1];
@@ -206,7 +203,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
 				parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
 				if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
 				{
-					redirectCgiOutputToClient(env, fd, parsedRequest, Data);
+					redirectCgiOutputToClient(env, parsedRequest, Data);
 					responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                 	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
 				}
@@ -223,7 +220,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
             if (parsedRequest.pathInfo == "/exit.html") // (?)
                 running = 0;
 			// std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
-            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            //std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
             // std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
             // std::cout << " \r \r \r";
             fcntl(fd, F_SETFL, O_NONBLOCK);
