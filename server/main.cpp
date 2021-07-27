@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/26 17:09:07 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/27 11:39:51 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,8 @@ void	redirectCgiOutputToClient(char **env, int fd, t_request req, WebservData &D
 
 
 	(void)Data;
+	std::cout << req.fullPathInfo.c_str() << std::endl;
 	pid = fork();
-
 	if (pid == -1)
 		std::cout << "ERROR" << std::endl;
 	else if (pid == 0) {
@@ -133,13 +133,13 @@ void	redirectCgiOutputToClient(char **env, int fd, t_request req, WebservData &D
 	else {
 		close(p[1]); // WRITE SIDE
 		waitpid(pid, NULL, 0);
-		struct stat buf;
-		fstat(fd, &buf);
-    	off_t fdSize = buf.st_size;
-		char tmp[fdSize];
-		read(fd, tmp, fdSize);
-		req.fileContent = tmp;
-		req.fileContent += "\0";
+		// struct stat buf;
+		// fstat(fd, &buf);
+    	// off_t fdSize = buf.st_size;
+		// char tmp[fdSize];
+		// read(fd, tmp, fdSize);
+		// req.fileContent = tmp;
+		// req.fileContent += "\0";
 		close(p[0]);
 	}
 }
@@ -186,7 +186,9 @@ int     processSockets(int fd, WebservData &Data, char **env)
             configForClient = findConfigForClient(Data, parsedRequest.host);
             const t_location  *locationForClient = NULL;
             if (!configForClient)
+			{
                 parsedRequest.statusCode = "400 Bad Request";
+			}
             else
             {
                 checkRedir(configForClient, parsedRequest);
@@ -216,7 +218,6 @@ int     processSockets(int fd, WebservData &Data, char **env)
 				if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
 				{
 					redirectCgiOutputToClient(env, fd, parsedRequest, Data);
-					
 					// responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                 	//                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;
 				}
@@ -232,10 +233,10 @@ int     processSockets(int fd, WebservData &Data, char **env)
 			}
             if (parsedRequest.pathInfo == "./exit.html") // (?)
                 running = 0;
-			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
-            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
-            std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
-            std::cout << " \r \r \r";
+			// std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
+            // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            // std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
+            // std::cout << " \r \r \r";
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
