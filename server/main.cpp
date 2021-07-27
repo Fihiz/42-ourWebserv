@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 17:58:18 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 18:25:24 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
     (void) configForClient;
 }
 
-void	redirectCgiOutputToClient(char **env, t_request &req, WebservData &Data)
+void	redirectCgiOutputToClient(char **env, t_request &req)
 {
 	int p[2];
 	int pid;
@@ -104,9 +104,6 @@ void	redirectCgiOutputToClient(char **env, t_request &req, WebservData &Data)
 	int fdTmp;
 
 	fdTmp = open("transferCgi.html", O_RDWR | O_CREAT, 0777);
-				std::cout << fdTmp << std::endl;
-	(void)Data;
-	std::cout << req.fullPathInfo.c_str() << std::endl;
 	pid = fork();
 	if (pid == -1)
 		std::cout << "ERROR" << std::endl;
@@ -188,8 +185,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                             parsedRequest.statusCode = "301 Moved Permanently";
                             parsedRequest.location = locationForClient->redirect;
                         }
-
-                        std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
+                        //std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
                     }
                 }
             }
@@ -203,7 +199,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
 				parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
 				if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
 				{
-					redirectCgiOutputToClient(env, parsedRequest, Data);
+					redirectCgiOutputToClient(env, parsedRequest);
 					responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                 	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
 				}
