@@ -37,7 +37,6 @@ void    closeAllFdUnlessMaster(fd_set &readSet, std::vector<Socket *> tabMaster)
     (void) tabMaster;
     for (int ind = 0; ind <= FD_SETSIZE; ++ind)
     {
-        // if (/*FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0) */0)
         if (FD_ISSET(ind, &readSet) && (isTabMaster(tabMaster, ind) == 0))
         {
             std::cerr << T_YB << "Connection lost... [fd=" << ind << "]" << T_N << std::endl;

@@ -49,30 +49,16 @@ Config *findConfigForClient(WebservData &Data, std::string host)
     return (NULL);
 }
 
-void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
+void    setFullPathInfo(t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
 {
-    // std::vector<std::string>    method;
-    // if (locationForClient)
-    // {
-        parsedRequest.fullPathInfo = parsedRequest.pathInfo;
-        parsedRequest.fullPathInfo.replace(0, tmpFile.size(), configForClient.getRoot(tmpFile));
-        // parsedRequest.fullPathInfo.replace(0, tmpFile.size() + 1, configForClient.getRoot(tmpFile));
-        // checkingHeader(&parsedRequest, locationForClient->method);
-    // }
-    // else
-    // {
-    //     method.push_back("GET");
-    //     parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(1);
-    //     // parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
-    //     // checkingHeader(&parsedRequest, method);
-    // }
+    parsedRequest.fullPathInfo = parsedRequest.pathInfo;
+    parsedRequest.fullPathInfo.replace(0, tmpFile.size(), configForClient.getRoot(tmpFile));
 }
 
 const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest)
 {
     const t_location  *locationForClient = NULL;
     std::string tmpFile = parsedRequest.pathInfo;
-    // std::string tmpFile = parsedRequest.pathInfo.substr(1);
 
     while(tmpFile.size() > 0 && locationForClient == NULL)
     {
@@ -80,7 +66,7 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
         if (!locationForClient)
             tmpFile.resize(tmpFile.size() - 1);
     }
-    setFullPathInfo(locationForClient, parsedRequest, configForClient, tmpFile);
+    setFullPathInfo(parsedRequest, configForClient, tmpFile);
     checkingMethod(parsedRequest, locationForClient->method);
 
     return (locationForClient);
@@ -96,7 +82,7 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
         {
             parsedRequest.statusCode = "301 Moved Permanently";
             parsedRequest.location = parsedRequest.pathInfo + "/";
-            }
+        }
     }
     (void) configForClient;
 }
@@ -136,26 +122,29 @@ int     processSockets(int fd, WebservData &Data, char **env)
             (void) env;
 
 			parsedRequest = parsingRequest(tmpRequest);
-
             Config *configForClient;
-            configForClient = findConfigForClient(Data, parsedRequest.host);
             const t_location  *locationForClient = NULL;
-            if (!configForClient)
-                parsedRequest.statusCode = "400 Bad Request";
-            else
-            {
-                checkRedir(configForClient, parsedRequest);
-                if (parsedRequest.statusCode == "200 OK")
-                {
-                    locationForClient = findLocationForClient(*configForClient, parsedRequest);
-                    if ((parsedRequest.statusCode != "400 Bad Request")
-                        && (locationForClient->redirect != ""))
-                    {
-                        parsedRequest.statusCode = "301 Moved Permanently";
-                        parsedRequest.location = locationForClient->redirect;
-                    }
 
-                    std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
+            if (parsedRequest.statusCode == "200 OK")
+            {
+                configForClient = findConfigForClient(Data, parsedRequest.host);
+                if (!configForClient)
+                    parsedRequest.statusCode = "400 Bad Request";
+                else
+                {
+                    checkRedir(configForClient, parsedRequest);
+                    if (parsedRequest.statusCode == "200 OK")
+                    {
+                        locationForClient = findLocationForClient(*configForClient, parsedRequest);
+                        if ((parsedRequest.statusCode != "400 Bad Request")
+                            && (locationForClient->redirect != ""))
+                        {
+                            parsedRequest.statusCode = "301 Moved Permanently";
+                            parsedRequest.location = locationForClient->redirect;
+                        }
+
+                        std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
+                    }
                 }
             }
             std::string responseToClient;
@@ -172,7 +161,7 @@ int     processSockets(int fd, WebservData &Data, char **env)
                 responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
                                         + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
             }
-            if (parsedRequest.pathInfo == "./exit.html") // (?)
+            if (parsedRequest.pathInfo == "/exit.html") // (?)
                 running = 0;
 			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
             // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
@@ -235,7 +224,6 @@ int     main(int ac, char *av[], char *env[])
         Data.getReadCopy() = Data.getReadSet();
         ret = select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, &tv);
         if (ret < 0)
-        // if (select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, &tv) < 0)
             error("Select", Data);
         else if (ret == 0)
             running = 0;

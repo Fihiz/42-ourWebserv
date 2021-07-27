@@ -57,10 +57,9 @@ void            getFileInfo( char *request, std::string &fileName, std::string &
 std::string     getDateFormat( time_t &date );
 std::string     numFormat( int nb );
 std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
-// void            setContentDependingOnFileOrDirectory( t_request &parsedRequest, const t_location *loc );
 void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf);
 std::string     getContentFileError(Config * virtualHost, std::string causeError);
-
+std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
 
 /* CLOSE AND ERROR MANAGEMENT */
 void            destroyTabMaster(std::vector<Socket *> tabMaster);
@@ -82,8 +81,6 @@ char **         initEnv( char **env, t_request const &req, t_serv serv );
 int             tabSize( char **tab );
 t_request       parsingRequest( std::string buffer );
 // ORIGINAL
-//t_request       parsingRequest( char *buffer );
-// void            checkingHeader( t_request *req, const std::vector<std::string> method );
 void    checkingProtocol(t_request &req);
 void    checkingMethod(t_request &req, const std::vector<std::string> &method);
 

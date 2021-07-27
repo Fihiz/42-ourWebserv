@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "Socket.hpp"
-// #include "../config/Config.hpp"
 
 Socket::Socket( void )
 {
@@ -24,7 +23,6 @@ Socket::Socket(int port)
 {
     this->doSocket();
 
-    // this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     this->_servAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     this->_servAddr.sin_family = AF_INET;
     this->_servAddr.sin_port = htons(port);

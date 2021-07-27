@@ -12,7 +12,6 @@
 
 #include "Request.hpp"
 
-
 std::string onlyTheGood(std::string str)
 {
     std::stringstream ss(str);
@@ -173,42 +172,14 @@ void    takeBody(t_request *req, std::string requestBuffer)
     }
 }
 
-
-//ORIGINAL
-// void    takeBody(t_request *req, char *requestBuffer)
-// {
-//     int i;
-
-//     i = strlen(requestBuffer);
-//     while(i > 1 && requestBuffer[i] != '\n' && requestBuffer[i - 1] != '\n')
-//         i--;
-//     if (i > 1)
-//     {
-//         std::string str(requestBuffer);
-//         req->body = str.substr(i, strlen(requestBuffer) - i);
-//     }
-// }
-
 void        setFileTypeForResponse(t_request *req)
 {
-    // std::string fileName;
     std::string fileExt;
-    // std::string withoutFirstPoint = (req->pathInfo).substr(1);
-    // std::string::size_type dot = (withoutFirstPoint).find('.');
     std::string::size_type dot = (req->pathInfo).find('.');
     if (dot != std::string::npos)
-    {
-        // fileName = (req->pathInfo).substr(0, dot + 1);
-        //std::cout << "filename " << fileName <<std::endl;
-        // fileExt = (req->pathInfo).substr(dot + 1 + 1);
-        //std::cout << "fileExt " << fileExt <<std::endl;
         fileExt = (req->pathInfo).substr(dot + 1);
-    }
     else
-    {
-        // fileName = (req->pathInfo);
         fileExt = "";
-    }
     if (fileExt == "jpg")
         req->fileType = "image/jpeg";
     else if (fileExt == "ico")
@@ -233,7 +204,6 @@ t_request  parsingRequest(std::string requestBuffer)
     req.requestMethod = word;
     std::getline(ss, word, ' ');
     req.pathInfo = word;
-	// req.pathInfo = "." + word;
 	std::getline(ss, word, '\n');
     req.protocol = word.substr(0, word.size() - 1);
     checkingProtocol(req);
@@ -262,41 +232,3 @@ t_request  parsingRequest(std::string requestBuffer)
     setFileTypeForResponse(&req);
     return (req);
 }
-
-//ORIGINAL
-// t_request  parsingRequest(char *requestBuffer)
-// {
-//     t_request req;
-//     std::stringstream ss(requestBuffer);
-//     std::string word, value;
-//     size_t pos = -1;
-
-//     std::getline(ss, word, ' ');
-//     req.requestMethod = word;
-//     std::getline(ss, word, ' ');
-//     req.pathInfo = "." + word;
-// 	std::getline(ss, word, '\n');
-//     req.protocol = word;
-//     word = requestBuffer;
-//     parsingRequestBis(word, &req);
-//     parsingRequestTer(word, &req);
-//     parsingRequestQuater(word, &req);
-//     parsingRequestCinquies(word, &req);
-//     pos = word.find("User-Agent", 0);
-//     if (pos != std::string::npos)
-//     {
-//         value = onlyTheGood(&word[pos]);
-//         req.acceptedLanguage = value;
-//     }
-//     pos = word.find("WWW-Authenticate", 0);
-//     if (pos != std::string::npos)
-//     {
-//         value = onlyTheGood(&word[pos]);
-//         req.acceptedLanguage = value;
-//     }
-//     if (req.pathInfo.empty() == false && req.host.empty() == false)
-//         req.pathTranslated = req.host + req.pathInfo;
-//     takeBody(&req, requestBuffer);
-//     splittingPath(&req);
-//     return (req);
-// }

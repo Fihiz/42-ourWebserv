@@ -38,14 +38,15 @@ HEADERS		=	Socket.hpp \
 				WebservData.hpp \
 				Parser.hpp
 FILES		= Socket.cpp \
-			  PageCreation.cpp \
-			  CloseError.cpp \
+			  CreatingPage.cpp \
+			  FdManager.cpp \
 			  InitEnvp.cpp \
 			  CheckingHeader.cpp \
 			  ParsingRequest.cpp \
 			  Config.cpp \
 			  Parser.cpp \
 			  WebservData.cpp \
+			  AutoIndex.cpp \
 			  main.cpp
 
 OPATH		= objs/
