@@ -51,21 +51,21 @@ Config *findConfigForClient(WebservData &Data, std::string host)
 
 void    setFullPathInfo(const t_location *locationForClient, t_request &parsedRequest, Config &configForClient, std::string &tmpFile)
 {
-    if (locationForClient)
-    {
+    // std::vector<std::string>    method;
+    // if (locationForClient)
+    // {
         parsedRequest.fullPathInfo = parsedRequest.pathInfo;
         parsedRequest.fullPathInfo.replace(0, tmpFile.size(), configForClient.getRoot(tmpFile));
         // parsedRequest.fullPathInfo.replace(0, tmpFile.size() + 1, configForClient.getRoot(tmpFile));
-        checkingHeader(&parsedRequest, locationForClient->method);
-    }
-    else
-    {
-        std::vector<std::string>    method;
-        method.push_back("GET");
-        parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(1);
-        // parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
-        checkingHeader(&parsedRequest, method);
-    }
+        // checkingHeader(&parsedRequest, locationForClient->method);
+    // }
+    // else
+    // {
+    //     method.push_back("GET");
+    //     parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(1);
+    //     // parsedRequest.fullPathInfo = configForClient.getRoot("") + parsedRequest.pathInfo.substr(2);
+    //     // checkingHeader(&parsedRequest, method);
+    // }
 }
 
 const t_location *findLocationForClient(Config &configForClient, t_request &parsedRequest)
@@ -81,6 +81,7 @@ const t_location *findLocationForClient(Config &configForClient, t_request &pars
             tmpFile.resize(tmpFile.size() - 1);
     }
     setFullPathInfo(locationForClient, parsedRequest, configForClient, tmpFile);
+    checkingMethod(parsedRequest, locationForClient->method);
 
     return (locationForClient);
 }
@@ -91,13 +92,11 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
     {
         struct stat statBuf;
         int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
-        // if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo.substr(1) + "/")))
         if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (configForClient->getLocation(parsedRequest.pathInfo + "/")))
         {
             parsedRequest.statusCode = "301 Moved Permanently";
             parsedRequest.location = parsedRequest.pathInfo + "/";
-            // parsedRequest.location = parsedRequest.pathInfo.substr(1) + "/";
-        }
+            }
     }
     (void) configForClient;
 }
@@ -137,7 +136,6 @@ int     processSockets(int fd, WebservData &Data, char **env)
             (void) env;
 
 			parsedRequest = parsingRequest(tmpRequest);
-            parsedRequest.statusCode = "200 OK";
 
             Config *configForClient;
             configForClient = findConfigForClient(Data, parsedRequest.host);

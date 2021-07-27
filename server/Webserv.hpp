@@ -83,7 +83,9 @@ int             tabSize( char **tab );
 t_request       parsingRequest( std::string buffer );
 // ORIGINAL
 //t_request       parsingRequest( char *buffer );
-void            checkingHeader( t_request *req, const std::vector<std::string> method );
+// void            checkingHeader( t_request *req, const std::vector<std::string> method );
+void    checkingProtocol(t_request &req);
+void    checkingMethod(t_request &req, const std::vector<std::string> &method);
 
 #include "./WebservData.hpp"
 #include "./Socket.hpp"

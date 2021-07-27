@@ -235,7 +235,10 @@ t_request  parsingRequest(std::string requestBuffer)
     req.pathInfo = word;
 	// req.pathInfo = "." + word;
 	std::getline(ss, word, '\n');
-    req.protocol = word;
+    req.protocol = word.substr(0, word.size() - 1);
+    checkingProtocol(req);
+    if (req.statusCode == "400 Bad Request")
+        return (req);
     word = requestBuffer;
     parsingRequestBis(word, &req);
     parsingRequestTer(word, &req);
