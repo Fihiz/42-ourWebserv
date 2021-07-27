@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/19 14:36:03 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/26 14:56:23 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,10 @@ typedef struct s_request
     std::string statusCode;
     std::string fullPathInfo;
     //std::string fileContent; (?)
+
+	// add to merge cgi
+	std::string pathInfoCgi;
+	std::string fileExt;
     
 
 }               t_request;

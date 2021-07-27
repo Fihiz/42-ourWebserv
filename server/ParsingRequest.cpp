@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/22 17:23:48 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 17:42:32 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,20 +174,19 @@ void    takeBody(t_request *req, std::string requestBuffer)
 
 void        setFileTypeForResponse(t_request *req)
 {
-    std::string fileExt;
     std::string::size_type dot = (req->pathInfo).find('.');
     if (dot != std::string::npos)
-        fileExt = (req->pathInfo).substr(dot + 1);
+        req->fileExt = (req->pathInfo).substr(dot + 1);
     else
-        fileExt = "";
-    if (fileExt == "jpg")
+        req->fileExt = "";
+    if (req->fileExt == "jpg")
         req->fileType = "image/jpeg";
-    else if (fileExt == "ico")
+    else if (req->fileExt == "ico")
     {
         std::cout << "\t🐄🐄🐄🐄🐄🐄🐄🐄..." << std::endl; 
         req->fileType = "image/x-icon";
     }
-    else if (fileExt == "gif")
+    else if (req->fileExt == "gif")
         req->fileType = "image/gif";
     else
         req->fileType = "text/html";

@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 15:28:56 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 17:46:33 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "WebservData.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
+#include <fstream>
+#include <iostream>
 
 Socket *findSpecificMasterSocket(std::vector<Socket *> tabMaster, int fd)
 {
@@ -87,6 +89,51 @@ void    checkRedir(Config *configForClient, t_request &parsedRequest)
     (void) configForClient;
 }
 
+
+void	redirectCgiOutputToClient(char **env, int fd, t_request &req, WebservData &Data)
+{
+	int p[2];
+	int pid;
+	
+	pipe(p);
+	
+	char *argv2[4];
+	argv2[0] = (char *)"./cgi-bin/php-cgi";
+	argv2[1] = (char *)"-q";
+	argv2[2] = const_cast<char *>(req.fullPathInfo.c_str());
+	argv2[3] = NULL;
+	int fdTmp;
+	(void)fd;
+	fdTmp = open("transferCgi.html", O_RDWR | O_CREAT, 0777);
+				std::cout << fdTmp << std::endl;
+	(void)Data;
+	std::cout << req.fullPathInfo.c_str() << std::endl;
+	pid = fork();
+	if (pid == -1)
+		std::cout << "ERROR" << std::endl;
+	else if (pid == 0) {
+		close(p[0]); // READ SIDE
+		dup2(fdTmp, STDOUT_FILENO);
+		if (execve(argv2[0], argv2, env) == -1) {
+			std::cerr << "Internal Error" << " errno=" << errno << "\n";
+			close(p[1]);
+			exit(1);
+		}
+		close(p[1]);
+		exit(0);
+	}
+	else {
+		close(p[1]); // WRITE SIDE
+		waitpid(pid, NULL, 0);
+		close(p[0]);
+		close(fdTmp);
+		
+	}
+	req.fileContent = getFileContent("transferCgi.html");
+	remove("transferCgi.html");
+}
+
+
 /* TEST BOUCLE RECV WHILE AVEC TAILLE DE 1 */
 int     processSockets(int fd, WebservData &Data, char **env)
 {
@@ -156,19 +203,29 @@ int     processSockets(int fd, WebservData &Data, char **env)
             }
             else
             {
-                if (parsedRequest.statusCode == "200 OK")
-                    setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
-                else
-                    parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
-                responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-                                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
-            }
+				parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
+				if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
+				{
+					redirectCgiOutputToClient(env, fd, parsedRequest, Data);
+					responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+                	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
+				}
+				else
+				{
+                	if (parsedRequest.statusCode == "200 OK")
+                	    setContentDependingOnFileOrDirectory(parsedRequest, locationForClient, configForClient);
+                	else
+                	    parsedRequest.fileContent = getContentFileError(configForClient, parsedRequest.statusCode);
+                	responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+                	                        + std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent;          
+				}
+			}
             if (parsedRequest.pathInfo == "/exit.html") // (?)
                 running = 0;
-			std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
-            // std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
-            std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
-            std::cout << " \r \r \r";
+			// std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N  << std::endl << tmpRequest << std::endl;
+            std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
+            // std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
+            // std::cout << " \r \r \r";
             fcntl(fd, F_SETFL, O_NONBLOCK);
             if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
                 error("Send", Data);
