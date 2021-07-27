@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 14:38:13 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/27 15:28:56 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,8 @@ int     processSockets(int fd, WebservData &Data, char **env)
                     parsedRequest.statusCode = "400 Bad Request";
                 else
                 {
+                    if ((unsigned long)atoi(parsedRequest.contentLenght.c_str()) > configForClient->getMaxBodySize())
+                        parsedRequest.statusCode = "413 Request Entity Too Large"; // A changer ?
                     checkRedir(configForClient, parsedRequest);
                     if (parsedRequest.statusCode == "200 OK")
                     {
