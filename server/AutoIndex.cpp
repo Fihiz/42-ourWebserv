@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/23 13:03:55 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 17:05:09 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,28 @@
 
 std::string numFormat(int nb)
 {
-	if (nb < 10)
-		return ("0" + std::to_string(nb));
-	return (std::to_string(nb));
+    char    itoaTab[3];
+
+    if (sprintf(itoaTab, "%d", nb) < 0)
+        return ("");
+	else if (nb < 10)
+		return ("0" + (std::string)itoaTab);
+	return (itoaTab);
 }
 
-std::string	getDateFormat( time_t &date )
+std::string getDateFormat( time_t &date )
 {
 	std::string	ret;
 	std::string month[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	struct tm	*formated;
+    char    itoaTab[10];
 
 	formated = gmtime(&date);
-	ret = numFormat(formated->tm_mday) + "-" + month[formated->tm_mon] + "-" + std::to_string(1900 + formated->tm_year);
-	ret += " " + numFormat(formated->tm_hour) + ":" + numFormat(formated->tm_min);
+    if (formated && (sprintf(itoaTab, "%d", 1900 + formated->tm_year) > 0))
+    {
+        ret = numFormat(formated->tm_mday) + "-" + month[formated->tm_mon] + "-" + (std::string)itoaTab;
+        ret += " " + numFormat(formated->tm_hour) + ":" + numFormat(formated->tm_min);
+    }
 	return (ret);
 }
 
@@ -54,6 +62,7 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
     std::string dir_buf = "<a href=\"../\">../</a>\n"; 
     std::string files_buf = "";
     struct stat buf;
+    char    itoaTab[100];
 
     while (it != files.end())
     {
@@ -62,8 +71,10 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
             stat((fullFileName + *it).c_str(), &buf);
             if (S_ISDIR(buf.st_mode))
                 dir_buf += "<a href=\"" + *it + "/\">" + formatName(*it + "/") + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
+            else if (sprintf(itoaTab, "%lld", buf.st_size) > 0)
+                files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   " + (std::string)itoaTab + "\n";
             else
-                files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   " + std::to_string(buf.st_size) + "\n";
+                files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   nan" + "\n";
         }
         it++;
     }
