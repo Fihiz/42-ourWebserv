@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
+#    By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/07/27 18:33:31 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/07/28 11:13:45 by pgoudet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,6 +47,7 @@ FILES		= Socket.cpp \
 			  Parser.cpp \
 			  WebservData.cpp \
 			  AutoIndex.cpp \
+			  ProcessSocket.cpp \
 			  main.cpp
 
 OPATH		= objs/

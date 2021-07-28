@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/27 19:50:21 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 11:14:44 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,6 @@ Socket *findSpecificMasterSocket(std::vector<Socket *> tabMaster, int fd)
 	return (NULL);
 }
 
-void    processMasterSocket(WebservData &Data, int fd)
-{
-	int     clientSock;
-
-	clientSock = accept(fd, NULL, NULL);
-	if (clientSock < 0)
-		error("Accept connexion", Data);
-	FD_SET(clientSock, &Data.getReadSet());
-	std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
-	return ;
-}
 
 Config *findServerConfigBlock(WebservData &Data, std::string host)
 {
@@ -226,48 +215,6 @@ void	sendResponseToClient(int fd, WebservData &Data, std::string &responseToClie
 	losingConnexion( fd, Data.getReadSet(), "Closing... [");
 }
 
-int     processClientSocket(WebservData &Data, int fd)
-{
-	int running = 1;
-	std::string clientRequest;
-
-	if (receiveClientRequest(fd, clientRequest) < 0)
-		losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
-	else
-	{
-		t_request	parsedRequest = parsingRequest(clientRequest);
-
-		if (parsedRequest.statusCode != "200 OK")
-			return (running);
-
-		Config *serverConfigBlock = findServerConfigBlock(Data, parsedRequest.host);
-		const t_location  *locationBlock = NULL;
-
-		checkServerConfigBlock(parsedRequest, serverConfigBlock);
-		checkRedir(serverConfigBlock, parsedRequest);
-		locationBlock = checkLocationBlock(parsedRequest, serverConfigBlock);
-		std::string responseToClient = buildClientResponse(parsedRequest, locationBlock, serverConfigBlock);
-
-		if (parsedRequest.pathInfo == "/exit.html")
-			running = 0;
-
-		printOutputs(parsedRequest, clientRequest, responseToClient);
-		// std::cout << " \r \r \r";
-		sendResponseToClient(fd, Data, responseToClient);
-	}
-	return (running);
-}
-
-int     processSockets(int fd, WebservData &Data)
-{
-	int     running = 1;
-
-	if (isTabMaster(Data.getTabMaster(), fd) == 1)
-		processMasterSocket(Data, fd);
-	else
-		processClientSocket(Data, fd);
-	return (running);
-}
 
 std::vector<Config> configuration(int argc, char **argv) {
 	std::string path;
