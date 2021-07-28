@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 14:41:38 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 16:09:17 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 void	sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient)
 {
 	fcntl(fd, F_SETFL, O_NONBLOCK); // Keeping it ?
-	if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
-		error("Send", Data);
-	losingConnexion( fd, Data.getReadSet(), Data.getWriteSet(), "Closing... [");
+	if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) <= 0)
+		losingConnexion(fd, Data.getReadSet(), Data.getWriteSet(), "Client has been removed... [");
+	losingConnexion( fd, Data.getReadSet(), Data.getWriteSet(), "Response has been sent, closing... [");
 }

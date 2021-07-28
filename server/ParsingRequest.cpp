@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/27 17:42:32 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 15:56:51 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ void        setFileTypeForResponse(t_request *req)
         req->fileType = "image/jpeg";
     else if (req->fileExt == "ico")
     {
-        std::cout << "\t🐄🐄🐄🐄🐄🐄🐄🐄..." << std::endl; 
+        std::cout << "🐄🐄🐄🐄🐄🐄🐄🐄..." << std::endl; 
         req->fileType = "image/x-icon";
     }
     else if (req->fileExt == "gif")
