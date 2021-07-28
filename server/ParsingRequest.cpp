@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParsingRequest.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 16:58:01 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/27 17:42:32 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 15:01:11 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ void        setFileTypeForResponse(t_request *req)
 {
     std::string::size_type dot = (req->pathInfo).find('.');
     if (dot != std::string::npos)
-        req->fileExt = (req->pathInfo).substr(dot + 1);
+        req->fileExt = (req->pathInfo).substr(dot);
     else
         req->fileExt = "";
     if (req->fileExt == "jpg")

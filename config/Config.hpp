@@ -54,6 +54,8 @@ class   Config
 		std::vector<std::string>			getIndex(std::string routes) const;
 		unsigned long						getMaxBodySize(void) const;
 		std::map<int, std::string>			getErrorPage(void) const;
+		std::string							getCgi(std::string routes, std::string extension) const;
+		std::string							getRoutes(std::string ask) const;
 		const	t_location *				getLocation(std::string routes) const;
 
 		void								reset(void);

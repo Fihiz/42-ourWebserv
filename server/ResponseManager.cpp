@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RespondManager.cpp                                 :+:      :+:    :+:   */
+/*   ResponseManager.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 11:49:48 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 15:58:35 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	redirectCgiOutputToClient(t_request &req)
 	int pid;
 
 	char *argv[4];
-	argv[0] = (char *)"./cgi-bin/php-cgi";
-	argv[1] = (char *)"-q";
+	argv[0] = const_cast<char *>(req.pathInfoCgi.c_str());
+	argv[1] = const_cast<char *>("-q");
 	argv[2] = const_cast<char *>(req.fullPathInfo.c_str());
 	argv[3] = NULL;
 	int fdTmp;
@@ -69,12 +69,25 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 	}
 	else
 	{
-		parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
-		if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
+		parsedRequest.pathInfoCgi = serverConfigBlock->getCgi(serverConfigBlock->getRoutes(parsedRequest.route), parsedRequest.fileExt);
+		if ((parsedRequest.fileExt == ".php" || parsedRequest.fileExt == ".py") && /*parsedRequest.pathInfoCgi.empty() == false &&*/ parsedRequest.statusCode == "200 OK")
 		{
-			redirectCgiOutputToClient(parsedRequest);
-			responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+			struct stat s;
+
+			if (stat(const_cast<char *>(parsedRequest.pathInfoCgi.c_str()), &s) == 0)
+			{
+				redirectCgiOutputToClient(parsedRequest);
+				responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
 									+ std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
+			}
+			else
+			{
+				parsedRequest.statusCode = "500 Internal Server Error";
+				parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
+				parsedRequest.fileType = "text / html";
+				responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+									+ std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
+			}
 		}
 		else
 		{

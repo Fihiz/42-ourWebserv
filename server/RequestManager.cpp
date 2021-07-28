@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestManager.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 12:33:00 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 15:26:50 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ const t_location *findLocationBlock(Config &serverConfigBlock, t_request &parsed
 		if (!locationBlock)
 			tmpFile.resize(tmpFile.size() - 1);
 	}
+	parsedRequest.route = tmpFile;
 	setFullPathInfo(parsedRequest, serverConfigBlock, tmpFile);
 	checkingMethod(parsedRequest, locationBlock->method);
 
