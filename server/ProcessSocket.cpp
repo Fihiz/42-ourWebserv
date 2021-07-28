@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   processSocket.cpp                                  :+:      :+:    :+:   */
+/*   ProcessSocket.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 12:05:38 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 12:54:57 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int     processClientSocket(WebservData &Data, int fd)
 			running = 0;
 
 		printOutputs(parsedRequest, clientRequest, responseToClient);
-		// std::cout << " \r \r \r";
+		//std::cout << " \r \r \r";
 		sendResponseToClient(fd, Data, responseToClient);
 	}
 	return (running);

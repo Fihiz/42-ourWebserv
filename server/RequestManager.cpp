@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestManager.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 11:50:46 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 12:33:00 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ off_t     getFdSize(int fd)
 ssize_t     receiveClientRequest(int fd, std::string &clientRequest)
 {
 	char    requestBuffer[1];
-	ssize_t len = 1;
+	ssize_t len = -1;
 	off_t fdSize = getFdSize(fd);
 	while ((clientRequest.size() < (size_t)fdSize) && ((len = recv(fd, requestBuffer, 1, 0)) >= 0) )
 	{
