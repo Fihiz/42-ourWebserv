@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 15:01:39 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 18:45:33 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,6 @@
 #include "../config/Config.hpp"
 #include <fstream>
 #include <iostream>
-
-// Socket *findSpecificMasterSocket(std::vector<Socket *> tabMaster, int fd)
-// {
-// 	std::vector<Socket *>::iterator ite = tabMaster.end();
-// 	for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != ite; it++)
-// 	{
-// 		if ((*it)->getMasterSock() == fd)
-// 			return(*it);
-// 	}
-// 	return (NULL);
-// }
-
 
 std::vector<Config> configuration(int argc, char **argv) {
 	std::string path;

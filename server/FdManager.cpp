@@ -6,20 +6,20 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/15 13:26:10 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 14:46:49 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:07:18 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./WebservData.hpp"
 
-void destroyTabMaster(std::vector<Socket *> tabMaster)
+void    destroyTabMaster(std::vector<Socket *> tabMaster)
 {
     for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != tabMaster.end(); ++it) {
         delete (*it);
     }
 }
 
-int isTabMaster(std::vector<Socket *> tabMaster, int ind)
+int     isTabMaster(std::vector<Socket *> tabMaster, int ind)
 {
     for (std::vector<Socket *>::iterator it = tabMaster.begin(); it != tabMaster.end(); ++it) {
         if (ind == (*it)->getMasterSock())

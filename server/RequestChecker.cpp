@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:31:37 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 15:12:34 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:06:38 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iostream>
 
-void    checkRedir(Config *serverConfigBlock, t_request &parsedRequest)
+void				checkRedir(Config *serverConfigBlock, t_request &parsedRequest)
 {
 	if (parsedRequest.statusCode == "200 OK" && parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
 	{
@@ -31,7 +31,7 @@ void    checkRedir(Config *serverConfigBlock, t_request &parsedRequest)
 	}
 }
 
-void    checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlock)
+void    			checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlock)
 {
 	if (!serverConfigBlock)
 		parsedRequest.statusCode = "400 Bad Request";
@@ -42,11 +42,10 @@ void    checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlo
 			parsedRequest.statusCode = "413 Request Entity Too Large"; // A changer ?
 			return ;
 		}
-	   
 	}
 }
 
-const t_location  *checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock)
+const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock)
 {
 	const t_location  *locationBlock = NULL;
 	

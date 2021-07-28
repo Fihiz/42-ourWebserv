@@ -6,13 +6,13 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 17:05:09 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:08:13 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-std::string numFormat(int nb)
+std::string     numFormat(int nb)
 {
     char    itoaTab[3];
 
@@ -23,7 +23,7 @@ std::string numFormat(int nb)
 	return (itoaTab);
 }
 
-std::string getDateFormat( time_t &date )
+std::string     getDateFormat( time_t &date )
 {
 	std::string	ret;
 	std::string month[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -39,7 +39,7 @@ std::string getDateFormat( time_t &date )
 	return (ret);
 }
 
-std::string formatName( std::string src )
+std::string     formatName( std::string src )
 {
     std::string spaces = " ";
 
@@ -68,13 +68,15 @@ std::string     fillAutoIndex( std::vector<std::string> &files, std::string &fil
     {
         if ((*it)[0] != '.')
         {
-            stat((fullFileName + *it).c_str(), &buf);
-            if (S_ISDIR(buf.st_mode))
-                dir_buf += "<a href=\"" + *it + "/\">" + formatName(*it + "/") + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
-            else if (sprintf(itoaTab, "%lld", buf.st_size) > 0)
-                files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   " + (std::string)itoaTab + "\n";
-            else
-                files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   nan" + "\n";
+            if (stat((fullFileName + *it).c_str(), &buf) == 0)
+            {
+                if (S_ISDIR(buf.st_mode))
+                    dir_buf += "<a href=\"" + *it + "/\">" + formatName(*it + "/") + getDateFormat(buf.st_mtime) + "                   " + "-" + "\n";
+                else if (sprintf(itoaTab, "%lld", buf.st_size) > 0)
+                    files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   " + (std::string)itoaTab + "\n";
+                else
+                    files_buf += "<a href=\"" + *it + "\">" + formatName(*it) + getDateFormat(buf.st_mtime) + "                   nan" + "\n";
+            }
         }
         it++;
     }
@@ -93,7 +95,7 @@ std::string     createAutoIndex( std::string &fullFileName, std::string &fileNam
         {
             files.push_back((std::string)dirRead->d_name);
         }
-        closedir (dir);
+        closedir(dir);
     }
     else
     {

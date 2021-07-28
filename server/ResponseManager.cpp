@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 17:05:25 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:12:02 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,17 @@
 #include <fstream>
 #include <iostream>
 
-void	printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
+void			printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
 {
 	(void)parsedRequest;
 	(void)clientRequest;
 	(void)responseToClient;
-	std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :\n" << T_N << clientRequest << std::endl;
+	std::cout << T_CB << "Client [" T_GNB << fd << T_CB "]" << " is requesting :\n" << T_N << clientRequest << std::endl;
 	// std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
 	// std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
 }
 
-void	redirectCgiOutputToClient(t_request &req)
+void			redirectCgiOutputToClient(t_request &req)
 {
 	int pid;
 
@@ -59,7 +59,7 @@ void	redirectCgiOutputToClient(t_request &req)
 	remove("transferCgi.html");
 }
 
-std::string     buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
+std::string		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
 {
 	std::string responseToClient;
 
@@ -97,7 +97,7 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 	return (responseToClient);
 }
 
-void	sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient)
+void			sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient)
 {
 	fcntl(fd, F_SETFL, O_NONBLOCK); // Keeping it ?
 	if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) <= 0)

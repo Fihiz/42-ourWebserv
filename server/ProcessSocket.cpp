@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 16:26:02 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:07:00 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include <fstream>
 #include <iostream>
 
-int     processClientSocket(WebservData &Data, int fd)
+int		processClientSocket(WebservData &Data, int fd)
 {
 	int running = 1;
 	std::string clientRequest;
@@ -51,20 +51,23 @@ int     processClientSocket(WebservData &Data, int fd)
 	return (running);
 }
 
-void    processMasterSocket(WebservData &Data, int fd)
+void	processMasterSocket(WebservData &Data, int fd)
 {
 	int     clientSock;
 
 	clientSock = accept(fd, NULL, NULL);
 	if (clientSock < 0)
-		error("Accept connexion", Data);
+	{
+		perror("Accept");
+		return ;
+	}
 	FD_SET(clientSock, &Data.getReadSet());
 	FD_SET(clientSock, &Data.getWriteSet());
 	std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
 	return ;
 }
 
-int     processSockets(int fd, WebservData &Data)
+int		processSockets(int fd, WebservData &Data)
 {
 	int     running = 1;
 

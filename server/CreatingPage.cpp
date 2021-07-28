@@ -6,24 +6,36 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 17:04:44 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:07:41 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-std::string getFileContent(std::string fullFileName)
+std::string     getFileContent(std::string fullFileName)
 {
-    std::ifstream	ifs(fullFileName); // Dealing with protection later
-    std::stringstream   line;
-    line << ifs.rdbuf();
-    std::string content = line.str();
-    ifs.close();
+    std::ifstream		ifs(fullFileName);
+    std::string			content;
+    std::stringstream	line;
+    
+	if (!ifs.good())
+        return (content);
 
+	try
+    {
+        line << ifs.rdbuf();
+        content = line.str();
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << std::endl;
+	}
+
+    ifs.close();
     return (content);
 }
 
-std::string getDefaultErrorPage(std::string causeError) {
+std::string     getDefaultErrorPage(std::string causeError) {
 	std::string content;
 	content += "<!DOCTYPE html>";
 	content += "<html>";
@@ -36,7 +48,7 @@ std::string getDefaultErrorPage(std::string causeError) {
 	return (content);
 }
 
-std::string getContentFileError(Config * virtualHost, std::string causeError) {
+std::string     getContentFileError(Config * virtualHost, std::string causeError) {
     std::string contentFile;
     struct stat statBuf;
     if (virtualHost != NULL) {
@@ -54,7 +66,7 @@ std::string getContentFileError(Config * virtualHost, std::string causeError) {
     return (contentFile);
 }
 
-void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf)
+void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf)
 {
     struct stat statBuf;
     int ret = stat((parsedRequest.fullPathInfo).c_str(), &statBuf); /* need to be protected  */
@@ -73,10 +85,6 @@ void    setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_l
             ret = -1;
             for (std::vector<std::string>::const_iterator it = loc->index.begin(); it != loc->index.end(); it++)
             {
-                // std::cout << "fullPathInfo: " << parsedRequest.fullPathInfo << std::endl;
-                // std::cout << " + : " << *it << std::endl;
-                // std::cout << "loc: " << loc->root << std::endl;
-                
                 tmpFileName = loc->root + *it;
                 ret = stat(tmpFileName.c_str(), &statBuf);
                 if (ret != -1)

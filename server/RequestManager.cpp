@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 12:33:00 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:09:47 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <fstream>
 #include <iostream>
 
-void    setFullPathInfo(t_request &parsedRequest, Config &serverConfigBlock, std::string &tmpFile)
+void			setFullPathInfo(t_request &parsedRequest, Config &serverConfigBlock, std::string &tmpFile)
 {
 	parsedRequest.fullPathInfo = parsedRequest.pathInfo;
 	parsedRequest.fullPathInfo.replace(0, tmpFile.size(), serverConfigBlock.getRoot(tmpFile));
@@ -40,7 +40,7 @@ const t_location *findLocationBlock(Config &serverConfigBlock, t_request &parsed
 	return (locationBlock);
 }
 
-Config *findServerConfigBlock(WebservData &Data, std::string host)
+Config			*findServerConfigBlock(WebservData &Data, std::string host)
 {
 	if (host.find(":") == std::string::npos)
 	{
@@ -52,7 +52,7 @@ Config *findServerConfigBlock(WebservData &Data, std::string host)
 }
 
 
-off_t     getFdSize(int fd)
+off_t			getFdSize(int fd)
 {
 	struct stat buf;
 	fstat(fd, &buf);
@@ -61,7 +61,7 @@ off_t     getFdSize(int fd)
 	return (fdSize);
 }
 
-ssize_t     receiveClientRequest(int fd, std::string &clientRequest)
+ssize_t			receiveClientRequest(int fd, std::string &clientRequest)
 {
 	char    requestBuffer[1];
 	ssize_t len = -1;
