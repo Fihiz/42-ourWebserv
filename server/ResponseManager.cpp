@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 16:09:17 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 16:28:36 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 #include <fstream>
 #include <iostream>
 
-void	printOutputs(t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
+void	printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
 {
 	(void)parsedRequest;
 	(void)clientRequest;
 	(void)responseToClient;
-	//std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :" << T_N << clientRequest << std::endl;
+	std::cout << T_CB << "[" T_GNB << fd << T_CB "]" << " is requesting :\n" << T_N << clientRequest << std::endl;
 	// std::cout << "WE PRINT THE RESPONSE TO CLIENT HERE" << std::endl << T_YB << responseToClient.c_str() << T_N << "UNTIL HERE"<< std::endl;
 	// std::cout << T_GYB "Current status code [" T_GNB << parsedRequest.statusCode << T_GYB << "]" << T_N << std::endl;
 }

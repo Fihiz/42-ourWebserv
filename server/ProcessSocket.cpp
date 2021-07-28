@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 15:12:44 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 16:26:02 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int     processClientSocket(WebservData &Data, int fd)
 	int running = 1;
 	std::string clientRequest;
 
-	if (receiveClientRequest(fd, clientRequest) < 0)
-		losingConnexion(fd, Data.getReadSet(), Data.getWriteSet(), "Connexion lost... (");
+	if (receiveClientRequest(fd, clientRequest) <= 0)
+		losingConnexion(fd, Data.getReadSet(), Data.getWriteSet(), "Client has been removed... [");
 	else
 	{
 		t_request	parsedRequest = parsingRequest(clientRequest);
@@ -44,7 +44,7 @@ int     processClientSocket(WebservData &Data, int fd)
 		if (parsedRequest.pathInfo == "/exit.html")
 			running = 0;
 
-		printOutputs(parsedRequest, clientRequest, responseToClient);
+		printOutputs(fd, parsedRequest, clientRequest, responseToClient);
 		//std::cout << " \r \r \r";
 		sendResponseToClient(fd, Data, responseToClient);
 	}

@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 14:44:47 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 16:21:56 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void    			checkServerConfigBlock(t_request &parsedRequest, Config *serverConfig
 const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock);
 
 /* RESPONSE MANAGER */
-void				printOutputs(t_request	parsedRequest, std::string clientRequest,std::string responseToClient);
+void				printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient);
 void				redirectCgiOutputToClient(t_request &req);
 std::string    		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock);
 void				sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient);
