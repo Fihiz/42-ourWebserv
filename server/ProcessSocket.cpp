@@ -6,10 +6,13 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 11:14:01 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 12:05:38 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Socket.hpp"
+#include "WebservData.hpp"
+#include "Webserv.hpp"
 #include "../config/Parser.hpp"
 #include "../config/Config.hpp"
 #include <fstream>
@@ -66,6 +69,6 @@ int     processSockets(int fd, WebservData &Data)
 	if (isTabMaster(Data.getTabMaster(), fd) == 1)
 		processMasterSocket(Data, fd);
 	else
-		processClientSocket(Data, fd);
+		running = processClientSocket(Data, fd);
 	return (running);
 }

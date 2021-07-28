@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/22 19:00:43 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 12:08:38 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,37 +52,62 @@ typedef struct s_serv
 
 /* PAGE CREATION */
 
-std::string     getFileContent( std::string fullFileName );
-void            getFileInfo( char *request, std::string &fileName, std::string &ext, std::string &contentType );
-std::string     getDateFormat( time_t &date );
-std::string     numFormat( int nb );
-std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
-void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf);
-std::string     getContentFileError(Config * virtualHost, std::string causeError);
-std::string     createAutoIndex( std::string &fullFileName, std::string &fileName );
+std::string     	getFileContent( std::string fullFileName );
+void            	getFileInfo( char *request, std::string &fileName, std::string &ext, std::string &contentType );
+std::string     	getDateFormat( time_t &date );
+std::string     	numFormat( int nb );
+std::string     	createAutoIndex( std::string &fullFileName, std::string &fileName );
+void            	setContentDependingOnFileOrDirectory(t_request &parsedRequest, const t_location *loc, Config * conf);
+std::string     	getContentFileError(Config * virtualHost, std::string causeError);
+std::string     	createAutoIndex( std::string &fullFileName, std::string &fileName );
 
 /* CLOSE AND ERROR MANAGEMENT */
-void            destroyTabMaster(std::vector<Socket *> tabMaster);
-int            	isTabMaster(std::vector<Socket *> tabMaster, int ind);
+void            	destroyTabMaster(std::vector<Socket *> tabMaster);
+int            		isTabMaster(std::vector<Socket *> tabMaster, int ind);
 
 class Socket; // Need to deal with it later
 
-void           	losingConnexion( int fd, fd_set &readSet, std::string const type );
-int				error( std::string str, WebservData &Data);
-void			closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
-
+void           		losingConnexion( int fd, fd_set &readSet, std::string const type );
+int					error( std::string str, WebservData &Data);
+void				closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
 
 /* REQUEST */
+int             	getAnswer( t_request const &req );
+int             	postAnswer( t_request const &req );
+int             	deleteAnswer( t_request const &req );
+char **         	initEnv( char **env, t_request const &req, t_serv serv );
+int             	tabSize( char **tab );
+t_request       	parsingRequest( std::string buffer );
+void    			checkingProtocol(t_request &req);
+void    			checkingMethod(t_request &req, const std::vector<std::string> &method);
 
-int             getAnswer( t_request const &req );
-int             postAnswer( t_request const &req );
-int             deleteAnswer( t_request const &req );
-char **         initEnv( char **env, t_request const &req, t_serv serv );
-int             tabSize( char **tab );
-t_request       parsingRequest( std::string buffer );
-// ORIGINAL
-void    checkingProtocol(t_request &req);
-void    checkingMethod(t_request &req, const std::vector<std::string> &method);
+/* PROCESS SOCKET */
+int     			processClientSocket(WebservData &Data, int fd);
+void    			processMasterSocket(WebservData &Data, int fd);
+int     			processSockets(int fd, WebservData &Data);
+
+/* REQUEST MANAGER */
+void    			setFullPathInfo(t_request &parsedRequest, Config &serverConfigBlock, std::string &tmpFile);
+const t_location 	*findLocationBlock(Config &serverConfigBlock, t_request &parsedRequest);
+Config 				*findServerConfigBlock(WebservData &Data, std::string host);
+off_t     			getFdSize(int fd);
+ssize_t     		receiveClientRequest(int fd, std::string &clientRequest);
+
+/* REQUEST CHECKER */
+void    			checkRedir(Config *serverConfigBlock, t_request &parsedRequest);
+void    			checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlock);
+const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock);
+
+/* RESPONSE MANAGER */
+void				printOutputs(t_request	parsedRequest, std::string clientRequest,std::string responseToClient);
+void				redirectCgiOutputToClient(t_request &req);
+std::string    		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock);
+void				sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient);
+
+
+/* MAIN */
+std::vector<Config>	configuration(int argc, char **argv);
+void    			serverLoop(WebservData &Data);
 
 #include "./WebservData.hpp"
 #include "./Socket.hpp"

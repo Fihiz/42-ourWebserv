@@ -6,7 +6,7 @@
 #    By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/07/28 11:13:45 by pgoudet          ###   ########.fr        #
+#    Updated: 2021/07/28 11:52:20 by pgoudet          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,9 @@ FILES		= Socket.cpp \
 			  WebservData.cpp \
 			  AutoIndex.cpp \
 			  ProcessSocket.cpp \
+			  RequestManager.cpp \
+			  RequestChecker.cpp \
+			  ResponseManager.cpp \
 			  main.cpp
 
 OPATH		= objs/
