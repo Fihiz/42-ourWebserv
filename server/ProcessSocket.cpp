@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 12:54:57 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 15:12:44 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int     processClientSocket(WebservData &Data, int fd)
 	std::string clientRequest;
 
 	if (receiveClientRequest(fd, clientRequest) < 0)
-		losingConnexion(fd, Data.getReadSet(), "Connexion lost... (");
+		losingConnexion(fd, Data.getReadSet(), Data.getWriteSet(), "Connexion lost... (");
 	else
 	{
 		t_request	parsedRequest = parsingRequest(clientRequest);
@@ -38,6 +38,7 @@ int     processClientSocket(WebservData &Data, int fd)
 		checkServerConfigBlock(parsedRequest, serverConfigBlock);
 		checkRedir(serverConfigBlock, parsedRequest);
 		locationBlock = checkLocationBlock(parsedRequest, serverConfigBlock);
+		
 		std::string responseToClient = buildClientResponse(parsedRequest, locationBlock, serverConfigBlock);
 
 		if (parsedRequest.pathInfo == "/exit.html")
@@ -58,6 +59,7 @@ void    processMasterSocket(WebservData &Data, int fd)
 	if (clientSock < 0)
 		error("Accept connexion", Data);
 	FD_SET(clientSock, &Data.getReadSet());
+	FD_SET(clientSock, &Data.getWriteSet());
 	std::cout << T_BB "New connexion established on [" T_GNB << clientSock << T_BB "]\n" T_N << std::endl;
 	return ;
 }

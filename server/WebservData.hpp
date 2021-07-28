@@ -18,6 +18,8 @@ class WebservData
         std::vector<Socket *>                       _tabMaster;
         fd_set                                      _readSet;
         fd_set                                      _readCopy;
+        fd_set                                      _writeSet;
+        fd_set                                      _writeCopy;
         void                                        _initPorts(void);
         void                                        _initHosts(void);
         void                                        _initSocket(void);
@@ -32,6 +34,8 @@ class WebservData
 		std::map<std::string, Config> &				getMapServerName(void) ;
         fd_set &                                    getReadSet(void);
         fd_set &                                    getReadCopy(void);
+        fd_set &                                    getWriteSet(void);
+        fd_set &                                    getWriteCopy(void);
         std::vector<Socket *> &                     getTabMaster();
 };
 

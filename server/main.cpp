@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 11:50:54 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 15:01:39 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,17 @@ void    serverLoop(WebservData &Data)
 
 	while (running)
 	{
-		std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
+		//std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
 		Data.getReadCopy() = Data.getReadSet();
-		if (select(FD_SETSIZE, &Data.getReadCopy(), 0, 0, 0) < 0)
+		Data.getWriteCopy() = Data.getWriteSet();
+		if (select(FD_SETSIZE, &Data.getReadCopy(), &Data.getWriteCopy(), 0, 0) < 0)
 			error("Select", Data);
 		else
 			for (int fd = 0; fd <= FD_SETSIZE; ++fd)
 			{
-				if (FD_ISSET(fd, &Data.getReadCopy()))
+				if ((FD_ISSET(fd, &Data.getReadCopy()) && (isTabMaster(Data.getTabMaster(), fd) == 1 || FD_ISSET(fd, &Data.getWriteCopy()))))
 				{
+					std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
 					running = processSockets(fd, Data);
 					break ;
 				}
@@ -85,7 +87,7 @@ int     main(int ac, char *av[])
 	std::cout << std::endl;
 
 	serverLoop(Data);
-	closeAllFdUnlessMaster(Data.getReadSet(), Data.getTabMaster()); // Destructor destroys the master
+	closeAllFdUnlessMaster(Data.getReadSet(), Data.getWriteSet(), Data.getTabMaster()); // Destructor destroys the master
 	destroyTabMaster(Data.getTabMaster());
 	return (0);
 }

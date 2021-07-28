@@ -10,6 +10,8 @@ WebservData::WebservData(std::vector<Config> setup)
 {
 	FD_ZERO(&_readSet);
     FD_ZERO(&_readCopy);
+	FD_ZERO(&_writeSet);
+    FD_ZERO(&_writeCopy);
 
 	_initHosts();
 	_initPorts();
@@ -52,6 +54,7 @@ WebservData::_initSocket()
 		master = new Socket(*it);
         _tabMaster.push_back(master);
         FD_SET(master->getMasterSock(), &_readSet);
+		FD_SET(master->getMasterSock(), &_writeSet);
 	}
 }
 
@@ -80,6 +83,19 @@ fd_set &
 WebservData::getReadCopy(void)
 {
 	return(_readCopy);
+}
+
+fd_set &
+WebservData::getWriteSet(void)
+{
+	return(_writeSet);
+}
+
+
+fd_set &
+WebservData::getWriteCopy(void)
+{
+	return(_writeCopy);
 }
 
 std::vector<Socket *> &

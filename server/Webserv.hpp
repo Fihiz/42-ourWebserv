@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 12:08:38 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 14:44:47 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ int            		isTabMaster(std::vector<Socket *> tabMaster, int ind);
 
 class Socket; // Need to deal with it later
 
-void           		losingConnexion( int fd, fd_set &readSet, std::string const type );
+void           		losingConnexion( int fd, fd_set &readSet, fd_set &writeSet, std::string const type );
 int					error( std::string str, WebservData &Data);
-void				closeAllFdUnlessMaster( fd_set &readSet, std::vector<Socket *> tabMaster );
+void				closeAllFdUnlessMaster( fd_set &readSet, fd_set &writeSet, std::vector<Socket *> tabMaster );
 
 /* REQUEST */
 int             	getAnswer( t_request const &req );

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RespondManager.cpp                                 :+:      :+:    :+:   */
+/*   ResponseManager.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 11:49:48 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 14:41:38 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,5 @@ void	sendResponseToClient(int fd, WebservData &Data, std::string &responseToClie
 	fcntl(fd, F_SETFL, O_NONBLOCK); // Keeping it ?
 	if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) < 0)
 		error("Send", Data);
-	losingConnexion( fd, Data.getReadSet(), "Closing... [");
+	losingConnexion( fd, Data.getReadSet(), Data.getWriteSet(), "Closing... [");
 }

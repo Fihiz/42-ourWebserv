@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestChecker.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:31:37 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 11:34:38 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 15:12:34 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 void    checkRedir(Config *serverConfigBlock, t_request &parsedRequest)
 {
-	if (parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
+	if (parsedRequest.statusCode == "200 OK" && parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
 	{
 		struct stat statBuf;
 		int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
