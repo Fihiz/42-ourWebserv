@@ -17,6 +17,44 @@
 #include <fstream>
 #include <iostream>
 
+int		checkpath(t_request &parsedRequest) {
+	std::string path = parsedRequest.fullPathInfo;
+	std::string parts;
+	struct stat s;
+	int st = -1;
+
+	// /**/ std::cout << path << std::endl;
+
+	int pos = -1;
+	while (parsedRequest.statusCode == "200 OK" && (pos = path.find("/", pos + 1)) != (int)std::string::npos) {
+		parts = path.substr(0, pos + 1);
+		// /**/ std::cout << "Token: " << parts << std::endl;
+		st = stat(parts.c_str(), &s);
+		if ((S_ISDIR(s.st_mode) == 1) && (s.st_mode & S_IXOTH) != S_IXOTH) {
+			parsedRequest.statusCode = "403 Forbidden";
+		}
+		else if ((S_ISREG(s.st_mode) == 1) && (s.st_mode & S_IROTH) != S_IROTH) { // (?)
+			parsedRequest.statusCode = "401 Access Denied";
+		}
+	}
+	if (parsedRequest.statusCode == "200 OK") {
+		parts = path.substr(0, pos);
+		// /**/ std::cout << "Token: " << parts << std::endl;
+		st = stat(parts.c_str(), &s);
+		if ((S_ISDIR(s.st_mode) == 1) && (s.st_mode & S_IXOTH) != S_IXOTH) {
+			parsedRequest.statusCode = "403 Forbidden";
+		}
+		else if ((S_ISREG(s.st_mode) == 1) && (s.st_mode & S_IROTH) != S_IROTH) {
+			parsedRequest.statusCode = "401 Access Denied";
+		}
+	}
+	if (parsedRequest.statusCode == "200 OK")
+		return (1);
+	return (0);
+
+	// /**/ std::cout << parsedRequest.statusCode << std::endl;
+}
+
 void	printOutputs(t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
 {
 	(void)parsedRequest;
@@ -64,7 +102,7 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 	std::string responseToClient;
 	struct stat s;
 	
-	std::cout << parsedRequest.requestMethod << std::endl;
+	/* AFFICHAGE DEBUG */ std::cout << parsedRequest.requestMethod << std::endl;
 	
 	if (parsedRequest.requestMethod == "GET") {
 		if (parsedRequest.statusCode == "301 Moved Permanently")
@@ -97,37 +135,46 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 			}
 		}
 	}
-	else if (parsedRequest.requestMethod == "DELETE") {
-		int st = stat(const_cast<char *>(parsedRequest.fullPathInfo.c_str()), &s);
-		if (st != 0) {
-			parsedRequest.statusCode = "404 Not Found";
-		}
-		else {
-			int fd = open(const_cast<char *>(parsedRequest.fullPathInfo.c_str()), S_IRWXU);
-			if (fd == -1)
-				parsedRequest.statusCode = "401 Access Denied";
-			else {
-				close(fd);
-				if (parsedRequest.requestMethod == "DELETE" /*getmethod*/) {
-					if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
-						parsedRequest.statusCode = "500 Internal Server Error";
-					else
-						parsedRequest.statusCode = "204 No Content";
-				}
-	        	else
-					parsedRequest.statusCode = "405 Method Not Allowed";
-			}
-		}
-	}
-	else if (parsedRequest.requestMethod == "POST") {
+	else if (parsedRequest.requestMethod == "POST" && parsedRequest.statusCode == "200 OK") {
 		std::cout << "METHOD POST ASKING !!" << std::endl;
 	}
-	else {
-		std::cout << "UNEXPECTED METHOD ASKING !!" << std::endl;
+	else if (parsedRequest.requestMethod == "DELETE" && parsedRequest.statusCode == "200 OK") {
+		if (checkpath(parsedRequest)) {
+			if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
+				parsedRequest.statusCode = "500 Internal Server Error";
+			else
+				parsedRequest.statusCode = "204 No Content";
+		}
+
+		// int st = stat(const_cast<char *>(parsedRequest.fullPathInfo.c_str()), &s);
+		// if (st != 0) {
+		// 	parsedRequest.statusCode = "404 Not Found";
+		// }
+		// else {
+		// 	if ((s.st_mode & S_IROTH) != S_IROTH)
+		// 		parsedRequest.statusCode = "401 Access Denied";
+		// 	else {
+		// 		if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
+		// 			parsedRequest.statusCode = "500 Internal Server Error";
+		// 		else
+		// 			parsedRequest.statusCode = "204 No Content";
+		// 	}
+		// }
 	}
 	responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
 		+ std::to_string(parsedRequest.fileContent.size()) + "\n\n" + parsedRequest.fileContent + "\r\n";
 	return (responseToClient);
+
+	// 204 No Content -> localhost/dossier/exist.html (fichier ou dossier)
+	// 403 Forbidden -> localhost/dossier/ (si un element du chemin n'as pas les acces)
+	// 404 Not Found -> localhost/dossier/noexist.html
+	// 409 Conflict -> localhost/dossier
+
+	// Dossier GET permission: execution
+	// Fichier GET permission: lecture
+
+	// Dossier DELETE permission: lecture sinon 500 Internal Server Error
+	// Fichier DELETE permission: aucune
 }
 
 void	sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient)
