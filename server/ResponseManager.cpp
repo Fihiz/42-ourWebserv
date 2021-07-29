@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 19:12:02 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/28 19:26:31 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,46 @@ void			redirectCgiOutputToClient(t_request &req)
 	remove("transferCgi.html");
 }
 
+/* OLD VERSION */
+// std::string		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
+// {
+// 	std::string responseToClient;
+
+// 	if (parsedRequest.statusCode == "301 Moved Permanently")
+// 	{
+// 		responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
+// 	}
+// 	else
+// 	{
+// 		parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
+// 		if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
+// 		{
+// 			redirectCgiOutputToClient(parsedRequest);
+//     		char    itoaTab[100];
+// 			if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
+// 				responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+// 									+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent + "\r\n";
+// 			else
+// 				responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
+// 		}
+// 		else
+// 		{
+// 			if (parsedRequest.statusCode == "200 OK")
+// 				setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
+// 			else
+// 				parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
+//     		char    itoaTab[100];
+// 			if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
+// 				responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+// 								+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent;
+// 			else
+// 				responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
+// 		}
+// 	}
+// 	return (responseToClient);
+// }
+
+/* NEW VERSION WITH DELETE IN PROGRESS */
 std::string		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
 {
 	std::string responseToClient;
