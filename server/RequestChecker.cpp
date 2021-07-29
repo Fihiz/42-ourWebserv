@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:31:37 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 11:34:38 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/29 10:24:21 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void    checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlo
 			parsedRequest.statusCode = "413 Request Entity Too Large"; // A changer ?
 			return ;
 		}
-	   
+		errno = 0; 
 	}
 }
 
@@ -59,7 +59,6 @@ const t_location  *checkLocationBlock(t_request &parsedRequest, Config *serverCo
 			parsedRequest.statusCode = "301 Moved Permanently";
 			parsedRequest.location = locationBlock->redirect;
 		}
-		//std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
 	}
 	return (locationBlock);
 }

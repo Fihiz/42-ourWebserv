@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 15:26:50 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 18:02:17 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ Config *findServerConfigBlock(WebservData &Data, std::string host)
 		return (&(Data.getMapServerName()[host]));
 	return (NULL);
 }
-
 
 off_t     getFdSize(int fd)
 {
