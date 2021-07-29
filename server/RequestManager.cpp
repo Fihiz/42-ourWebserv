@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 11:49:32 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/29 18:49:32 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ const t_location *findLocationBlock(Config &serverConfigBlock, t_request &parsed
 		if (!locationBlock)
 			tmpFile.resize(tmpFile.size() - 1);
 	}
+	parsedRequest.route = tmpFile;
 	setFullPathInfo(parsedRequest, serverConfigBlock, tmpFile);
 	checkingMethod(parsedRequest, locationBlock->method);
 

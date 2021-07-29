@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 16:21:56 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/29 18:48:54 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void				closeAllFdUnlessMaster( fd_set &readSet, fd_set &writeSet, std::vector<S
 int             	getAnswer( t_request const &req );
 int             	postAnswer( t_request const &req );
 int             	deleteAnswer( t_request const &req );
-char **         	initEnv( char **env, t_request const &req, t_serv serv );
 int             	tabSize( char **tab );
 t_request       	parsingRequest( std::string buffer );
 void    			checkingProtocol(t_request &req);

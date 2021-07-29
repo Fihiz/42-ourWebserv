@@ -156,6 +156,31 @@ Config::getErrorPage(void) const {
 	return (this->_errorPage);
 }
 
+std::string
+Config::getRoutes(std::string ask) const {
+	if (ask.empty() == false)
+	{
+		std::map<std::string, t_location>::const_iterator it = this->_location.find(ask);
+		if (it != this->_location.end())
+			return (it->first);
+	}
+	return ("");
+}
+
+std::string
+Config::getCgi(std::string routes, std::string extension) const {
+	if (routes.empty() == false && extension.empty() == false)
+	{
+		std::map<std::string, t_location>::const_iterator it1 = this->_location.find(routes);
+		if (it1 != this->_location.end()) {
+			std::map<std::string, std::string>::const_iterator it2 = it1->second.cgi.find(extension);
+			if (it2 != it1->second.cgi.end())
+				return (it2->second);
+		}
+	}
+	return ("");
+}
+
 const t_location *
 Config::getLocation(std::string ask) const {
 	if (this->_location.find(ask) != this->_location.end())

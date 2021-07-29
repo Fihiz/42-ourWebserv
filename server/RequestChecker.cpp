@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:31:37 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 16:26:27 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/29 18:49:16 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverCon
 			parsedRequest.statusCode = "301 Moved Permanently";
 			parsedRequest.location = locationBlock->redirect;
 		}
-		//std::cout << "PATH : " << parsedRequest.fullPathInfo << std::endl;        
 	}
 	return (locationBlock);
 }

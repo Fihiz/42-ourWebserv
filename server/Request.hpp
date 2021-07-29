@@ -6,7 +6,7 @@
 /*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/26 14:56:23 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/28 15:13:02 by pgoudet          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ typedef struct s_request
     std::string fileType;
     std::string statusCode;
     std::string fullPathInfo;
+	std::string	route;
     //std::string fileContent; (?)
 
 	// add to merge cgi

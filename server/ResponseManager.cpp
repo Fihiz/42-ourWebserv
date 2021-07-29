@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 16:27:09 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/29 19:40:11 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,39 @@
 #include <fstream>
 #include <iostream>
 
-void			printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
+int		checkPath(t_request &parsedRequest) {
+	std::string path = parsedRequest.fullPathInfo;
+	std::string parts;
+	struct stat s;
+
+	int st = -1;
+	int pos = -1;
+	while (parsedRequest.statusCode == "200 OK" && (pos = path.find("/", pos + 1)) != (int)std::string::npos) {
+		parts = path.substr(0, pos + 1);
+		st = stat(parts.c_str(), &s);
+		if ((S_ISDIR(s.st_mode) == 1) && (s.st_mode & S_IXOTH) != S_IXOTH) {
+			parsedRequest.statusCode = "403 Forbidden";
+		}
+		else if ((S_ISREG(s.st_mode) == 1) && (s.st_mode & S_IROTH) != S_IROTH) {
+			parsedRequest.statusCode = "401 Access Denied";
+		}
+	}
+	if (parsedRequest.statusCode == "200 OK") {
+		parts = path.substr(0, pos);
+		st = stat(parts.c_str(), &s);
+		if ((S_ISDIR(s.st_mode) == 1) && (s.st_mode & S_IXOTH) != S_IXOTH) {
+			parsedRequest.statusCode = "403 Forbidden";
+		}
+		else if ((S_ISREG(s.st_mode) == 1) && (s.st_mode & S_IROTH) != S_IROTH) {
+			parsedRequest.statusCode = "401 Access Denied";
+		}
+	}
+	if (parsedRequest.statusCode == "200 OK")
+		return (1);
+	return (0);
+}
+
+void	printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient)
 {
 	(void)parsedRequest;
 	(void)clientRequest;
@@ -31,14 +63,24 @@ void			printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,s
 void			redirectCgiOutputToClient(t_request &req)
 {
 	int pid;
-
 	char *argv[4];
-	argv[0] = (char *)"./cgi-bin/php-cgi";
-	argv[1] = (char *)"-q";
-	argv[2] = const_cast<char *>(req.fullPathInfo.c_str());
-	argv[3] = NULL;
 	int fdTmp;
 
+	if  (req.fileExt == ".py" || req.fileExt == ".pl")
+	{
+		argv[0] = const_cast<char *>(req.pathInfoCgi.c_str());
+		argv[1] = const_cast<char *>(req.fullPathInfo.c_str());
+		argv[2] = NULL;
+	}
+	else
+	{
+		argv[0] = const_cast<char *>(req.pathInfoCgi.c_str());
+		argv[1] = const_cast<char *>("-q");
+		argv[2] = const_cast<char *>(req.fullPathInfo.c_str());
+		argv[3] = NULL;
+	}
+
+	
 	fdTmp = open("transferCgi.html", O_RDWR | O_CREAT, 0777);
 	pid = fork();
 	if (pid == -1)
@@ -60,81 +102,62 @@ void			redirectCgiOutputToClient(t_request &req)
 	remove("transferCgi.html");
 }
 
-/* OLD VERSION */
-// std::string		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
-// {
-// 	std::string responseToClient;
-
-// 	if (parsedRequest.statusCode == "301 Moved Permanently")
-// 	{
-// 		responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
-// 	}
-// 	else
-// 	{
-// 		parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
-// 		if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
-// 		{
-// 			redirectCgiOutputToClient(parsedRequest);
-//     		char    itoaTab[100];
-// 			if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
-// 				responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-// 									+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent + "\r\n";
-// 			else
-// 				responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
-// 		}
-// 		else
-// 		{
-// 			if (parsedRequest.statusCode == "200 OK")
-// 				setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
-// 			else
-// 				parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
-//     		char    itoaTab[100];
-// 			if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
-// 				responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-// 								+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent;
-// 			else
-// 				responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
-// 		}
-// 	}
-// 	return (responseToClient);
-// }
-
-/* NEW VERSION WITH DELETE IN PROGRESS */
-std::string		buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
+std::string     buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
 {
 	std::string responseToClient;
-
-	if (parsedRequest.statusCode == "301 Moved Permanently")
-	{
-		responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
-	}
-	else
-	{
-		parsedRequest.pathInfoCgi = "../cgi-bin/php-cgi"; // need to initialise in main ? 
-		if (parsedRequest.fileExt == "php" && parsedRequest.pathInfoCgi.empty() == false && parsedRequest.statusCode == "200 OK")
+	//struct stat s;
+		
+	if (parsedRequest.requestMethod == "GET") {
+		if (parsedRequest.statusCode == "301 Moved Permanently")
 		{
-			redirectCgiOutputToClient(parsedRequest);
-    		char    itoaTab[100];
-			if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
-				responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-									+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent + "\r\n";
-			else
-				responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
+			responseToClient = "HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location;
 		}
 		else
 		{
-			if (parsedRequest.statusCode == "200 OK")
-				setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
+			parsedRequest.pathInfoCgi = serverConfigBlock->getCgi(serverConfigBlock->getRoutes(parsedRequest.route), parsedRequest.fileExt);
+			if ((parsedRequest.fileExt == ".php" || parsedRequest.fileExt == ".pl" || parsedRequest.fileExt == ".py") \
+				&& parsedRequest.statusCode == "200 OK" && parsedRequest.pathInfoCgi.empty() == false)
+			{
+				
+				if (checkPath(parsedRequest))
+				{
+					redirectCgiOutputToClient(parsedRequest);
+				}
+				else
+				{
+					std::cout << checkPath(parsedRequest) << std::endl;
+					std::cout << parsedRequest.statusCode << "\n";
+					parsedRequest.statusCode = "500 Internal Server Error";
+					parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
+					parsedRequest.fileType = "text / html";
+				}
+			}
 			else
-				parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
-    		char    itoaTab[100];
-			if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
-				responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
-								+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent;
-			else
-				responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
+			{
+				if (parsedRequest.statusCode == "200 OK")
+					setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
+				else
+					parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
+			}
 		}
 	}
+	else if (parsedRequest.requestMethod == "POST" && parsedRequest.statusCode == "200 OK") {
+		std::cout << "METHOD POST ASKING !!" << std::endl;
+	}
+	else if (parsedRequest.requestMethod == "DELETE" && parsedRequest.statusCode == "200 OK") {
+		if (checkPath(parsedRequest)) {
+			if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
+				parsedRequest.statusCode = "500 Internal Server Error";
+			else
+				parsedRequest.statusCode = "204 No Content";
+		}
+	}
+	char    itoaTab[100];
+	if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
+		responseToClient = "\nHTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
+							+ (std::string)itoaTab + "\n\n" + parsedRequest.fileContent + "\r\n";
+	else
+		responseToClient = "\nHTTP/1.1 500 Internal Server Error\nContent-Type:text/html\nContent-Length:0\n\n\r\n";
 	return (responseToClient);
 }
 
