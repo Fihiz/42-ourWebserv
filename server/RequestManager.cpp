@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 19:09:47 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/29 11:49:32 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ ssize_t			receiveClientRequest(int fd, std::string &clientRequest)
 	off_t fdSize = getFdSize(fd);
 	while ((clientRequest.size() < (size_t)fdSize) && ((len = recv(fd, requestBuffer, 1, 0)) >= 0) )
 	{
-		std::cout << " \r \r \r";
+		//std::cout << " \r \r \r";
 		clientRequest =  clientRequest  + requestBuffer[0];
 		if (len == 0)
 			break;
