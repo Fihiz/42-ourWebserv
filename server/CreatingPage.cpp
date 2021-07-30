@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 19:07:41 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 13:06:08 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void            setContentDependingOnFileOrDirectory(t_request &parsedRequest, c
         parsedRequest.fileContent = getContentFileError(conf, parsedRequest.statusCode);
     }
     else
-    {
+    {   
         if (!S_ISDIR(statBuf.st_mode))
             parsedRequest.fileContent = getFileContent(parsedRequest.fullPathInfo);
         else

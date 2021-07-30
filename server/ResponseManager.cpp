@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 19:40:11 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 13:06:37 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 {
 	std::string responseToClient;
 	//struct stat s;
-		
+
 	if (parsedRequest.requestMethod == "GET") {
 		if (parsedRequest.statusCode == "301 Moved Permanently")
 		{
@@ -118,7 +118,6 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 			if ((parsedRequest.fileExt == ".php" || parsedRequest.fileExt == ".pl" || parsedRequest.fileExt == ".py") \
 				&& parsedRequest.statusCode == "200 OK" && parsedRequest.pathInfoCgi.empty() == false)
 			{
-				
 				if (checkPath(parsedRequest))
 				{
 					redirectCgiOutputToClient(parsedRequest);
