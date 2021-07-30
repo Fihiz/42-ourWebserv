@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:41 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/29 11:47:43 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 15:05:09 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int     Socket::getUsedPort( void ) const
 
 void    Socket::doListen( void )
 {
-    if (listen(this->_masterSock, 30) < 0)
+    if (listen(this->_masterSock, 128) < 0)
 	{
 		perror("listen");
 		exit(EXIT_FAILURE);
