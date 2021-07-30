@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/30 15:55:41 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 16:26:40 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,6 @@ void            redirectCgiOutputToClient(t_request &req, Config *serverConfigBl
         req.fileContent = getFileContent("transferCgi.html");
         if (status != 0)
         {
-			std::cout << "Je suis passe dans redirect\n";
             req.statusCode = "500 Internal Server Error";
             req.fileContent = getContentFileError(serverConfigBlock, req.statusCode);
             req.fileType = "text / html";
@@ -166,28 +165,17 @@ void            redirectCgiOutputToClient(t_request &req, Config *serverConfigBl
 std::string     buildClientResponse(t_request &parsedRequest, const t_location *locationBlock, Config *serverConfigBlock)
 {
 	std::string responseToClient;
-	//struct stat s;
 
-	if (parsedRequest.requestMethod == "GET") {
+	if (parsedRequest.requestMethod != "DELETE" || parsedRequest.statusCode != "200 OK") {
 		if (parsedRequest.statusCode == "301 Moved Permanently")
-		{
 			return ("HTTP/1.1 301 Moved Permanently\nLocation: " + parsedRequest.location);
-		}
 		else
 		{
 			parsedRequest.pathInfoCgi = serverConfigBlock->getCgi(serverConfigBlock->getRoutes(parsedRequest.route), parsedRequest.fileExt);
-			/* OLD */
-			// if ((parsedRequest.fileExt == ".php" || parsedRequest.fileExt == ".pl" || parsedRequest.fileExt == ".py") \
-			// 	&& parsedRequest.statusCode == "200 OK" && parsedRequest.pathInfoCgi.empty() == false)
-
-			/* NEW */
 			if ((parsedRequest.fileExt == ".php" || parsedRequest.fileExt == ".pl" || parsedRequest.fileExt == ".py") \
 			 	&& checkPath(parsedRequest) && parsedRequest.pathInfoCgi.empty() == false)
-			{
 				if (checkPath(parsedRequest))
-				{
 					redirectCgiOutputToClient(parsedRequest, serverConfigBlock);
-				}
 				else
 				{
 					std::cout << checkPath(parsedRequest) << std::endl;
@@ -196,34 +184,19 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 					parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
 					parsedRequest.fileType = "text / html";
 				}
-			}
 			else
-			{
-				/* OLD */
-				// if (parsedRequest.statusCode == "200 OK")
-				// 	setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
-				// else
-				// 	parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
-
-				/* NEW */
                 if (checkPath(parsedRequest))
                     setContentDependingOnFileOrDirectory(parsedRequest, locationBlock, serverConfigBlock);
                 else
                     parsedRequest.fileContent = getContentFileError(serverConfigBlock, parsedRequest.statusCode);
-            }
 		}
 	}
-	else if (parsedRequest.requestMethod == "POST" && parsedRequest.statusCode == "200 OK") {
-		std::cout << "METHOD POST ASKING !!" << std::endl;
-	}
-	else if (parsedRequest.requestMethod == "DELETE" && parsedRequest.statusCode == "200 OK") {
-		if (checkPath(parsedRequest)) {
+    else
+		if (checkPath(parsedRequest))
 			if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
 				parsedRequest.statusCode = "500 Internal Server Error";
 			else
 				parsedRequest.statusCode = "204 No Content";
-		}
-	}
 	char    itoaTab[100];
 	if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
 		responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
@@ -235,7 +208,7 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 
 void			sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient)
 {
-	fcntl(fd, F_SETFL, O_NONBLOCK); // Keeping it ?
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (send(fd, responseToClient.c_str(), responseToClient.size(), 0) <= 0)
 		losingConnexion(fd, Data.getReadSet(), Data.getWriteSet(), "Client has been removed... [");
 	losingConnexion( fd, Data.getReadSet(), Data.getWriteSet(), "Response has been sent, closing... [");
