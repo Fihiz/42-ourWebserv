@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:41 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/30 15:05:09 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 17:37:06 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,21 +29,6 @@ Socket::Socket(int port)
 
     this->doBind();
     this->doListen();
-    return ;
-}
-
-Socket  &Socket::operator=( Socket const &rhs )
-{
-    std::cout << T_GYB "Socket operator assignation overload called" T_N << std::endl;
-    // Need to deal with it
-    (void)rhs;
-    return (*this);
-}
-
-Socket::Socket( Socket const &src )
-{
-    std::cout << T_GYB "Socket copy constructor called" T_N << std::endl;
-    *this = src;
     return ;
 }
 
@@ -79,7 +64,7 @@ void    Socket::doSocket( void )
     if ((this->_masterSock = socket(AF_INET, SOCK_STREAM, 0)) == 0)
 	{
 		perror("socket");
-        exit(EXIT_FAILURE); // To deal with exceptions later
+        exit(EXIT_FAILURE);
 	}
     std::cout << T_BB "Using fd [" T_GNB << this->_masterSock << T_BB "] for listening on port [" T_GNB << getUsedPort() << T_BB "]" << T_N << std::endl;
     

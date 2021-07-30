@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:31:37 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 18:49:16 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 17:46:24 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void    			checkServerConfigBlock(t_request &parsedRequest, Config *serverConfig
 	{
 		if ((unsigned long)atoi(parsedRequest.contentLenght.c_str()) > serverConfigBlock->getMaxBodySize())
 		{
-			parsedRequest.statusCode = "413 Request Entity Too Large"; // A changer ?
+			parsedRequest.statusCode = "413 Request Entity Too Large";
 			return ;
 		}
 	}
@@ -60,4 +60,24 @@ const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverCon
 		}
 	}
 	return (locationBlock);
+}
+
+void    checkingProtocol(t_request &req)
+{
+    if (req.protocol != "HTTP/1.1")
+    {
+        req.statusCode = "400 Bad Request";
+        std::cerr << T_YB "Wrong method" T_N << std::endl;
+    }
+    else
+        req.statusCode = "200 OK";
+}
+
+void    checkingMethod(t_request &req, const std::vector<std::string> &method)
+{
+    if( std::find(method.begin(), method.end(), req.requestMethod) == method.end() )
+    {
+        req.statusCode = "405 Method Not Allowed";
+        std::cerr << T_YB "Wrong method" T_N << std::endl;
+    }
 }

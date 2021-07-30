@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:10:29 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/30 15:42:26 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 17:51:35 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
-#include <stdexcept> // To do: try and catch
+#include <stdexcept>
 #include <time.h>
 #include <vector>
 #include <fcntl.h>
@@ -49,6 +49,29 @@ typedef struct s_serv
 	const char *server_port;
 }               t_serv;
 
+/* MAIN */
+std::vector<Config>	configuration(int argc, char **argv);
+void    			serverLoop(WebservData &Data);
+
+/* PROCESS SOCKET */
+int     			processClientSocket(WebservData &Data, int fd);
+void    			processMasterSocket(WebservData &Data, int fd);
+int     			processSockets(int fd, WebservData &Data);
+
+/* REQUEST MANAGER */
+t_request       	parsingRequest( std::string buffer );
+void    			setFullPathInfo(t_request &parsedRequest, Config &serverConfigBlock, std::string &tmpFile);
+const t_location 	*findLocationBlock(Config &serverConfigBlock, t_request &parsedRequest);
+Config 				*findServerConfigBlock(WebservData &Data, std::string host);
+off_t     			getFdSize(int fd);
+ssize_t     		receiveClientRequest(int fd, std::string &clientRequest);
+
+/* REQUEST CHECKER */
+void    			checkRedir(Config *serverConfigBlock, t_request &parsedRequest);
+void    			checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlock);
+const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock);
+void    			checkingProtocol(t_request &req);
+void    			checkingMethod(t_request &req, const std::vector<std::string> &method);
 
 /* PAGE CREATION */
 
@@ -61,42 +84,6 @@ void            	setContentDependingOnFileOrDirectory(t_request &parsedRequest, 
 std::string     	getContentFileError(Config * virtualHost, std::string causeError);
 std::string     	createAutoIndex( std::string &fullFileName, std::string &fileName );
 
-/* CLOSE AND ERROR MANAGEMENT */
-void            	destroyTabMaster(std::vector<Socket *> tabMaster);
-int            		isTabMaster(std::vector<Socket *> tabMaster, int ind);
-
-class Socket; // Need to deal with it later
-
-void           		losingConnexion( int fd, fd_set &readSet, fd_set &writeSet, std::string const type );
-int					error( std::string str, WebservData &Data);
-void				closeAllFdUnlessMaster( fd_set &readSet, fd_set &writeSet, std::vector<Socket *> tabMaster );
-
-/* REQUEST */
-int             	getAnswer( t_request const &req );
-int             	postAnswer( t_request const &req );
-int             	deleteAnswer( t_request const &req );
-int             	tabSize( char **tab );
-t_request       	parsingRequest( std::string buffer );
-void    			checkingProtocol(t_request &req);
-void    			checkingMethod(t_request &req, const std::vector<std::string> &method);
-
-/* PROCESS SOCKET */
-int     			processClientSocket(WebservData &Data, int fd);
-void    			processMasterSocket(WebservData &Data, int fd);
-int     			processSockets(int fd, WebservData &Data);
-
-/* REQUEST MANAGER */
-void    			setFullPathInfo(t_request &parsedRequest, Config &serverConfigBlock, std::string &tmpFile);
-const t_location 	*findLocationBlock(Config &serverConfigBlock, t_request &parsedRequest);
-Config 				*findServerConfigBlock(WebservData &Data, std::string host);
-off_t     			getFdSize(int fd);
-ssize_t     		receiveClientRequest(int fd, std::string &clientRequest);
-
-/* REQUEST CHECKER */
-void    			checkRedir(Config *serverConfigBlock, t_request &parsedRequest);
-void    			checkServerConfigBlock(t_request &parsedRequest, Config *serverConfigBlock);
-const t_location	*checkLocationBlock(t_request &parsedRequest, Config *serverConfigBlock);
-
 /* RESPONSE MANAGER */
 void				printOutputs(int fd, t_request	parsedRequest, std::string clientRequest,std::string responseToClient);
 void            	redirectCgiOutputToClient(t_request &req, Config *serverConfigBlock);
@@ -104,10 +91,12 @@ std::string    		buildClientResponse(t_request &parsedRequest, const t_location 
 void				sendResponseToClient(int fd, WebservData &Data, std::string &responseToClient);
 int        			checkPath(t_request &parsedRequest);
 
-
-/* MAIN */
-std::vector<Config>	configuration(int argc, char **argv);
-void    			serverLoop(WebservData &Data);
+/* FD MANAGER */
+void            	destroyTabMaster(std::vector<Socket *> tabMaster);
+int            		isTabMaster(std::vector<Socket *> tabMaster, int ind);
+void           		losingConnexion( int fd, fd_set &readSet, fd_set &writeSet, std::string const type );
+int					error( std::string str, WebservData &Data);
+void				closeAllFdUnlessMaster( fd_set &readSet, fd_set &writeSet, std::vector<Socket *> tabMaster );
 
 #include "./WebservData.hpp"
 #include "./Socket.hpp"

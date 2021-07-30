@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agathe <agathe@student.42lyon.fr>          +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:21:35 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/08 13:44:17 by agathe           ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 17:37:27 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,8 @@ class Socket
 		int		_usedPort;
 		struct sockaddr_in _servAddr;
 
-
 		Socket( Socket const &src );
 		Socket &operator=( Socket const &rhs );
-	
 
 	public:
 		Socket( void );

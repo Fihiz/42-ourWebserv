@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pgoudet <pgoudet@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 08:08:07 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/28 15:13:02 by pgoudet          ###   ########.fr       */
+/*   Updated: 2021/07/30 17:34:49 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,48 +17,36 @@
 
 typedef struct s_request
 {
-    std::string acceptedCharset; //+
-    std::string acceptedLanguage; //+
-    std::string allow; //+
-    std::string authorization; //+
-    std::string contentLanguage; //+
-    std::string contentLenght; //+
-    std::string contentLocation; //+
-    std::string contentType; //+
-    std::string date; //+
-    std::string host; // +
-    std::string lastModified; //+
-    std::string location; //+
-    std::string referer; //+
-    std::string retryAfter; //+
-    std::string server; // +
-    std::string transfertEncoding; //+
-    std::string userAgent; //+
-    std::string wwwAuthenticate; //+
-
-    std::string body; //+
-    std::string protocol; // +
-    std::string pathInfo; //+
-    std::string requestMethod; // +
-    std::string pathTranslated; // +
-    std::string script;   // -
-    std::string queryString; // -
-    std::string uri; // -
-    std::string remoteUser; //-
-    std::string remoteAddr; // -
-    std::string authType; //-
-    // Added by socket team
+    std::string acceptedCharset;
+    std::string acceptedLanguage;
+    std::string allow;
+    std::string authorization;
+    std::string contentLanguage;
+    std::string contentLenght;
+    std::string contentLocation;
+    std::string contentType;
+    std::string date;
+    std::string host; 
+    std::string lastModified;
+    std::string location;
+    std::string referer;
+    std::string retryAfter;
+    std::string server; 
+    std::string transfertEncoding;
+    std::string userAgent;
+    std::string wwwAuthenticate;
+    std::string body;
+    std::string protocol; 
+    std::string pathInfo;
+    std::string requestMethod;
+    std::string pathTranslated;
     std::string fileContent;
     std::string fileType;
     std::string statusCode;
     std::string fullPathInfo;
 	std::string	route;
-    //std::string fileContent; (?)
-
-	// add to merge cgi
 	std::string pathInfoCgi;
 	std::string fileExt;
-    
 
 }               t_request;
 

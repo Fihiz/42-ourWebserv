@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 16:26:59 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 17:34:01 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ int		processClientSocket(WebservData &Data, int fd)
 			running = 0;
 
 		printOutputs(fd, parsedRequest, clientRequest, responseToClient);
-		//std::cout << " \r \r \r";
 		sendResponseToClient(fd, Data, responseToClient);
 	}
 	return (running);

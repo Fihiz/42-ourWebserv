@@ -2,14 +2,14 @@ server {
 	listen 80 ;
 	server_name localhost ;
 
-	root / ;
+	root /Users/sad-aude/Desktop/CGI ;
 	index index.html ;
 
 	error_page 404 /404.html ;
 
-    location /images/ {
+    location /dessin/ {
         method GET POST DELETE ;
-		root /data ;
+		root /Users/sad-aude/Desktop/CGI/images ;
 		index index.html ;
 		autoindex off ;
     }

@@ -14,7 +14,6 @@ Parser::~Parser(void) {
 		this->_file.close();
 }
 
-// ------- OVERLOAD -----------------------------------------------------------
 // ------- METHOD -------------------------------------------------------------
 void
 Parser::checkGeneralSyntax() {
@@ -509,7 +508,6 @@ Parser::printConfigs(void) {
 	}
 }
 
-// ------- OPERATOR -----------------------------------------------------------
 // ------- EXCEPTION ----------------------------------------------------------
 const char *
 Parser::FileOpeningFailedException::what() const throw () {

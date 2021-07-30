@@ -1,6 +1,5 @@
 #include "./WebservData.hpp"
 
-
 WebservData::WebservData()
 {
 }
@@ -90,7 +89,6 @@ WebservData::getWriteSet(void)
 {
 	return(_writeSet);
 }
-
 
 fd_set &
 WebservData::getWriteCopy(void)

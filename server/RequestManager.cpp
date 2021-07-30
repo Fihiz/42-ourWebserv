@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:24:28 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/29 18:49:32 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 17:35:31 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,7 @@ const t_location *findLocationBlock(Config &serverConfigBlock, t_request &parsed
 Config			*findServerConfigBlock(WebservData &Data, std::string host)
 {
 	if (host.find(":") == std::string::npos)
-	{
-	   host = host + ":80"; 
-	}
+	   host = host + ":80";
 	if (Data.getMapServerName().find(host) != Data.getMapServerName().end())
 		return (&(Data.getMapServerName()[host]));
 	return (NULL);
@@ -69,7 +67,6 @@ ssize_t			receiveClientRequest(int fd, std::string &clientRequest)
 	off_t fdSize = getFdSize(fd);
 	while ((clientRequest.size() < (size_t)fdSize) && ((len = recv(fd, requestBuffer, 1, 0)) >= 0) )
 	{
-		//std::cout << " \r \r \r";
 		clientRequest =  clientRequest  + requestBuffer[0];
 		if (len == 0)
 			break;

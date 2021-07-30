@@ -39,5 +39,4 @@ class WebservData
         std::vector<Socket *> &                     getTabMaster();
 };
 
-
 #endif

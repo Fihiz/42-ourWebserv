@@ -6,7 +6,7 @@
 #    By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/10 16:17:37 by sad-aude          #+#    #+#              #
-#    Updated: 2021/07/29 18:48:29 by sad-aude         ###   ########lyon.fr    #
+#    Updated: 2021/07/30 18:01:24 by sad-aude         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,26 +31,25 @@ VPATH		=	./config \
 				./server \
 				./
 
-HEADERS		=	Socket.hpp \
+HEADERS		=	Request.hpp \
+				Socket.hpp \
 				Webserv.hpp \
-				Request.hpp \
-				Config.hpp \
 				WebservData.hpp \
+				Config.hpp \
 				Parser.hpp
-FILES		= Socket.cpp \
+FILES		= AutoIndex.cpp \
 			  CreatingPage.cpp \
 			  FdManager.cpp \
-			  CheckingHeader.cpp \
+			  main.cpp \
 			  ParsingRequest.cpp \
-			  Config.cpp \
-			  Parser.cpp \
-			  WebservData.cpp \
-			  AutoIndex.cpp \
 			  ProcessSocket.cpp \
-			  RequestManager.cpp \
 			  RequestChecker.cpp \
+			  RequestManager.cpp \
 			  ResponseManager.cpp \
-			  main.cpp
+			  Socket.cpp \
+			  WebservData.cpp \
+			  Config.cpp \
+			  Parser.cpp
 
 OPATH		= objs/
 
