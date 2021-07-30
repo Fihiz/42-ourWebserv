@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:48:55 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/30 16:26:40 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 16:28:47 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,11 +192,15 @@ std::string     buildClientResponse(t_request &parsedRequest, const t_location *
 		}
 	}
     else
-		if (checkPath(parsedRequest))
-			if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
+    {
+        if (checkPath(parsedRequest))
+        {
+            if (remove(parsedRequest.fullPathInfo.c_str()) == -1)
 				parsedRequest.statusCode = "500 Internal Server Error";
 			else
 				parsedRequest.statusCode = "204 No Content";
+        }
+    }
 	char    itoaTab[100];
 	if (sprintf(itoaTab, "%lu", parsedRequest.fileContent.size()) > 0)
 		responseToClient = "HTTP/1.1 " +  parsedRequest.statusCode + "\nContent-Type:" + parsedRequest.fileType + "\nContent-Length:" 
