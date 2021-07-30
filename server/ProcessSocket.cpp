@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:11:42 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/30 17:34:01 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 18:10:53 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ int		processClientSocket(WebservData &Data, int fd)
 		const t_location  *locationBlock = NULL;
 
 		checkServerConfigBlock(parsedRequest, serverConfigBlock);
-		checkRedir(serverConfigBlock, parsedRequest);
 		locationBlock = checkLocationBlock(parsedRequest, serverConfigBlock);
+		checkRedir(serverConfigBlock, parsedRequest);
 		
 		std::string responseToClient = buildClientResponse(parsedRequest, locationBlock, serverConfigBlock);
 

@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/08 11:59:24 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/30 17:33:29 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 18:04:49 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void    serverLoop(WebservData &Data)
 
 	while (running)
 	{
-		//std::cout << T_GYB "Waiting in passive mode" T_N << std::endl;
 		Data.getReadCopy() = Data.getReadSet();
 		Data.getWriteCopy() = Data.getWriteSet();
 		if (select(FD_SETSIZE, &Data.getReadCopy(), &Data.getWriteCopy(), 0, 0) < 0)

@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/10 16:07:14 by sad-aude          #+#    #+#             */
-/*   Updated: 2021/07/28 19:08:13 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 18:04:24 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,9 @@ std::string     createAutoIndex( std::string &fullFileName, std::string &fileNam
     std::vector<std::string> files;
     struct dirent *dirRead;
 
-    if ((dir = opendir((fullFileName).c_str())) != nullptr)
+    if ((dir = opendir((fullFileName).c_str())) != NULL)
     {
-        while ((dirRead = readdir(dir)) != nullptr)
+        while ((dirRead = readdir(dir)) != NULL)
         {
             files.push_back((std::string)dirRead->d_name);
         }

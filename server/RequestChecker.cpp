@@ -6,7 +6,7 @@
 /*   By: sad-aude <sad-aude@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 11:31:37 by pgoudet           #+#    #+#             */
-/*   Updated: 2021/07/30 17:46:24 by sad-aude         ###   ########lyon.fr   */
+/*   Updated: 2021/07/30 18:17:01 by sad-aude         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ void				checkRedir(Config *serverConfigBlock, t_request &parsedRequest)
 	if (parsedRequest.statusCode == "200 OK" && parsedRequest.pathInfo[parsedRequest.pathInfo.size() - 1] != '/')
 	{
 		struct stat statBuf;
-		int ret = stat((parsedRequest.pathInfo).c_str(), &statBuf);
+
+		int ret = stat((parsedRequest.fullPathInfo).c_str(), &statBuf);
 		if ((ret != -1 && S_ISDIR(statBuf.st_mode)) || (serverConfigBlock->getLocation(parsedRequest.pathInfo + "/")))
 		{
 			parsedRequest.statusCode = "301 Moved Permanently";
