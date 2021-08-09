@@ -1,4 +1,4 @@
-# TEAM FOR WEBSERV
+# WEBSERV
 [Le sujet](https://cdn.intra.42.fr/pdf/pdf/24190/en.subject.pdf)  
 
 ## Makefile usage
@@ -19,7 +19,12 @@ compiling and launching without flags for
 ⚠️ Do not launch valgrind and fsanitize at the same time
 
 
-## Quelques liens utiles
+HTTP means HyperText Transfer Protocol. It is a communication protocol between a client and a server. As a request-response protocol, the client sends a request (into a navigator) to the server which will be responsible for responding instantly. HTTP clients generally use Transmission Control Protocol (TCP) connections to communicate with servers.
+
+A Socket allows communication between two different processes on the same or different machines. It's a way to talk to other computers using file descriptors.
+
+
+## Some useful links
 [Pour s'initier à un serveur HTTP simple](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)  
 [Comprendre les sockets et leurs fonctions](https://broux.developpez.com/articles/c/sockets/)  
 [Découvrir les requêtes](https://www.pierre-giraud.com/http-reseau-securite-cours/requete-reponse-session/)  
