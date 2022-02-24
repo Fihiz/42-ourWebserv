@@ -26,6 +26,10 @@ compiling and launching without flags for
 
 ⚠️ Do not launch valgrind and fsanitize at the same time
 
+Authors
+
+Joel Benassac, Romain Lepart, Agathe Géraud, Pierre-louis Goudet, Salomé d'Audeteau
+
 
 ## Some useful links
 [To learn about a simple http server](https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa)  
